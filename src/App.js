@@ -6,6 +6,7 @@ import {
 } from "react-router-dom"
 import Navbar from './components/navbar'
 import Routes from './routes'
+import Footer from './components/footer'
 import './App.css';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-white">
         <Navbar />
-        <div className="py-10">
+        <div className="">
           <Switch>
             {Routes.map((route, index) => (
               <Route
@@ -26,6 +27,7 @@ function App() {
             <Redirect to="/" />
           </Switch>
         </div>
+        <Footer/>
       </div>
     </Router>
   );

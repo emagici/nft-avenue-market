@@ -1,3 +1,11 @@
+.navbar {
+  z-index: 100;
+}
+
 .dropdown-menu {
   z-index: 50;
+}
+
+.modal-container {
+  z-index: 500;
 }
