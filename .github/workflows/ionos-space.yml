@@ -32,7 +32,7 @@ jobs:
         if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
         run: craco build
         env:
-          CI: true
+          CI: false
           SITE_URL: ${{ steps.project.outputs.site-url }}
       - name: Deploy to IONOS
         if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
