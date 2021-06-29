@@ -30,7 +30,7 @@ jobs:
           yarn install --frozen-lockfile
       - name: Build Node project
         if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
-        run: craco build
+        run: yarn build
         env:
           CI: false
           SITE_URL: ${{ steps.project.outputs.site-url }}
