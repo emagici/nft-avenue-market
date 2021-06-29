@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
-import CardDefault from '../../components/shop-items/card-default'
+import CardDefault from '../../components/cards/item-card-default'
 import { LoginIcon, LogoutIcon, PencilAltIcon } from '@heroicons/react/solid'
 
 import NFT1 from '../../assets/img/nft/nft1.png'
 import NFT2 from '../../assets/img/nft/nft2.jpeg'
 import NFT3 from '../../assets/img/nft/nft3.jpeg'
 import NFT4 from '../../assets/img/nft/nft4.png'
+import NFT5 from '../../assets/img/nft/nft5.png'
 import Modal from '../../components/modal'
 
 const profile = {
@@ -61,6 +62,14 @@ const files = [
     highestbid: '0.5 BNB',
     source: NFT4,
   },
+  {
+    id: '4',
+    title: 'Amazing digital art',
+    available: '3 in stock',
+    price: '2.45 BNB',
+    highestbid: '0.5 BNB',
+    source: NFT5,
+  },
 ]
 
 function classNames(...classes) {
@@ -82,7 +91,7 @@ export default function Profile() {
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
-          <img className="h-32 w-full object-cover lg:h-60" src={profile.backgroundImage} alt="" />
+          <img className="h-42 mt-5 shadow-xl w-full rounded-2xl object-cover lg:h-60" src={profile.backgroundImage} alt="" />
           {loggedIn ? (
             <div className="absolute bottom-5 right-5">
               <button
@@ -95,13 +104,13 @@ export default function Profile() {
             </div>
           ) : null}
         </div>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
             <div className="flex">
               {loggedIn ? (
-                <img className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32" src={profile.avatar} alt="" />
+                <img className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32" src={profile.avatar} alt="" />
               ) : (
-                <div className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32 bg-gray-100"></div>
+                <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32 bg-gray-100"></div>
               )}
             </div>
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
@@ -174,7 +183,7 @@ export default function Profile() {
             </div>
 
             {activeTab === 'On Sale' ? (
-              <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+              <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
                 {files.map((item, index) => (
                   <CardDefault key={index} {...item} />
                 ))}

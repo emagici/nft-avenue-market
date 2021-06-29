@@ -46,7 +46,7 @@ export default function ItemDetail() {
                 <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
               </div>
               <div className="flex-1 min-w-0">
-                <Link to={`/profile?id=${user.id}`} className="focus:outline-none">
+                <Link to={`/user?id=${user.id}`} className="focus:outline-none">
                   <span className="absolute inset-0" aria-hidden="true" />
                   <p className="text-sm font-medium text-gray-900">{user.name}</p>
                   <p className="text-sm text-gray-500 truncate">{user.role}</p>

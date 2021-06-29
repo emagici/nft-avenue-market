@@ -4,7 +4,7 @@ import AvatarGroup from '../../assets/img/tmp/avatar-group.png'
 export default function CardDefault(props) {
   return (
     <li className="relative mb-8">
-      <div className="group block w-full aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
+      <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
         <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
         <Link
           to={`/item-detail?id=${props.id}`}
@@ -18,7 +18,16 @@ export default function CardDefault(props) {
         <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
       </div>
       <div className="flex justify-between border-b border-gray-200 pb-3">
-        <img src={AvatarGroup} className="h-7" />
+        <Link to="/user">
+          <div className="flex items-center">
+            <img
+              className="inline-block h-6 w-6 rounded-full"
+              src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+              alt=""
+            />
+            <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
+          </div>
+        </Link>
         <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p>
       </div>
       <div className="flex justify-between">

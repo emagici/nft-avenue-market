@@ -92,10 +92,12 @@ export default function Example() {
         <div className="pb-8 xl:grid xl:grid-cols-5 xl:gap-8">
           <div className="col-span-2">
             <img src={AvenueLogo} className="h-12 mb-5" />
-            <h3 className="text-md font-medium text-gray-500 tracking-wider uppercase">Powered by Fomo Lab</h3>
+            <a href="https://fomolab.io">
+              <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">Powered by Fomo Lab</h3>
+            </a>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Pages</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Pages</h3>
             <ul className="mt-6 space-y-4">
               {navigation.pages.map((item) => (
                 <li key={item.name}>
@@ -107,7 +109,7 @@ export default function Example() {
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Contact Us</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Contact Us</h3>
             <ul className="mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
@@ -119,7 +121,7 @@ export default function Example() {
             </ul>
           </div>
           <div className="mt-12 md:mt-0">
-            <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">Legal</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Legal</h3>
             <ul className="mt-6 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
@@ -133,7 +135,7 @@ export default function Example() {
         </div>
         <div className="border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0">
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 tracking-wider uppercase">
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
               Subscribe to our mailing list
             </h3>
             <p className="mt-2 text-base text-gray-500">
@@ -172,7 +174,7 @@ export default function Example() {
               </a>
             ))}
           </div>
-          <p className="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
+          <p className="mt-8 text-base text-gray-500 md:mt-0 md:order-1">
             &copy; 2021 Fomo Lab, Inc. All rights reserved.
           </p>
         </div>

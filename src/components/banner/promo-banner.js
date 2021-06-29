@@ -11,8 +11,8 @@ export default function PromoBanner() {
       </div>
       <div className="relative max-w-4xl mx-auto py-24 px-4 sm:py-28 sm:px-6 lg:px-8 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-7xl">Mark Cavendish</h1>
-        <p className="mt-1 text-2xl font-bold text-white">Official Tour de France NFT Series</p>
-        <p className="mt-6 text-2xl font-medium text-white">Fomo Lab have teamed up with Mark Cavendish to bring you an exclusive, limited edition NFT collection</p>
+        <p className="mt-1 text-3xl font-extrabold text-white">Official Tour de France NFT Series</p>
+        <p className="mt-6 text-2xl font-bold text-white">Fomo Lab have teamed up with Mark Cavendish to bring you an exclusive, limited edition NFT collection</p>
       </div>
     </div>
   )

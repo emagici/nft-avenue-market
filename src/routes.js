@@ -1,7 +1,7 @@
 import Explore from './pages/explore'
+import Featured from './pages/featured';
 import ItemDetail from './pages/item-detail';
-import LiveDrop from './pages/live-drop'
-import Profile from './pages/profile'
+import User from './pages/user'
 
 export default [
 	{
@@ -12,16 +12,16 @@ export default [
 		nav: true
 	},
 	{
-	  path: "/live-drop",
-		title: "Live Drop",
-	  component: LiveDrop,
+	  path: "/featured",
+		title: "Featured",
+	  component: Featured,
 		exact: true,
 		nav: true
 	},
 	{
-	  path: "/profile",
-		title: "Profile",
-	  component: Profile,
+	  path: "/user",
+		title: "My Items",
+	  component: User,
 		exact: true,
 		nav: true
 	},

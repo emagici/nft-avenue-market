@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
@@ -15,8 +14,8 @@ export default function TitleDropdown(props) {
           <div>
             <Menu.Button className="">
              <div className="flex items-center cursor-pointer">
-                <h2 className="text-4xl font-medium">{props.title}</h2>
-                <ChevronDownIcon className="h-8 w-8"/>
+                <h2 className="text-4xl font-bold text-indigo-700">{props.title}</h2>
+                <ChevronDownIcon className="h-8 w-8 mt-1"/>
               </div>
             </Menu.Button>
           </div>
