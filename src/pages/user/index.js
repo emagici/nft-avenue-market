@@ -1,5 +1,8 @@
 import React, {useState} from 'react'
+import { Link } from 'react-router-dom'
 import CardDefault from '../../components/cards/item-card-default'
+import SectionHeader from '../../components/section-header'
+import AvatarList from '../../components/avatar/avatar-list'
 import { LoginIcon, LogoutIcon, PencilAltIcon } from '@heroicons/react/solid'
 
 import NFT1 from '../../assets/img/nft/nft1.png'
@@ -77,10 +80,10 @@ function classNames(...classes) {
 }
 
 export default function Profile() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [signInModalOpen, setSignInModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('On Sale');
-  const tabs = ['On Sale', 'Collectibles', 'Created', 'Likes', 'Following', 'Followers'];
+  const tabs = ['On Sale', 'Owned', 'Created', 'Liked', 'Following', 'Followers'];
 
   function handleConfirmSignIn() {
     setSignInModalOpen(false)
@@ -93,13 +96,21 @@ export default function Profile() {
         <div className="relative">
           <img className="h-42 mt-5 shadow-xl w-full rounded-2xl object-cover lg:h-60" src={profile.backgroundImage} alt="" />
           {loggedIn ? (
-            <div className="absolute bottom-5 right-5">
-              <button
-                type="button"
+            <div className="absolute bottom-5 right-5 z-10">
+              <Link
+                to="/settings"
                 className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
               >
-                <span>Edit Cover</span>
+                <span>Edit Profile</span>
                 <PencilAltIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setLoggedIn(false)}
+                className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+              >
+                <span>Sign Out</span>
+                <LogoutIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
               </button>
             </div>
           ) : null}
@@ -118,25 +129,6 @@ export default function Profile() {
                 <h1 className="text-2xl font-bold text-gray-900 truncate">{loggedIn ? profile.name : "Sign in required"}</h1>
               </div>
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {loggedIn ? (
-                  <div>
-                    <button
-                      type="button"
-                      className="inline-flex justify-center px-4 py-2 mr-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-                    >
-                      <span>Edit Profile</span>
-                      <PencilAltIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLoggedIn(false)}
-                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-                    >
-                      <span>Sign Out</span>
-                      <LogoutIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-                    </button>
-                  </div>
-                ) : null}
                 {!loggedIn ? (
                   <button
                     type="button"
@@ -166,7 +158,7 @@ export default function Profile() {
 
         {loggedIn ? (
           <div className="py-20">
-            <div className="mt-3 sm:mt-0 sm:ml-4 text-center mb-10">
+            <div className="mt-3 sm:mt-0 sm:ml-4 text-center mb-20">
               {tabs.map((tab, index) => (
                 <button
                   key={index}
@@ -190,24 +182,63 @@ export default function Profile() {
               </ul>
             ) : null}
 
-            {activeTab === 'Collectibles' ? (
-              <h1 className="font-bold text-2xl text-center">Collectibles</h1>
+            {activeTab === 'Owned' ? (
+              <div className="text-center">
+                <h1 className="font-bold text-2xl mb-2">No items owned</h1>
+                <p className="font-medium text-gray-600 mb-5">Explore our marketplace to find items now.</p>
+                <Link
+                  to="/"
+                  className='text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
+                >
+                  Explore
+                </Link>
+              </div>
             ) : null}
             
             {activeTab === 'Created' ? (
-              <h1 className="font-bold text-2xl text-center">Created</h1>
+              <div className="text-center">
+                <h1 className="font-bold text-2xl mb-2">No items created</h1>
+                <p className="font-medium text-gray-600 mb-5">You can create NFTs to sell right here on The Avenue</p>
+                <button
+                  type="button"
+                  onClick={() => alert('coming soon')}
+                  className='text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
+                >
+                  Create NFT
+                </button>
+              </div>
             ) : null}
             
-            {activeTab === 'Likes' ? (
-              <h1 className="font-bold text-2xl text-center">Likes</h1>
+            {activeTab === 'Liked' ? (
+              <div className="text-center">
+                <h1 className="font-bold text-2xl mb-2">No liked items</h1>
+                <p className="font-medium text-gray-600 mb-5">Click like on items in the marketplace to save them here.</p>
+                <Link
+                  to="/"
+                  className='text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
+                >
+                  Explore
+                </Link>
+              </div>
             ) : null}
             
             {activeTab === 'Following' ? (
-              <h1 className="font-bold text-2xl text-center">Following</h1>
+              <div className="">
+                <AvatarList />
+              </div>
             ) : null}
             
             {activeTab === 'Followers' ? (
-              <h1 className="font-bold text-2xl text-center">Followers</h1>
+              <div className="text-center">
+                <h1 className="font-bold text-2xl mb-2">No followers</h1>
+                <p className="font-medium text-gray-600 mb-5">Sell and like items to increase your followers</p>
+                <Link
+                  to="/"
+                  className='text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
+                >
+                  Explore
+                </Link>
+              </div>
             ) : null}
 
           </div>

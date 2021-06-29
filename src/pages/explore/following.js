@@ -1,6 +1,4 @@
 import React from 'react'
-import Dropdown from '../../components/dropdown'
-import TitleDropdown from '../../components/dropdown/title-dropdown'
 import SectionHeader from '../../components/section-header'
 import CardList from '../../components/cards/card-list'
 
@@ -53,24 +51,12 @@ const files = [
   },
 ]
 
-export default function PopularSection() {
+export default function FollowingSection() {
   return (
     <div className="py-10">
       <div className="max-w-screen-2xl mx-auto">
-
-        <SectionHeader title="Popular">
-          <div className="sm:flex sm:items-center sm:justify-between">
-            <div>
-              <TitleDropdown title="Auctions" />
-            </div>
-            <div>
-              <Dropdown title="Today" />
-            </div>
-          </div>
-        </SectionHeader>
-
+        <SectionHeader title="Following" />
         <CardList items={files} />
-        
       </div>
     </div>
   )

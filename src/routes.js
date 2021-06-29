@@ -2,6 +2,7 @@ import Explore from './pages/explore'
 import Featured from './pages/featured';
 import ItemDetail from './pages/item-detail';
 import User from './pages/user'
+import UserSettings from './pages/user/settings';
 
 export default [
 	{
@@ -24,6 +25,12 @@ export default [
 	  component: User,
 		exact: true,
 		nav: true
+	},
+	{
+	  path: "/settings",
+		title: "User Settings",
+	  component: UserSettings,
+		exact: true,
 	},
 	{
 	  path: "/item-detail",

@@ -58,10 +58,10 @@ function classNames(...classes) {
 
 export default function Discover() {
   const [activeTab, setActiveTab] = useState('All Items');
-  const tabs = ['All Items', 'Art', 'Game'];
+  const tabs = ['All Items', 'Featured', 'Art', 'Game'];
 
   return (  
-    <div className="pb-10">
+    <div className="">
       <SectionHeader title="Discover">
         <div className="sm:grid sm:grid-cols-5">
           <div>
@@ -83,12 +83,12 @@ export default function Discover() {
             ))}
           </div>
           <div className="text-right">
-            <button
+            {/* <button
               type="button"
               className="inline-flex items-center px-6 py-2 border border-transparent rounded-full text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
             >
               Filter
-            </button>
+            </button> */}
           </div>
         </div>
       </SectionHeader>
