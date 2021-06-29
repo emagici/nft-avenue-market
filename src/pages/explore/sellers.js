@@ -45,7 +45,7 @@ const people = [
 export default function LiveDrop() {
   return (
     <div className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
 
         <div className="pb-5 mb-10 border-b border-gray-200">
           <h3 className="text-lg leading-6 font-medium text-gray-900 mb-5">Popular</h3>

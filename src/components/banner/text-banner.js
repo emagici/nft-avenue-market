@@ -1,7 +1,7 @@
 export default function TextBanner() {
   return (
     <div className="bg-white">
-      <div className="max-w-7xl mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto py-20 px-4 sm:py-24 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="max-w-xl mx-auto text-xl text-gray-700 uppercase font-bold mb-3">
             Create, Explore, Collect Digital Art NFTs

@@ -88,7 +88,7 @@ export default function Example() {
       <h2 id="footerHeading" className="sr-only">
         Footer
       </h2>
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
         <div className="pb-8 xl:grid xl:grid-cols-5 xl:gap-8">
           <div className="col-span-2">
             <img src={AvenueLogo} className="h-12 mb-5" />

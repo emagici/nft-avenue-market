@@ -16,7 +16,7 @@ export default function Navbar() {
     <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
       {({ open }) => (
         <>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex">
                 <div className="-ml-2 mr-2 flex items-center md:hidden">

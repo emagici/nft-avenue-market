@@ -26,7 +26,7 @@ export default function ItemDetail() {
 
   return (
     <div className="p-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         
         <div className="mt-10 grid md:grid-cols-3 gap-x-6">
           <div className="">
