@@ -1,4 +1,6 @@
+import Connect from './pages/connect';
 import Explore from './pages/explore'
+import FaqSection from './pages/faq';
 import Featured from './pages/featured';
 import ItemDetail from './pages/item-detail';
 import User from './pages/user'
@@ -36,6 +38,18 @@ export default [
 	  path: "/item-detail",
 		title: "Item Detail",
 	  component: ItemDetail,
+		exact: true,
+	},
+	{
+	  path: "/connect",
+		title: "Connect",
+	  component: Connect,
+		exact: true,
+	},
+	{
+	  path: "/faq",
+		title: "FAQ",
+	  component: FaqSection,
 		exact: true,
 	},
 ];

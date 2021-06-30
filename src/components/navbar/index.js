@@ -153,12 +153,12 @@ export default function Navbar() {
                 </div>
 
                 <div className="flex-shrink-0">
-                  <button
-                    type="button"
+                  <Link
+                    to="/connect"
                     className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                   >
                     <span>Connect Wallet</span>
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

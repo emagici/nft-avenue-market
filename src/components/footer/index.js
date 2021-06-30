@@ -4,9 +4,10 @@ import AvenueLogo from '../../assets/img/theavenue-logo.png'
 
 const navigation = {
   pages: [
-    { name: 'Discover', href: '#' },
-    { name: 'Live Drops', href: '#' },
-    { name: 'Profile', href: '#' },
+    { name: 'Explore', href: '/explore' },
+    { name: 'Featured', href: '/featured' },
+    { name: 'My Items', href: '/user' },
+    { name: 'FAQ', href: '/faq' },
   ],
   contactus: [
     { name: 'Email Us', href: '#' },
@@ -82,7 +83,7 @@ const navigation = {
   ],
 }
 
-export default function Example() {
+export default function Footer() {
   return (
     <footer className="bg-white mt-20 border-t" aria-labelledby="footerHeading">
       <h2 id="footerHeading" className="sr-only">

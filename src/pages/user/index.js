@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import CardDefault from '../../components/cards/item-card-default'
 import SectionHeader from '../../components/section-header'
 import AvatarList from '../../components/avatar/avatar-list'
-import { LoginIcon, LogoutIcon, PencilAltIcon } from '@heroicons/react/solid'
+import { LoginIcon, LogoutIcon, PencilAltIcon, PlusCircleIcon } from '@heroicons/react/solid'
 
 import NFT1 from '../../assets/img/nft/nft1.png'
 import NFT2 from '../../assets/img/nft/nft2.jpeg'
@@ -95,25 +95,37 @@ export default function Profile() {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
           <img className="h-42 mt-5 shadow-xl w-full rounded-2xl object-cover lg:h-60" src={profile.backgroundImage} alt="" />
-          {loggedIn ? (
-            <div className="absolute bottom-5 right-5 z-10">
-              <Link
-                to="/settings"
-                className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-              >
-                <span>Edit Profile</span>
-                <PencilAltIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-              </Link>
+          <div className="absolute bottom-5 right-5 z-10">
+            {loggedIn ? (
+              <div>
+                <Link
+                  to="/settings"
+                  className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                >
+                  <span>Edit Profile</span>
+                  <PencilAltIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setLoggedIn(false)}
+                  className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                >
+                  <span>Sign Out</span>
+                  <LogoutIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
               <button
                 type="button"
-                onClick={() => setLoggedIn(false)}
-                className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                // onClick={() => setLoggedIn(true)}
+                onClick={() => setSignInModalOpen(true)}
+                className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
               >
-                <span>Sign Out</span>
-                <LogoutIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                <span>Sign In</span>
+                <LoginIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
               </button>
-            </div>
-          ) : null}
+            )}
+          </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
@@ -129,15 +141,13 @@ export default function Profile() {
                 <h1 className="text-2xl font-bold text-gray-900 truncate">{loggedIn ? profile.name : "Sign in required"}</h1>
               </div>
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {!loggedIn ? (
+                {loggedIn ? (
                   <button
-                    type="button"
-                    // onClick={() => setLoggedIn(true)}
-                    onClick={() => setSignInModalOpen(true)}
-                    className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                    onClick={() => alert('follow')}
+                    className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
                   >
-                    <span>Sign In</span>
-                    <LoginIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                    <span>Follow</span>
+                    <PlusCircleIcon className="-mr-1 ml-1 h-5 w-5 text-white" aria-hidden="true" />
                   </button>
                 ) : null}
               </div>
