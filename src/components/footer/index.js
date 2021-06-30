@@ -1,5 +1,5 @@
+import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-
 import AvenueLogo from '../../assets/img/theavenue-logo.png'
 
 const navigation = {
@@ -10,13 +10,13 @@ const navigation = {
     { name: 'FAQ', href: '/faq' },
   ],
   contactus: [
-    { name: 'Email Us', href: '#' },
-    { name: 'Get Support', href: '#' },
-    { name: 'Apply For Verification', href: '#' },
+    { name: 'Email Us', href: '/' },
+    { name: 'Get Support', href: '/' },
+    { name: 'Apply For Verification', href: '/' },
   ],
   legal: [
-    { name: 'Privacy', href: '#' },
-    { name: 'Terms', href: '#' },
+    { name: 'Privacy', href: '/' },
+    { name: 'Terms', href: '/' },
   ],
   social: [
     {
@@ -102,9 +102,9 @@ export default function Footer() {
             <ul className="mt-6 space-y-4">
               {navigation.pages.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -114,9 +114,9 @@ export default function Footer() {
             <ul className="mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -126,9 +126,9 @@ export default function Footer() {
             <ul className="mt-6 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
