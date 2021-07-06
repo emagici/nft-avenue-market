@@ -1,21 +1,22 @@
+import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-
 import AvenueLogo from '../../assets/img/theavenue-logo.png'
 
 const navigation = {
   pages: [
-    { name: 'Discover', href: '#' },
-    { name: 'Live Drops', href: '#' },
-    { name: 'Profile', href: '#' },
+    { name: 'Explore', href: '/explore' },
+    { name: 'Featured', href: '/featured' },
+    { name: 'My Items', href: '/user' },
+    { name: 'FAQ', href: '/faq' },
   ],
   contactus: [
-    { name: 'Email Us', href: '#' },
-    { name: 'Get Support', href: '#' },
-    { name: 'Apply For Verification', href: '#' },
+    { name: 'Email Us', href: '/' },
+    { name: 'Get Support', href: '/' },
+    { name: 'Apply For Verification', href: '/' },
   ],
   legal: [
-    { name: 'Privacy', href: '#' },
-    { name: 'Terms', href: '#' },
+    { name: 'Privacy', href: '/' },
+    { name: 'Terms', href: '/' },
   ],
   social: [
     {
@@ -82,7 +83,7 @@ const navigation = {
   ],
 }
 
-export default function Example() {
+export default function Footer() {
   return (
     <footer className="bg-white mt-20 border-t" aria-labelledby="footerHeading">
       <h2 id="footerHeading" className="sr-only">
@@ -101,9 +102,9 @@ export default function Example() {
             <ul className="mt-6 space-y-4">
               {navigation.pages.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -113,9 +114,9 @@ export default function Example() {
             <ul className="mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -125,9 +126,9 @@ export default function Example() {
             <ul className="mt-6 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
