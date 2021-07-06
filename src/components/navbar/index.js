@@ -1,7 +1,8 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, useLocation } from "react-router-dom"
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon, SearchIcon } from '@heroicons/react/outline'
+import { useWallet } from 'use-wallet'
 import AvenueLogo from '../../assets/img/theavenue-logo.png'
 import Routes from '../../routes'
 
@@ -10,7 +11,40 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-  const location = useLocation();
+  const location = useLocation()
+  const { account, chainId, connect, error, reset, status } = useWallet()
+  const [errorStr, setErrorStr] = useState(null)
+
+  useEffect(() => {
+    if (status !== 'connected') {
+      connectWallet()
+    }
+  }, [])
+
+  async function connectWallet() {
+    if (status !== 'connected') {
+      connect()
+    } else {
+      reset()
+    }
+  }
+
+  useEffect(() => {
+    console.log(status)
+    if (status === 'connected') {
+      setErrorStr(null)
+    }
+  }, [status])
+
+  useEffect(() => {
+    if (error) {
+      console.log(error.name)
+      setErrorStr(error.name === 'ChainUnsupportedError' ? 'Unsupported Network' : null)
+    } else {
+      setErrorStr(null)
+    }
+  }, [error])
+
   
   return (
     <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
@@ -81,7 +115,7 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="hidden md:mr-4 md:flex-shrink-0 md:flex md:items-center">
+                <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
                   {/* Profile dropdown */}
                   <Menu as="div" className="ml-3 relative">
                     {({ open }) => (
@@ -152,12 +186,23 @@ export default function Navbar() {
                   </Menu>
                 </div>
 
+                {account ? (
+                  <div className="flex-shrink-0">
+                    <Link
+                      to="/create"
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Create</span>
+                    </Link>
+                  </div>
+                ) : null}
                 <div className="flex-shrink-0">
                   <button
                     type="button"
-                    className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    onClick={() => connectWallet()}
+                    className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                   >
-                    <span>Connect Wallet</span>
+                    <span>{account ? account.substr(0,6) + '...' : 'Connect Wallet'}</span>
                   </button>
                 </div>
               </div>

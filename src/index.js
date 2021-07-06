@@ -4,9 +4,35 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import {
+  BscConnector,
+  UserRejectedRequestError,
+} from '@binance-chain/bsc-connector'
+
+import {
+  ConnectionRejectedError,
+  UseWalletProvider,
+} from 'use-wallet'
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <UseWalletProvider
+      chainId={56}
+      connectors={{
+        bsc: {
+          web3ReactConnector() {
+            return new BscConnector({ supportedChainIds: [56, 97] })
+          },
+          handleActivationError(err) {
+            if (err instanceof UserRejectedRequestError) {
+              return new ConnectionRejectedError()
+            }
+          },
+        },
+      }}
+    >
+      <App />
+    </UseWalletProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
