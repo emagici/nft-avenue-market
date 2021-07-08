@@ -89,17 +89,17 @@ export default function Footer() {
       <h2 id="footerHeading" className="sr-only">
         Footer
       </h2>
-      <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <div className="pb-8 xl:grid xl:grid-cols-5 xl:gap-8">
-          <div className="col-span-2">
-            <img src={AvenueLogo} className="h-12 mb-5" />
+      <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 text-center lg:text-left">
+        <div className="pb-8 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-8">
+          <div className="md:col-span-3 lg:col-span-2 mb-10 md:mb-5">
+            <img src={AvenueLogo} className="h-12 mb-3 mx-auto lg:mx-0" />
             <a href="https://fomolab.io">
               <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">Powered by Fomo Lab</h3>
             </a>
           </div>
-          <div>
+          <div className="mb-10 md:mb-0">
             <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Pages</h3>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.pages.map((item) => (
                 <li key={item.name}>
                   <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
@@ -111,7 +111,7 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Contact Us</h3>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
                   <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
@@ -123,7 +123,7 @@ export default function Footer() {
           </div>
           <div className="mt-12 md:mt-0">
             <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Legal</h3>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
                   <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
@@ -143,7 +143,7 @@ export default function Footer() {
               Get the latest news from the team at Fomo Lab
             </p>
           </div>
-          <form className="mt-4 sm:flex sm:max-w-md lg:mt-0">
+          <form className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0">
             <label htmlFor="emailAddress" className="sr-only">
               Email address
             </label>
@@ -167,7 +167,7 @@ export default function Footer() {
           </form>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
-          <div className="flex space-x-6 md:order-2">
+          <div className="flex space-x-6 md:order-2 justify-center">
             {navigation.social.map((item) => (
               <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">{item.name}</span>

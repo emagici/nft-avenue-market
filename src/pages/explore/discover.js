@@ -63,11 +63,8 @@ export default function Discover() {
   return (  
     <div className="">
       <SectionHeader title="Discover">
-        <div className="sm:grid sm:grid-cols-5">
-          <div>
-            <Dropdown title="Recently added" />
-          </div>
-          <div className="col-span-3 text-center mt-3 sm:mt-0 sm:ml-4">
+        <div className="grid md:grid-cols-4">
+          <div className="flex md:col-span-3 items-center justify-center md:justify-start mt-3 md:mt-0">
             {tabs.map((tab, index) => (
               <button
                 key={index}
@@ -82,13 +79,8 @@ export default function Discover() {
               </button>
             ))}
           </div>
-          <div className="text-right">
-            {/* <button
-              type="button"
-              className="inline-flex items-center px-6 py-2 border border-transparent rounded-full text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
-            >
-              Filter
-            </button> */}
+          <div className="text-center md:text-right order-first md:order-last">
+            <Dropdown title="Recently added" />
           </div>
         </div>
       </SectionHeader>

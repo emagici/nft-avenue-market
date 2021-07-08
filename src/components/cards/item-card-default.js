@@ -25,7 +25,7 @@ export default function CardDefault(props) {
           <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.title}</p>
           <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
         </div>
-        <div className="flex justify-between border-b border-gray-200 pb-3">
+        <div className="flex justify-between items-end border-b border-gray-200 pb-3">
           {props.nolink ? (
             <div className="flex items-center">
               <img
@@ -33,7 +33,7 @@ export default function CardDefault(props) {
                 src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
                 alt=""
               />
-              <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
+              <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p>
             </div>
           ) : (
             <Link to="/user">
@@ -43,7 +43,7 @@ export default function CardDefault(props) {
                   src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
                   alt=""
                 />
-                <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
+                <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p>
               </div>
             </Link>
           )}
