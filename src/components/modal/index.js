@@ -1,9 +1,11 @@
 import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/solid'
+
 
 export default function Modal(props) {
-  const cancelButtonRef = useRef(null)
+  const titleRef = useRef(null)
+  const cancelButtonRef = useRef();
 
   return (
     <Transition.Root show={props.open} as={Fragment}>
@@ -42,53 +44,24 @@ export default function Modal(props) {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div>
-                <div className="mt-3 text-center sm:mt-5">
-                  <Dialog.Title as="h3" className="text-2xl leading-6 font-bold text-gray-900 mb-5">
-                    Fomo Lab Terms of Service
-                  </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 mb-5">
-                      Please take a few minutes to read and understand the <a href="#" className="text-indigo-600 font-bold">Fomo Lab Terms of Service</a>. To continue, you'll need to accept the Terms of Service by checking the box.
-                    </p>
-                    <div className="flex items-center justify-center px-5 mb-3">
-                      <div className="h-5 flex items-center">
-                        <input
-                          id="minage"
-                          name="minage"
-                          type="checkbox"
-                          className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label htmlFor="minage" className="font-medium text-gray-700">
-                          I am at least 13 years old
-                        </label>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center px-5">
-                      <div className="h-5 flex items-center">
-                        <input
-                          id="terms"
-                          name="terms"
-                          type="checkbox"
-                          className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3 text-sm">
-                        <label htmlFor="terms" className="font-medium text-gray-700">
-                          I accept the Fomo Lab terms of service
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+                <button
+                  type="button"
+                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                  ref={cancelButtonRef}
+                  onClick={() => props.setOpen(false)}
+                >
+                  <span className="sr-only">Close</span>
+                  <XIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
               </div>
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+              <Dialog.Title as="h3" ref={titleRef} className="text-2xl text-center leading-6 font-bold text-gray-900 mb-5">{props.title}</Dialog.Title>
+              {props.children}
+              {/* <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-                  onClick={() => props.onConfirm()}
+                  onClick={() => props.setOpen(false)}
                 >
                   Confirm
                 </button>
@@ -96,11 +69,10 @@ export default function Modal(props) {
                   type="button"
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
                   onClick={() => props.setOpen(false)}
-                  ref={cancelButtonRef}
                 >
                   Cancel
                 </button>
-              </div>
+              </div> */}
             </div>
           </Transition.Child>
         </div>

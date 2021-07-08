@@ -4,6 +4,7 @@ import CardDefault from '../../components/cards/item-card-default'
 import SectionHeader from '../../components/section-header'
 import AvatarList from '../../components/avatar/avatar-list'
 import { LoginIcon, LogoutIcon, PencilAltIcon, PlusCircleIcon } from '@heroicons/react/solid'
+import { CheckIcon } from '@heroicons/react/outline'
 
 import NFT1 from '../../assets/img/nft/nft1.png'
 import NFT2 from '../../assets/img/nft/nft2.jpeg'
@@ -94,10 +95,10 @@ export default function Profile() {
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
-          <img className="h-42 mt-5 shadow-xl w-full rounded-2xl object-cover lg:h-60" src={profile.backgroundImage} alt="" />
-          <div className="absolute bottom-5 right-5 z-10">
+          <img className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60" src={profile.backgroundImage} alt="" />
+          <div className="hidden sm:block absolute bottom-5 right-5 z-10">
             {loggedIn ? (
-              <div>
+              <div className="">
                 <Link
                   to="/settings"
                   className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
@@ -129,7 +130,7 @@ export default function Profile() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
-            <div className="flex">
+            <div className="flex justify-center lg:justify-start">
               {loggedIn ? (
                 <img className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32" src={profile.avatar} alt="" />
               ) : (
@@ -137,9 +138,16 @@ export default function Profile() {
               )}
             </div>
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-              <div className="sm:hidden md:block mt-6 min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 truncate">{loggedIn ? profile.name : "Sign in required"}</h1>
+              <div className="block mt-6 min-w-0 flex-1">
+                <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">{loggedIn ? profile.name : "Sign in required"}</h1>
               </div>
+
+              {loggedIn ? (
+                <div className="text-center sm:hidden pt-5">
+                  <p>{profile.bio}</p>
+                </div>
+              ) : null}
+
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                 {loggedIn ? (
                   <button
@@ -150,24 +158,53 @@ export default function Profile() {
                     <PlusCircleIcon className="-mr-1 ml-1 h-5 w-5 text-white" aria-hidden="true" />
                   </button>
                 ) : null}
+                {loggedIn ? (
+                  <div className="sm:hidden flex flex-col justify-center">
+                    <Link
+                      to="/settings"
+                      className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
+                    >
+                      <span>Edit Profile</span>
+                      <PencilAltIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setLoggedIn(false)}
+                      className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
+                    >
+                      <span>Sign Out</span>
+                      <LogoutIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    // onClick={() => setLoggedIn(true)}
+                    onClick={() => setSignInModalOpen(true)}
+                    className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
+                  >
+                    <span>Sign In</span>
+                    <LoginIcon className="-mr-1 ml-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
           <div className="">
             {loggedIn ? (
-              <div className="px-10">
-                <h6 className="font-bold">Bio</h6>
+              <div className="hidden sm:block lg:px-10 text-center md:text-left">
+                <h6 className="font-bold hidden md:block">Bio</h6>
                 <p>{profile.bio}</p>
               </div>
             ) : null}
           </div>
-          <div className="hidden sm:block md:hidden mt-6 min-w-0 flex-1">
+          <div className="hidden lg:hidden mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">{profile.name}</h1>
           </div>
         </div>
 
         {loggedIn ? (
-          <div className="py-20">
+          <div className="py-10 lg:py-20">
             <div className="mt-3 sm:mt-0 sm:ml-4 text-center mb-20">
               {tabs.map((tab, index) => (
                 <button
@@ -187,7 +224,7 @@ export default function Profile() {
             {activeTab === 'On Sale' ? (
               <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
                 {files.map((item, index) => (
-                  <CardDefault key={index} {...item} />
+                  <CardDefault key={index} {...item} sellItem />
                 ))}
               </ul>
             ) : null}
@@ -254,7 +291,64 @@ export default function Profile() {
           </div>
         ) : null}
 
-        <Modal open={signInModalOpen} setOpen={(v) => setSignInModalOpen(v)} onConfirm={() => handleConfirmSignIn()}/>
+        <Modal title="Fomo Lab Terms of Service" open={signInModalOpen} setOpen={(v) => setSignInModalOpen(v)}>
+          <div>
+            <div className="mt-3 text-center sm:mt-5">
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-5">
+                  Please take a few minutes to read and understand the <a href="#" className="text-indigo-600 font-bold">Fomo Lab Terms of Service</a>. To continue, you'll need to accept the Terms of Service by checking the box.
+                </p>
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                    <input
+                      id="minage"
+                      name="minage"
+                      type="checkbox"
+                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="minage" className="font-medium text-gray-700">
+                      I am at least 13 years old
+                    </label>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center px-5">
+                  <div className="h-5 flex items-center">
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="terms" className="font-medium text-gray-700">
+                      I accept the Fomo Lab terms of service
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+            <button
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+              onClick={() => handleConfirmSignIn()}
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => setSignInModalOpen(false)}
+              // ref={cancelButtonRef}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
 
       </div>
     </div>

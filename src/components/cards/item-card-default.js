@@ -1,36 +1,32 @@
+import { Fragment, useState } from 'react'
 import { Link } from "react-router-dom"
-import AvatarGroup from '../../assets/img/tmp/avatar-group.png'
+import Modal from '../modal'
+import { TagIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/react/solid'
 
 export default function CardDefault(props) {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <li className="relative mb-8">
-      <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
-        <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
-        {!props.nolink ? (
-          <Link
-            to={`/item-detail?id=${props.id}`}
-            className="absolute inset-0 focus:outline-none"
-          >
-            <span className="sr-only">View details for {props.title}</span>
-          </Link>
-        ) : null}
-      </div>
-      <div className="flex justify-between">
-        <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.title}</p>
-        <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
-      </div>
-      <div className="flex justify-between border-b border-gray-200 pb-3">
-        {props.nolink ? (
-          <div className="flex items-center">
-            <img
-              className="inline-block h-6 w-6 rounded-full"
-              src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-              alt=""
-            />
-            <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
-          </div>
-        ) : (
-          <Link to="/user">
+    <Fragment>
+
+      <li className="relative mb-8">
+        <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
+          <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
+          {!props.nolink ? (
+            <Link
+              to={`/item-detail?id=${props.id}`}
+              className="absolute inset-0 focus:outline-none"
+            >
+              <span className="sr-only">View details for {props.title}</span>
+            </Link>
+          ) : null}
+        </div>
+        <div className="flex justify-between">
+          <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.title}</p>
+          <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
+        </div>
+        <div className="flex justify-between border-b border-gray-200 pb-3">
+          {props.nolink ? (
             <div className="flex items-center">
               <img
                 className="inline-block h-6 w-6 rounded-full"
@@ -39,14 +35,73 @@ export default function CardDefault(props) {
               />
               <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
             </div>
-          </Link>
-        )}
-        <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p>
-      </div>
-      <div className="flex justify-between">
-        <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
-        <p className="mt-2 block text-sm text-gray-900 truncate pointer-events-none font-light">New Bid</p>
-      </div>
-    </li>
+          ) : (
+            <Link to="/user">
+              <div className="flex items-center">
+                <img
+                  className="inline-block h-6 w-6 rounded-full"
+                  src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                  alt=""
+                />
+                <p className="text-xs ml-1.5 font-bold">CryptoChown</p>
+              </div>
+            </Link>
+          )}
+          <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p>
+        </div>
+        <div className="flex justify-between">
+          <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
+          {props.sellItem ? (
+            // <p className="mt-2 block text-sm text-gray-900 truncate pointer-events-none font-light">New Bid</p>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="inline-flex justify-center items-center px-2 py-1 mt-1 shadow-md text-xs font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+            >
+              <span>Sell Item</span>
+            </button>
+          ) : null}
+        </div>
+      </li>
+
+      <Modal title="Put On Sale" open={modalOpen} setOpen={(v) => setModalOpen(v)} hideFooter>
+        <div>
+          <div className="mt-3 text-center sm:mt-5">
+            <div className="mt-2">
+              <p className="text-sm text-gray-500 mb-5">Choose sale type</p>
+              <div className="md:flex justify-center items-center mb-3">
+                <button
+                  onClick={() => alert('follow')}
+                  className="flex md:flex-col justify-center items-center mb-3 px-4 py-2 w-full mx-1.5 md:w-32 md:h-40 shadow-lg text-sm font-bold rounded-2xl border border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                >
+                  <div className="flex justify-center mb-1">
+                    <TagIcon className="h-5 w-5 md:h-7 md:w-7 mr-1 md:mr-0 text-gray-700" aria-hidden="true" />
+                  </div>
+                  <p className="">Fixed Price</p>
+                </button>
+                <button
+                  onClick={() => alert('follow')}
+                  className="flex md:flex-col justify-center items-center mb-3 px-4 py-2 w-full mx-1.5 md:w-32 md:h-40 shadow-lg text-sm font-bold rounded-2xl border border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                >
+                  <div className="flex justify-center mb-1">
+                    <ClockIcon className="h-5 w-5 md:h-7 md:w-7 mr-1 md:mr-0 text-gray-700" aria-hidden="true" />
+                  </div>
+                  <p>Timed Auction</p>
+                </button>
+                <button
+                  onClick={() => alert('follow')}
+                  className="flex md:flex-col justify-center items-center mb-3 px-4 py-2 w-full mx-1.5 md:w-32 md:h-40 shadow-lg text-sm font-bold rounded-2xl border border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                >
+                  <div className="flex justify-center mb-1">
+                    <CurrencyDollarIcon className="h-5 w-5 md:h-7 md:w-7 mr-1 md:mr-0 text-gray-700" aria-hidden="true" />
+                  </div>
+                  <p>Open For Bids</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+    </Fragment>
   )
 }
