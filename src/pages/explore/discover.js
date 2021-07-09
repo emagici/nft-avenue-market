@@ -59,6 +59,12 @@ function classNames(...classes) {
 export default function Discover() {
   const [activeTab, setActiveTab] = useState('All Items');
   const tabs = ['All Items', 'Featured', 'Art', 'Game'];
+  
+  const [activeDropdown, setActiveDropdown] = useState('recent');
+  const options = [
+    { id: 'recent', 'title': 'Recently added' },
+    { id: 'popular', 'title': 'Popular' },
+  ]
 
   return (  
     <div className="">
@@ -80,7 +86,12 @@ export default function Discover() {
             ))}
           </div>
           <div className="text-center md:text-right order-first md:order-last">
-            <Dropdown title="Recently added" />
+            <Dropdown
+              options={options}
+              active={activeDropdown}
+              onChange={(v) => setActiveDropdown(v)}
+              menuPosition='right'
+            />
           </div>
         </div>
       </SectionHeader>

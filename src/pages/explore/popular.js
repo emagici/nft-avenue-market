@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Dropdown from '../../components/dropdown'
 import TitleDropdown from '../../components/dropdown/title-dropdown'
 import SectionHeader from '../../components/section-header'
@@ -54,6 +54,19 @@ const files = [
 ]
 
 export default function PopularSection() {
+  const [activeDropdown, setActiveDropdown] = useState('auctions');
+  const [activeFilterDropdown, setActiveFilterDropdown] = useState('today');
+  const options = [
+    { id: 'auctions', 'title': 'Auctions' },
+    { id: 'collections', 'title': 'Collections' },
+    { id: 'sellers', 'title': 'Sellers' },
+  ]
+  const filterOptions = [
+    { id: 'today', 'title': 'Today' },
+    { id: 'week', 'title': 'This Week' },
+    { id: 'month', 'title': 'This Month' },
+  ]
+
   return (
     <div className="py-10">
       <div className="max-w-screen-2xl mx-auto">
@@ -61,10 +74,20 @@ export default function PopularSection() {
         <SectionHeader title="Popular">
           <div className="sm:flex sm:items-center sm:justify-between">
             <div>
-              <TitleDropdown title="Auctions" />
+              <TitleDropdown
+                options={options}
+                active={activeDropdown}
+                onChange={(v) => setActiveDropdown(v)}
+                menuPosition='left'
+              />
             </div>
             <div>
-              <Dropdown title="Today" />
+              <Dropdown
+                options={filterOptions}
+                active={activeFilterDropdown}
+                onChange={(v) => setActiveFilterDropdown(v)}
+                menuPosition='right'
+              />
             </div>
           </div>
         </SectionHeader>

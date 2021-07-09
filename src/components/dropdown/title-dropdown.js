@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 
@@ -7,6 +7,13 @@ function classNames(...classes) {
 }
 
 export default function TitleDropdown(props) {
+  const [active, setActive] = useState(null);
+
+  useEffect(() => {
+    if (!props.options || !props.active) return
+    setActive(props.options.filter(item => item.id == props.active)[0])
+  }, [props.active, props.options])
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => (
@@ -14,7 +21,13 @@ export default function TitleDropdown(props) {
           <div>
             <Menu.Button className="">
              <div className="flex items-center cursor-pointer">
-                <h2 className="text-4xl font-bold text-indigo-700">{props.title}</h2>
+                <h2 className="text-4xl font-bold text-indigo-700">
+                  {active && active.title ? (
+                    active.title
+                  ) : (
+                    "All"
+                  )}
+                </h2>
                 <ChevronDownIcon className="h-8 w-8 mt-1"/>
               </div>
             </Menu.Button>
@@ -32,63 +45,29 @@ export default function TitleDropdown(props) {
           >
             <Menu.Items
               static
-              className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-menu"
+              className={classNames(
+                props.menuPosition ? `${props.menuPosition}-0` : 'left-0',
+                "origin-top-right absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-menu"
+              )}
             >
               <div className="py-1">
-                <Menu.Item>
-                  {({ active }) => (
-                    <a
-                      href="#"
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block px-4 py-2 text-sm'
-                      )}
-                    >
-                      Option 1
-                    </a>
-                  )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <a
-                      href="#"
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block px-4 py-2 text-sm'
-                      )}
-                    >
-                      Option 2
-                    </a>
-                  )}
-                </Menu.Item>
-                <Menu.Item>
-                  {({ active }) => (
-                    <a
-                      href="#"
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block px-4 py-2 text-sm'
-                      )}
-                    >
-                      Option 3
-                    </a>
-                  )}
-                </Menu.Item>
-                <form method="POST" action="#">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        type="submit"
+                {props.options ? (
+                  props.options.map((item, index) => (
+                    <Menu.Item>
+                      <a
+                        href="javascript:void(0);"
+                        key={index}
+                        onClick={() => props.onChange(item.id)}
                         className={classNames(
-                          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                          'block w-full text-left px-4 py-2 text-sm'
+                          active && active.id == item.id ? 'bg-gray-100 text-gray-800 font-bold' : 'text-gray-700 font-medium ',
+                          'block px-4 py-2 text-sm'
                         )}
                       >
-                        Option 4
-                      </button>
-                    )}
-                  </Menu.Item>
-                </form>
+                        {item.title}
+                      </a>
+                    </Menu.Item>
+                  ))
+                ) : null}
               </div>
             </Menu.Items>
           </Transition>
