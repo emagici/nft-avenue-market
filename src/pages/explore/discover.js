@@ -16,7 +16,7 @@ const files = [
     available: '3 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT1,
+    Image: NFT1,
   },
   {
     id: '2',
@@ -24,7 +24,7 @@ const files = [
     available: '3 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT5,
+    Image: NFT5,
   },
   {
     id: '3',
@@ -32,7 +32,7 @@ const files = [
     available: '3 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT2,
+    Image: NFT2,
   },
   {
     id: '4',
@@ -40,7 +40,7 @@ const files = [
     available: '3 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT4,
+    Image: NFT4,
   },
   {
     id: '5',
@@ -48,7 +48,7 @@ const files = [
     available: '3 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT3,
+    Image: NFT3,
   },
 ]
 

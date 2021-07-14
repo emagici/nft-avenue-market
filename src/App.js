@@ -2,12 +2,13 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
-} from "react-router-dom"
-import Navbar from './components/navbar'
-import Routes from './routes'
-import Footer from './components/footer'
-import './App.css';
+  Redirect,
+} from "react-router-dom";
+import Navbar from "./components/navbar";
+import Routes from "./routes";
+import Footer from "./components/footer";
+import "./App.css";
+
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             <Redirect to="/" />
           </Switch>
         </div>
-        <Footer/>
+        <Footer />
       </div>
     </Router>
   );

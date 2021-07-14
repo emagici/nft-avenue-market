@@ -11,7 +11,7 @@ export default function CardDefault(props) {
 
       <li className="relative mb-8">
         <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
-          <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
+          <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
           {!props.nolink ? (
             <Link
               to={`/item-detail?id=${props.id}`}
@@ -22,7 +22,7 @@ export default function CardDefault(props) {
           ) : null}
         </div>
         <div className="flex justify-between">
-          <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.title}</p>
+          <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.TokenName}</p>
           <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
         </div>
         <div className="flex justify-between items-end border-b border-gray-200 pb-3">

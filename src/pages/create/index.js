@@ -25,7 +25,7 @@ export default function Create() {
     available: '1 in stock',
     price: '2.45 BNB',
     highestbid: '0.5 BNB',
-    source: NFT1,
+    Image: NFT1,
   })
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function Create() {
       available: '1 in stock',
       price: onSalePrice ? `${onSalePrice} BNB` : '??? BNB',
       highestbid: '0.5 BNB',
-      source: itemFile ? itemFile : NFT1,
+      Image: itemFile ? itemFile : NFT1,
     })
   }, [
     itemFile,
