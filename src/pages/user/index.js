@@ -112,14 +112,10 @@ export default function Profile() {
     web3.eth.personal
       .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
       .then(async function (sign) {
-        var bodyFormData = new FormData();
-        bodyFormData.append("Signature", sign);
-
         axios({
           method: "post",
-          url: "https://locker.workinjupiter.club",
-          data: bodyFormData,
-          headers: { "Content-Type": "multipart/form-data" },
+          url: "http://0.0.0.0:3001",
+          data: JSON.stringify({ Signature: sign }),
         })
           .then(function (response) {
             console.log(response);

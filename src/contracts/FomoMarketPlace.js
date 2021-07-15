@@ -1,7 +1,7 @@
-[
-    {
-        "inputs": [
-            {
+export const MARKETPLACE_ADDRESS = '0x1A6eA31e185d1A23235a9d78F175F342d9C28e0F'
+
+export const MARKETPLACE_ABI = [{
+        "inputs": [{
                 "internalType": "address payable",
                 "name": "_feeRecipient",
                 "type": "address"
@@ -17,8 +17,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "owner",
@@ -42,8 +41,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "owner",
@@ -97,8 +95,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "seller",
@@ -140,8 +137,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "owner",
@@ -171,8 +167,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "creator",
@@ -196,8 +191,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "creator",
@@ -245,8 +239,7 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "previousOwner",
@@ -264,33 +257,28 @@
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "platformFee",
-                "type": "uint256"
-            }
-        ],
+        "inputs": [{
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "platformFee",
+            "type": "uint256"
+        }],
         "name": "UpdatePlatformFee",
         "type": "event"
     },
     {
         "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address payable",
-                "name": "platformFeeRecipient",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "indexed": false,
+            "internalType": "address payable",
+            "name": "platformFeeRecipient",
+            "type": "address"
+        }],
         "name": "UpdatePlatformFeeRecipient",
         "type": "event"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -312,8 +300,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -335,8 +322,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -353,8 +339,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -371,8 +356,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -411,32 +395,27 @@
     {
         "inputs": [],
         "name": "feeReceipient",
-        "outputs": [
-            {
-                "internalType": "address payable",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "address payable",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "fomo721",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -473,8 +452,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -491,8 +469,7 @@
             }
         ],
         "name": "listings",
-        "outputs": [
-            {
+        "outputs": [{
                 "internalType": "uint256",
                 "name": "quantity",
                 "type": "uint256"
@@ -517,8 +494,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -530,19 +506,16 @@
             }
         ],
         "name": "minters",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -559,8 +532,7 @@
             }
         ],
         "name": "offers",
-        "outputs": [
-            {
+        "outputs": [{
                 "internalType": "contract IERC20",
                 "name": "payToken",
                 "type": "address"
@@ -587,32 +559,27 @@
     {
         "inputs": [],
         "name": "owner",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
+        "outputs": [{
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
         "inputs": [],
         "name": "platformFee",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -641,8 +608,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -654,45 +620,38 @@
             }
         ],
         "name": "royalties",
-        "outputs": [
-            {
-                "internalType": "uint8",
-                "name": "",
-                "type": "uint8"
-            }
-        ],
+        "outputs": [{
+            "internalType": "uint8",
+            "name": "",
+            "type": "uint8"
+        }],
         "stateMutability": "view",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+        }],
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_fomo721",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address",
+            "name": "_fomo721",
+            "type": "address"
+        }],
         "name": "updateFomo721",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
+        "inputs": [{
                 "internalType": "address",
                 "name": "_nftAddress",
                 "type": "address"
@@ -714,26 +673,22 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_platformFee",
-                "type": "uint256"
-            }
-        ],
+        "inputs": [{
+            "internalType": "uint256",
+            "name": "_platformFee",
+            "type": "uint256"
+        }],
         "name": "updatePlatformFee",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address payable",
-                "name": "_platformFeeRecipient",
-                "type": "address"
-            }
-        ],
+        "inputs": [{
+            "internalType": "address payable",
+            "name": "_platformFeeRecipient",
+            "type": "address"
+        }],
         "name": "updatePlatformFeeRecipient",
         "outputs": [],
         "stateMutability": "nonpayable",

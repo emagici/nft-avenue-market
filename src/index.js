@@ -17,7 +17,7 @@ import {
 ReactDOM.render(
   <React.StrictMode>
     <UseWalletProvider
-      chainId={56}
+      chainId={97}
       connectors={{
         bsc: {
           web3ReactConnector() {
