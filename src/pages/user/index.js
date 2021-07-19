@@ -12,12 +12,6 @@ import {
 import { CheckIcon } from "@heroicons/react/outline";
 import Web3 from "web3";
 import axios from "axios";
-
-import NFT1 from "../../assets/img/nft/nft1.png";
-import NFT2 from "../../assets/img/nft/nft2.jpeg";
-import NFT3 from "../../assets/img/nft/nft3.jpeg";
-import NFT4 from "../../assets/img/nft/nft4.png";
-import NFT5 from "../../assets/img/nft/nft5.png";
 import Modal from "../../components/modal";
 
 const profile = {
@@ -41,49 +35,6 @@ const profile = {
   ],
 };
 
-const files = [
-  {
-    id: "1",
-    TokenName: "Amazing digital art",
-    available: "3 in stock",
-    price: "2.45 BNB",
-    highestbid: "0.5 BNB",
-    Image: NFT1,
-  },
-  {
-    id: "2",
-    TokenName: "Amazing digital art",
-    available: "3 in stock",
-    price: "2.45 BNB",
-    highestbid: "0.5 BNB",
-    Image: NFT2,
-  },
-  {
-    id: "3",
-    TokenName: "Amazing digital art",
-    available: "3 in stock",
-    price: "2.45 BNB",
-    highestbid: "0.5 BNB",
-    Image: NFT3,
-  },
-  {
-    id: "4",
-    TokenName: "Amazing digital art",
-    available: "3 in stock",
-    price: "2.45 BNB",
-    highestbid: "0.5 BNB",
-    Image: NFT4,
-  },
-  {
-    id: "4",
-    TokenName: "Amazing digital art",
-    available: "3 in stock",
-    price: "2.45 BNB",
-    highestbid: "0.5 BNB",
-    Image: NFT5,
-  },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -91,6 +42,7 @@ function classNames(...classes) {
 export default function Profile() {
   const [web3, setWeb3] = useState();
   const [ownNfts, setOwnNfts] = useState([]);
+  const [onSaleNfts, setOnSaleNfts] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [signInModalOpen, setSignInModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
@@ -103,11 +55,29 @@ export default function Profile() {
     "Followers",
   ];
 
+  const transformOnSaleObj = (onSaleObj) => {
+    var obj = {
+      id: onSaleObj.id,
+      TokenId: onSaleObj.tokenId,
+      NftAddress: onSaleObj.nft,
+      TokenName:  onSaleObj.tokenName,
+      Image: onSaleObj.imageUrl
+    };
+    return obj;
+  }
+  
   const getOwnNFts = async () => {
     if (web3.givenProvider == null) return;
 
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
+
+    var myListedNfts = await axios({
+      method: "get",
+      url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"",
+    })
+
+    setOnSaleNfts(myListedNfts.data.result)
 
     web3.eth.personal
       .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
@@ -117,13 +87,26 @@ export default function Profile() {
           url: "http://0.0.0.0:3001",
           data: JSON.stringify({ Signature: sign }),
         })
-          .then(function (response) {
-            console.log(response);
-            setOwnNfts(response.data);
+        .then(function (response) {
+
+          var items = response.data.map((item, i) => {   
+              var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.NftAddress.toLowerCase());
+            
+              var obj = {
+                id: listedItem ? listedItem.nft.id : 0,
+                TokenName: item.TokenName,
+                Image: item.Image,
+                TokenId: item.TokenId,
+                NftAddress: item.NftAddress
+              };
+              return obj;
           })
-          .catch(function (response) {
-            console.log(response);
-          });
+
+          setOwnNfts(items);
+        })
+        .catch(function (response) {
+          console.log(response);
+        });
       });
   };
 
@@ -307,8 +290,9 @@ export default function Profile() {
                 role="list"
                 className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
               >
-                {files.map((item, index) => (
-                  <CardDefault key={index} {...item} sellItem />
+                {onSaleNfts.map((item, index) => (
+                  // console.log(item)
+                  <CardDefault key={index} {...transformOnSaleObj(item.nft)} sellItem />
                 ))}
               </ul>
             ) : null}
