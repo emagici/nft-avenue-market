@@ -53,10 +53,6 @@ export default function ItemDetail(props) {
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
 
-  function epoch (date) {
-    return Date.parse(date)
-  }
-
   const getTokenURI = async () => {
     if (web3.givenProvider == null) return;
 
@@ -112,11 +108,13 @@ export default function ItemDetail(props) {
       return;
     }
 
-    const timestamp =  epoch(new Date())
+    const timestamp = new Date().getTime();
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
 
+    console.log(timestamp)
+
     await marketplaceContract.methods
-      .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, 1626598502, "0x0000000000000000000000000000000000000000")
+      .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestamp, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
   };
 

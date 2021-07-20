@@ -44,6 +44,8 @@ export default function Profile() {
   const [ownNfts, setOwnNfts] = useState([]);
   const [onSaleNfts, setOnSaleNfts] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
+  const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
   const tabs = [
@@ -65,12 +67,44 @@ export default function Profile() {
     };
     return obj;
   }
-  
-  const getOwnNFts = async () => {
-    if (web3.givenProvider == null) return;
 
-    const accounts = await web3.eth.getAccounts();
-    var myadd = accounts[0];
+  const getAccessTokenAndLoadProfile = (sign) => {
+    axios({
+      method: "POST",
+      url: "https://0.0.0.0:44301/api/TokenAuth/FomoLogin",
+      data: JSON.stringify({ sign: sign }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function (response) {
+      setAccessToken(response.data.result.accessToken);
+      loadProfile(response.data.result.accessToken);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
+  const loadProfile = (accessToken) => {
+    axios({
+      method: "GET",
+      url: "https://0.0.0.0:44301/api/services/app/User/GetProfile",
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      setUserProfile(response.data.result);
+      setLoggedIn(true);
+    //  console.log(response)
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
+  const getOwnNfts = async (sign, myadd) => {
 
     var myListedNfts = await axios({
       method: "get",
@@ -79,34 +113,43 @@ export default function Profile() {
 
     setOnSaleNfts(myListedNfts.data.result)
 
+    axios({
+      method: "post",
+      url: "http://0.0.0.0:3001",
+      data: JSON.stringify({ Signature: sign }),
+    })
+    .then(function (response) {
+
+      var items = response.data.map((item, i) => {   
+          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.NftAddress.toLowerCase());
+        
+          var obj = {
+            id: listedItem ? listedItem.nft.id : 0,
+            TokenName: item.TokenName,
+            Image: item.Image,
+            TokenId: item.TokenId,
+            NftAddress: item.NftAddress
+          };
+          return obj;
+      })
+      setOwnNfts(items);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+  
+  const signAndGetUserData = async () => {
+    if (web3.givenProvider == null) return;
+
+    const accounts = await web3.eth.getAccounts();
+    var myadd = accounts[0];
+
     web3.eth.personal
       .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
       .then(async function (sign) {
-        axios({
-          method: "post",
-          url: "http://0.0.0.0:3001",
-          data: JSON.stringify({ Signature: sign }),
-        })
-        .then(function (response) {
-
-          var items = response.data.map((item, i) => {   
-              var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.NftAddress.toLowerCase());
-            
-              var obj = {
-                id: listedItem ? listedItem.nft.id : 0,
-                TokenName: item.TokenName,
-                Image: item.Image,
-                TokenId: item.TokenId,
-                NftAddress: item.NftAddress
-              };
-              return obj;
-          })
-
-          setOwnNfts(items);
-        })
-        .catch(function (response) {
-          console.log(response);
-        });
+        getAccessTokenAndLoadProfile(sign);
+        getOwnNfts(sign, myadd);
       });
   };
 
@@ -116,8 +159,7 @@ export default function Profile() {
 
   function handleConfirmSignIn() {
     setSignInModalOpen(false);
-    setLoggedIn(true);
-    getOwnNFts();
+    signAndGetUserData();
   }
 
   return (
@@ -126,7 +168,7 @@ export default function Profile() {
         <div className="relative">
           <img
             className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"
-            src={profile.backgroundImage}
+            src={loggedIn ? userProfile.bannerPictureUrl : profile.backgroundImage}
             alt=""
           />
           <div className="hidden sm:block absolute bottom-5 right-5 z-10">
@@ -186,13 +228,13 @@ export default function Profile() {
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
               <div className="block mt-6 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {loggedIn ? profile.name : "Sign in required"}
+                  {loggedIn ? userProfile.name : "Sign in required"}
                 </h1>
               </div>
 
               {loggedIn ? (
                 <div className="text-center sm:hidden pt-5">
-                  <p>{profile.bio}</p>
+                  <p>{userProfile.description}</p>
                 </div>
               ) : null}
 
@@ -254,7 +296,7 @@ export default function Profile() {
             {loggedIn ? (
               <div className="hidden sm:block lg:px-10 text-center md:text-left">
                 <h6 className="font-bold hidden md:block">Bio</h6>
-                <p>{profile.bio}</p>
+                <p>{userProfile.description}</p>
               </div>
             ) : null}
           </div>
