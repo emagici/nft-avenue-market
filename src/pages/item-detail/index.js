@@ -54,8 +54,6 @@ export default function ItemDetail(props) {
   const [listingLength, setListingLength] = useState(7);
 
   const getTokenURI = async () => {
-    if (web3.givenProvider == null) return;
-
     if(listingId > 0){
       axios({
         method: "get",
@@ -101,7 +99,7 @@ export default function ItemDetail(props) {
   };
 
   const listItem = async () => {
-    if (web3.givenProvider == null) return;
+    if (!web3) return;
 
     if(ListPrice <= 0 || ListQuantity <= 0){
       alert("Please enter price and quantity more than 0");
@@ -111,56 +109,45 @@ export default function ItemDetail(props) {
     const timestamp = new Date().getTime();
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
 
-    console.log(timestamp)
-
     await marketplaceContract.methods
       .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestamp, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
   };
 
   const updateListing = async (newPricePerItem) => {
-    if (web3.givenProvider == null) return;
-
     await marketplaceContract.methods
       .updateListing(nftAddress, tokenid, 200)
       .send({ from: myAdd });
   };
 
   const cancelListing = async () => {
-    if (web3.givenProvider == null) return;
-
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd });
   };
 
   const acceptOffer = async () => {
-    if (web3.givenProvider == null) return;
-
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, myAdd)
       .send({ from: myAdd });
   };
 
   const createOffer = async (payTokenAddress ,quantity, pricePerItem, deadline) => {
-    if (web3.givenProvider == null) return;
-
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, "0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985" ,1, 100, 1626354627, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
   };
 
   const cancelOffer = async () => {
-    if (web3.givenProvider == null) return;
-
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
       .send({ from: myAdd });
   };
 
   const buyItem = async () => {
-    if (web3.givenProvider == null) return;
 
+    console.log(NftPrice)
+    console.log(nftListedQuantity)
     const totalPrice = NftPrice * nftListedQuantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     
@@ -185,10 +172,7 @@ export default function ItemDetail(props) {
   }, [web3]);
 
   useEffect(async () => {
-    if (Web3.givenProvider != null) {
-      var newWeb3 = new Web3(Web3.givenProvider);
-      setWeb3(newWeb3);
-    }
+    setWeb3(window.web3);
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
 

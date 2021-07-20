@@ -5,6 +5,9 @@ import { BellIcon, MenuIcon, XIcon, SearchIcon } from '@heroicons/react/outline'
 import { useWallet } from 'use-wallet'
 import AvenueLogo from '../../assets/img/theavenue-logo.png'
 import Routes from '../../routes'
+import Web3 from "web3";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -12,38 +15,83 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const location = useLocation()
-  const { account, chainId, connect, error, reset, status } = useWallet()
+  // const { account, chainId, connect, error, reset, status } = useWallet()
+  const [myAdd, setMyAdd] = useState(null)
+  const [connected, setCommnected] = useState(false)
   const [errorStr, setErrorStr] = useState(null)
 
   useEffect(() => {
-    if (status !== 'connected') {
+    // if (status !== 'connected') {
       connectWallet()
-    }
+    // }
   }, [])
 
   async function connectWallet() {
-    if (status !== 'connected') {
-      connect()
-    } else {
-      reset()
+
+    if(connected)
+      return;
+
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+          rpc: {
+            97:"https://data-seed-prebsc-1-s1.binance.org:8545" 
+          }// required
+        } 
+      }
+    };
+    
+    const web3Modal = new Web3Modal({
+      providerOptions // required
+    });
+
+    const provider = await web3Modal.connect();
+
+    if(provider.http){
+      provider.chainId = 97;
+      provider.http.url = "https://data-seed-prebsc-1-s1.binance.org:8545";
+      provider.rpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545";
     }
+
+    window.web3 = new Web3(provider);
+
+    const accounts = await window.web3.eth.getAccounts();
+    var myadd = accounts[0];
+    setMyAdd(myadd)
+    setCommnected(true)
+
+        // Subscribe to accounts change
+    provider.on("accountsChanged", (accounts) => {
+      document.location.href="/";
+    });
+
+    // Subscribe to chainId change
+    provider.on("chainChanged", (chainId) => {
+      document.location.href="/";
+    });
+
+    // Subscribe to provider disconnection
+    provider.on("disconnect", (error) => {
+      document.location.href="/";
+    });
   }
 
-  useEffect(() => {
-    console.log(status)
-    if (status === 'connected') {
-      setErrorStr(null)
-    }
-  }, [status])
+  // useEffect(() => {
+  //   console.log(status)
+  //   if (status === 'connected') {
+  //     setErrorStr(null)
+  //   }
+  // }, [status])
 
-  useEffect(() => {
-    if (error) {
-      console.log(error.name)
-      setErrorStr(error.name === 'ChainUnsupportedError' ? 'Unsupported Network' : null)
-    } else {
-      setErrorStr(null)
-    }
-  }, [error])
+  // useEffect(() => {
+  //   if (error) {
+  //     console.log(error.name)
+  //     setErrorStr(error.name === 'ChainUnsupportedError' ? 'Unsupported Network' : null)
+  //   } else {
+  //     setErrorStr(null)
+  //   }
+  // }, [error])
 
   
   return (
@@ -181,7 +229,7 @@ export default function Navbar() {
                   </Menu>
                 </div>
 
-                {false && account ? (
+                {false && myAdd ? (
                   <div className="flex-shrink-0 hidden md:block">
                     <Link
                       to="/create"
@@ -197,7 +245,7 @@ export default function Navbar() {
                     onClick={() => connectWallet()}
                     className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                   >
-                    <span>{account ? account.substr(0,6) + '...' : 'Connect Wallet'}</span>
+                    <span>{myAdd ? myAdd.substr(0,6) + '...' : 'Connect Wallet'}</span>
                   </button>
                 </div>
               </div>

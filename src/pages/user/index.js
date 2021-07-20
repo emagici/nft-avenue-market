@@ -95,6 +95,7 @@ export default function Profile() {
       }
     })
     .then(function (response) {
+      console.log(response)
       setUserProfile(response.data.result);
       setLoggedIn(true);
     //  console.log(response)
@@ -140,7 +141,7 @@ export default function Profile() {
   }
   
   const signAndGetUserData = async () => {
-    if (web3.givenProvider == null) return;
+    if (!web3) return;
 
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
@@ -154,7 +155,8 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    setWeb3(new Web3(Web3.givenProvider));
+    console.log(Web3)
+    setWeb3(window.web3);
   }, []);
 
   function handleConfirmSignIn() {
