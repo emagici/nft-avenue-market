@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useState, useContext } from 'react'
 import { Link, useLocation } from "react-router-dom"
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon, SearchIcon } from '@heroicons/react/outline'
@@ -9,11 +9,18 @@ import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
+import { UserContext } from '../../context/user-context'
+import { Web3Context } from '../../context/web3-context'
+
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Navbar() {
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+
   const location = useLocation()
   // const { account, chainId, connect, error, reset, status } = useWallet()
   const [myAdd, setMyAdd] = useState(null)
@@ -92,6 +99,35 @@ export default function Navbar() {
   //     setErrorStr(null)
   //   }
   // }, [error])
+
+
+  function updateUserContext(data) {
+    userContext.dispatch({
+      type: "UPDATE_DATA",
+      payload: data
+    })
+  }
+  function connectUser() {
+    web3Context.dispatch({
+      type: "SET_USER_CONNECTED"
+    })
+  }
+  function disconnectUser() {
+    web3Context.dispatch({
+      type: "SET_USER_DISCONNECTED"
+    })
+  }
+  function disconnectUser(data) {
+    web3Context.dispatch({
+      type: "SET_WEB3_DATA",
+      payload: data
+    })
+  }
+
+  function howToAccessState() {
+    const description = userContext.state.description;
+    // etc etc
+  }
 
   
   return (
