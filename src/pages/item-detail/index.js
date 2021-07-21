@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom'
 import NFT1 from '../../assets/img/nft/nft1.png'
 import Dropdown from '../../components/dropdown'
 import qs from 'qs'
-import { Fragment } from 'preact'
+import { Accordion, AccordionItem, AccordionPanel } from '../../components/accordion'
 
 const tabs = [
   { name: 'Info', href: '#', current: true },
-  { name: 'Owners', href: '#', current: false },
+  { name: 'Creator', href: '#', current: false },
   { name: 'History', href: '#', current: false },
-  { name: 'Bids', href: '#', current: false },
 ]
 
 const listingTypes = ['Fixed Price', 'Timed Auction', 'Open For Offers']
@@ -29,8 +28,8 @@ function classNames(...classes) {
 
 export default function ItemDetail(props) {
   const [activeTab, setActiveTab] = useState('Info');
-  const [isOwner, setIsOwner] = useState(true);
-  const [listingId, setListingId] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+  const [listingId, setListingId] = useState(1);
   const [listingType, setListingType] = useState('Fixed Price');
   const [listingLength, setListingLength] = useState(7);
 
@@ -52,46 +51,119 @@ export default function ItemDetail(props) {
             </div>
           </div>
           <div className="col-span-2">
-            <h1 className="font-bold text-3xl text-center md:text-left mb-2">#1 Fomo Lab NFT</h1>
+            <h1 className="font-bold text-3xl text-center md:text-left mb-4">#1 Fomo Lab NFT</h1>
 
+            {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
             {listingId ? (
-              <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
-                <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
-              </div>
-            ) : null}
-
-            <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
-              <div className="flex-shrink-0">
-                <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
-              </div>
-              <div className="min-w-0">
-                <Link to={`/user?id=${user.id}`} className="focus:outline-none">
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                  <p className="text-sm text-gray-500 truncate">{user.role}</p>
-                </Link>
-              </div>
-            </div>
-
-            <p className="mb-6 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-            {!isOwner && listingId ? (
-              <div className="flex gap-2 justify-center md:justify-start">
+              <div class="-mt-4 mb-4">
+                <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
+                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
+                </div>
                 <button
                   type="button"
                   className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
                 >
                   <span>Buy Now</span>
                 </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                >
-                  <span>Place Bid</span>
-                </button>
               </div>
             ) : null}
+
+            <div className="flex space-x-8">
+              <div>
+                <p className="mb-2 text-center md:text-left font-bold">Owned By</p>
+                <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
+                  <div className="flex-shrink-0">
+                    <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                  </div>
+                  <div className="min-w-0">
+                    <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-center md:text-left font-bold">Created By</p>
+                <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
+                  <div className="flex-shrink-0">
+                    <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                  </div>
+                  <div className="min-w-0">
+                    <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <p className="mb-2 text-center md:text-left font-bold">Description</p>
+            <p className="mb-6 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+
+            {/* DYNAMICALLY SHOW EACH RELEVANT LISTING SECTION AS REQUIRED - E.G, HIDE BUY NOW IF BIDS ONLY SELECTED */}
+            <Accordion>
+
+              <AccordionItem toggle="buy-now">Buy Now</AccordionItem>
+              <AccordionPanel id="buy-now">
+                <div className="px-2 mb-3">
+                  <p className="mb-1 text-center md:text-left font-bold">Price</p>
+                  <div className="flex space-x-2 mb-3 items-center">
+                    <p className="block text-xl font-bold text-gray-800 truncate pointer-events-none">2.45 BNB</p>
+                    <p className="block text-md font-medium text-gray-400 truncate pointer-events-none">($744.20)</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                  >
+                    <span>Buy Now</span>
+                  </button>
+                </div>
+              </AccordionPanel>
+
+              <AccordionItem toggle="listings">Listings</AccordionItem>
+              <AccordionPanel id="listings">
+                <div className="px-2">
+                  <p className="mb-4">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                  </p>
+                </div>
+              </AccordionPanel>
+
+              <AccordionItem toggle="offers">Offers</AccordionItem>
+              <AccordionPanel id="offers">
+                <div className="px-2">
+                  <p className="mb-4">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                  </p>
+                </div>
+              </AccordionPanel>
+
+              <AccordionItem toggle="price-history">Price History</AccordionItem>
+              <AccordionPanel id="price-history">
+                <div className="px-2">
+                  <p className="mb-4">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                  </p>
+                </div>
+              </AccordionPanel>
+
+            </Accordion>
 
             {isOwner && !listingId ? (
               <div className="py-5">
@@ -229,7 +301,7 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-gray-200 mb-3">
               <div className="sm:flex sm:items-baseline">
                 <div className="mt-10">
                   <nav className="-mb-px flex space-x-8">
@@ -255,19 +327,38 @@ export default function ItemDetail(props) {
             </div>
 
             {activeTab === 'Info' ? (
-              <h1 className="font-bold text-2xl">Info</h1>
+              <div>
+                <dl className="sm:divide-y sm:divide-gray-200">
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-medium text-gray-800">Contract Address</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                      <a href="#">0x066f...c0e5</a>
+                    </dd>
+                  </div>
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-medium text-gray-800">Token ID</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">180</dd>
+                  </div>
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-medium text-gray-800">Blockchain</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">BSC</dd>
+                  </div>
+                </dl>
+              </div>
             ) : null}
 
-            {activeTab === 'Owners' ? (
-              <h1 className="font-bold text-2xl">Owners</h1>
+            {activeTab === 'Creator' ? (
+              <div>
+                <h1 className="font-bold text-xl mb-3">About CryptoChown</h1>
+                <p className="mb-3 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p className="text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              </div>
             ) : null}
 
             {activeTab === 'History' ? (
-              <h1 className="font-bold text-2xl">History</h1>
-            ) : null}
-
-            {activeTab === 'Bids' ? (
-              <h1 className="font-bold text-2xl">Bids</h1>
+              <div>
+                <h1 className="font-bold text-2xl">History</h1>
+              </div>
             ) : null}
 
           </div>
