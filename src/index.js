@@ -16,23 +16,7 @@ import {
 
 ReactDOM.render(
   <React.StrictMode>
-    <UseWalletProvider
-      chainId={56}
-      connectors={{
-        bsc: {
-          web3ReactConnector() {
-            return new BscConnector({ supportedChainIds: [56, 97] })
-          },
-          handleActivationError(err) {
-            if (err instanceof UserRejectedRequestError) {
-              return new ConnectionRejectedError()
-            }
-          },
-        },
-      }}
-    >
       <App />
-    </UseWalletProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
