@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import AppProtected from './AppProtected';
 import reportWebVitals from './reportWebVitals';
 
 import {
@@ -31,7 +32,7 @@ ReactDOM.render(
         },
       }}
     >
-      <App />
+      {window.location.href.indexOf('staging') >= 0 ? <AppProtected/> : <App/>}
     </UseWalletProvider>
   </React.StrictMode>,
   document.getElementById('root')
