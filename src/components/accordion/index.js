@@ -20,7 +20,7 @@ export function Accordion({ children }) {
 //custom hook to consume all accordion values
 const useAccordion = () => React.useContext(Context);
 const style = {
-  item: `block focus:outline-none bg-gray-200 text-gray-900 font-medium rounded-md my-2 p-3 shadow-md`,
+  item: `block focus:outline-none bg-gray-100 text-gray-900 font-medium rounded-md my-2 p-3 shadow-md`,
   panel: `overflow-hidden md:overflow-x-hidden transition-height ease duration-300 text-gray-600`,
 };
 
