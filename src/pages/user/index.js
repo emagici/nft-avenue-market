@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import CardDefault from "../../components/cards/item-card-default";
 import SectionHeader from "../../components/section-header";
@@ -13,6 +13,8 @@ import { CheckIcon } from "@heroicons/react/outline";
 import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
+import { UserContext } from '../../context/user-context'
+import { Web3Context } from '../../context/web3-context'
 
 const profile = {
   name: "CryptoChown",
@@ -56,6 +58,8 @@ export default function Profile() {
     "Following",
     "Followers",
   ];
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
 
   const transformOnSaleObj = (onSaleObj) => {
     var obj = {
@@ -78,7 +82,10 @@ export default function Profile() {
       }
     })
     .then(function (response) {
-      setAccessToken(response.data.result.accessToken);
+      userContext.dispatch({
+        type: "SET_ACCESS_TOKEN",
+        payload: response.data.result.accessToken
+      })
       loadProfile(response.data.result.accessToken);
     })
     .catch(function (response) {
@@ -141,8 +148,6 @@ export default function Profile() {
   }
   
   const signAndGetUserData = async () => {
-    if (!web3) return;
-
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
 
@@ -155,9 +160,8 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    console.log(Web3)
-    setWeb3(window.web3);
-  }, []);
+    setWeb3(web3Context.state.web3Data);
+  }, [web3Context.state.web3Data]);
 
   function handleConfirmSignIn() {
     setSignInModalOpen(false);

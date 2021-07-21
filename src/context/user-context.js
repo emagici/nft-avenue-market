@@ -7,6 +7,7 @@ const initialState = {
   instagramUrl: null,
   name: null,
   profilePictureUrl: null,
+  accessToken: null
 };
 
 let reducer = (state, action) => {
@@ -15,6 +16,12 @@ let reducer = (state, action) => {
       return {
         ...state,
         ...action.payload
+      };
+
+    case 'SET_ACCESS_TOKEN':
+      return {
+        ...state,
+        accessToken: action.payload
       };
 
     default:

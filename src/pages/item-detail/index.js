@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import NFT1 from "../../assets/img/nft/nft1.png";
 import Dropdown from "../../components/dropdown";
@@ -6,6 +6,7 @@ import qs from "qs";
 import Web3 from "web3";
 import axios from "axios";
 import { Fragment } from "preact";
+import { Web3Context } from '../../context/web3-context'
 import {
   MARKETPLACE_ABI,
   MARKETPLACE_ADDRESS,
@@ -52,6 +53,8 @@ export default function ItemDetail(props) {
   const [listingId, setListingId] = useState(0);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
+
+  const web3Context = useContext(Web3Context)
 
   const getTokenURI = async () => {
     if(listingId > 0){
@@ -172,7 +175,7 @@ export default function ItemDetail(props) {
   }, [web3]);
 
   useEffect(async () => {
-    setWeb3(window.web3);
+    setWeb3(web3Context.state.web3Data);
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
 

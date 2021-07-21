@@ -61,9 +61,15 @@ export default function Navbar() {
       provider.rpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545";
     }
 
-    window.web3 = new Web3(provider);
+     const web3 = new Web3(provider);
 
-    const accounts = await window.web3.eth.getAccounts();
+     console.log(web3)
+     web3Context.dispatch({
+      type: "SET_WEB3_DATA",
+      payload: web3
+    })
+
+    const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyAdd(myadd)
     setCommnected(true)
@@ -101,33 +107,33 @@ export default function Navbar() {
   // }, [error])
 
 
-  function updateUserContext(data) {
-    userContext.dispatch({
-      type: "UPDATE_DATA",
-      payload: data
-    })
-  }
-  function connectUser() {
-    web3Context.dispatch({
-      type: "SET_USER_CONNECTED"
-    })
-  }
-  function disconnectUser() {
-    web3Context.dispatch({
-      type: "SET_USER_DISCONNECTED"
-    })
-  }
-  function disconnectUser(data) {
-    web3Context.dispatch({
-      type: "SET_WEB3_DATA",
-      payload: data
-    })
-  }
+  // function updateUserContext(data) {
+  //   userContext.dispatch({
+  //     type: "UPDATE_DATA",
+  //     payload: data
+  //   })
+  // }
+  // function connectUser() {
+  //   web3Context.dispatch({
+  //     type: "SET_USER_CONNECTED"
+  //   })
+  // }
+  // function disconnectUser() {
+  //   web3Context.dispatch({
+  //     type: "SET_USER_DISCONNECTED"
+  //   })
+  // }
+  // function disconnectUser(data) {
+  //   web3Context.dispatch({
+  //     type: "SET_WEB3_DATA",
+  //     payload: data
+  //   })
+  // }
 
-  function howToAccessState() {
-    const description = userContext.state.description;
-    // etc etc
-  }
+  // function howToAccessState() {
+  //   const description = userContext.state.description;
+  //   // etc etc
+  // }
 
   
   return (
