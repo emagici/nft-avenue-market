@@ -8,11 +8,15 @@ import { Accordion, AccordionItem, AccordionPanel } from '../../components/accor
 const tabs = [
   { name: 'Info', href: '#', current: true },
   { name: 'Creator', href: '#', current: false },
-  { name: 'History', href: '#', current: false },
+  // { name: 'History', href: '#', current: false },
 ]
 
 const listingTypes = ['Fixed Price', 'Timed Auction', 'Open For Offers']
 const listingLengths = [1, 3, 7, 14, 30]
+
+const listings = [
+  { name: '0.5 BNB', title: 'NFT Name Here', role: 'Buy Now', email: '-' }
+]
 
 const user = {
   id: '1',
@@ -39,7 +43,7 @@ export default function ItemDetail(props) {
   }, [])
 
   return (
-    <div className="p-6">
+    <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         
         <div className="mt-10 md:grid md:grid-cols-3 gap-x-6">
@@ -60,18 +64,38 @@ export default function ItemDetail(props) {
                   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
                   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
                 </div>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
-                >
-                  <span>Buy Now</span>
-                </button>
+                <div className="flex justify-center md:justify-start">
+                  {true ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Buy Now</span>
+                    </button>
+                  ) : null}
+                  {false ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Place Bid</span>
+                    </button>
+                  ) : null}
+                  {false ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Make Offer</span>
+                    </button>
+                  ) : null}
+                </div>
               </div>
             ) : null}
 
-            <div className="flex space-x-8">
+            <div className="flex justify-center md:justify-start space-x-8">
               <div>
-                <p className="mb-2 text-center md:text-left font-bold">Owned By</p>
+                <p className="mb-2 text-center md:text-left font-bold">Created By</p>
                 <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
                   <div className="flex-shrink-0">
                     <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
@@ -86,7 +110,7 @@ export default function ItemDetail(props) {
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-center md:text-left font-bold">Created By</p>
+                <p className="mb-2 text-center md:text-left font-bold">Owned By</p>
                 <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
                   <div className="flex-shrink-0">
                     <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
@@ -113,7 +137,7 @@ export default function ItemDetail(props) {
               <AccordionItem toggle="buy-now">Buy Now</AccordionItem>
               <AccordionPanel id="buy-now">
                 <div className="px-2 mb-3">
-                  <p className="mb-1 text-center md:text-left font-bold">Price</p>
+                  <p className="mb-1 text-left font-bold">Price</p>
                   <div className="flex space-x-2 mb-3 items-center">
                     <p className="block text-xl font-bold text-gray-800 truncate pointer-events-none">2.45 BNB</p>
                     <p className="block text-md font-medium text-gray-400 truncate pointer-events-none">($744.20)</p>
@@ -129,39 +153,94 @@ export default function ItemDetail(props) {
 
               <AccordionItem toggle="listings">Listings</AccordionItem>
               <AccordionPanel id="listings">
-                <div className="px-2">
-                  <p className="mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat.
-                  </p>
+                <div className="px-0">
+                  <div className="flex flex-col">
+                    <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                      <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                        <div className="overflow-hidden sm:rounded-lg">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="">
+                              <tr>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Price
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  USD Price
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Type
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Expires
+                                </th>
+                                <th scope="col" className="relative px-6 py-3">
+                                  <span className="sr-only">Actions</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {listings.map((item) => (
+                                <tr key={item.email}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.name}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.title}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.role}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      Buy Now
+                                    </a>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </AccordionPanel>
 
               <AccordionItem toggle="offers">Offers</AccordionItem>
               <AccordionPanel id="offers">
-                <div className="px-2">
-                  <p className="mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat.
-                  </p>
+                <div className="px-2 mb-4">
+                  {true ? (
+                    <div>
+                      <p className="mb-2">This item is accepting offers. To make an offer use the button below:</p>
+                      <button
+                        type="button"
+                        className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                      >
+                        <span>Make Offer</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="mb-4">This item is not accepting offers.</p>
+                    </div>
+                  )}
+
                 </div>
               </AccordionPanel>
 
-              <AccordionItem toggle="price-history">Price History</AccordionItem>
+              {/* <AccordionItem toggle="price-history">Price History</AccordionItem>
               <AccordionPanel id="price-history">
                 <div className="px-2">
-                  <p className="mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat.
-                  </p>
+                  <p className="mb-4">Price history content here.</p>
                 </div>
-              </AccordionPanel>
+              </AccordionPanel> */}
 
             </Accordion>
 
@@ -330,17 +409,17 @@ export default function ItemDetail(props) {
               <div>
                 <dl className="sm:divide-y sm:divide-gray-200">
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-medium text-gray-800">Contract Address</dt>
+                    <dt className="text-sm font-bold text-gray-800">Contract Address</dt>
                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
                       <a href="#">0x066f...c0e5</a>
                     </dd>
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-medium text-gray-800">Token ID</dt>
+                    <dt className="text-sm font-bold text-gray-800">Token ID</dt>
                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">180</dd>
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-medium text-gray-800">Blockchain</dt>
+                    <dt className="text-sm font-bold text-gray-800">Blockchain</dt>
                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">BSC</dd>
                   </div>
                 </dl>
@@ -348,8 +427,8 @@ export default function ItemDetail(props) {
             ) : null}
 
             {activeTab === 'Creator' ? (
-              <div>
-                <h1 className="font-bold text-xl mb-3">About CryptoChown</h1>
+              <div className="pt-3">
+                <h1 className="font-bold text-xl mb-3 text-center md:text-left">About CryptoChown</h1>
                 <p className="mb-3 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                 <p className="text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
               </div>
