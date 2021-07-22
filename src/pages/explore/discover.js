@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useContext } from "react";
 import Dropdown from '../../components/dropdown'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
+import axios from "axios";
 
 import NFT1 from '../../assets/img/nft/nft1.png'
 import NFT2 from '../../assets/img/nft/nft2.jpeg'
@@ -61,10 +62,40 @@ export default function Discover() {
   const tabs = ['All Items', 'Featured', 'Art', 'Game'];
   
   const [activeDropdown, setActiveDropdown] = useState('recent');
+  const [listedItems, setListedItems] = useState([]);
   const options = [
     { id: 'recent', 'title': 'Recently added' },
     { id: 'popular', 'title': 'Popular' },
   ]
+
+
+  useEffect(() => {
+   
+    axios({
+      method: "get",
+      url: "https://0.0.0.0:44301/api/services/app/Nft/GetListedNfts"
+    })
+    .then(function (response) {
+
+      console.log(response.data.result)
+
+      var items = response.data.result.map((item) => (
+         {
+          id: item.nft.id,
+          TokenId: item.nft.tokenId,
+          NftAddress: item.nft.nft,
+          TokenName:  item.nft.tokenName,
+          Image: item.nft.videoUrl,
+          highestbid: '0.5 BNB',
+        }
+      ))
+
+      setListedItems(items);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }, []);
 
   return (  
     <div className="">
@@ -95,7 +126,7 @@ export default function Discover() {
           </div>
         </div>
       </SectionHeader>
-      <CardList items={files} />
+      <CardList items={listedItems} />
     </div>
   )
 }

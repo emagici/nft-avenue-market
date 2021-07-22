@@ -17,10 +17,10 @@ export default function Explore() {
         />
       </div>
       <Discover/>
-      <TopSellers/>
+      {/* <TopSellers/>
       <FeaturedArtists/>
       <Following/>
-      <Sellers/>
+      <Sellers/> */}
     </div>
   )
 }

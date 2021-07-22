@@ -93,6 +93,10 @@ export default function Profile() {
     });
   }
 
+  useEffect(() => {
+    console.log(userContext.state)
+  }, [userContext.state])
+
   const loadProfile = (accessToken) => {
     axios({
       method: "GET",
@@ -102,10 +106,12 @@ export default function Profile() {
       }
     })
     .then(function (response) {
-      console.log(response)
       setUserProfile(response.data.result);
+      userContext.dispatch({
+        type: "UPDATE_DATA",
+        payload: response.data.result
+      })
       setLoggedIn(true);
-    //  console.log(response)
     })
     .catch(function (response) {
       console.log(response);
@@ -119,7 +125,7 @@ export default function Profile() {
       url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"",
     })
 
-    setOnSaleNfts(myListedNfts.data.result)
+    setOnSaleNfts(myListedNfts.data.result);
 
     axios({
       method: "post",
