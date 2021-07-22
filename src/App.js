@@ -7,6 +7,9 @@ import {
 import Navbar from './components/navbar'
 import Routes from './routes'
 import Footer from './components/footer'
+
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import './App.css';
 
 import LoadingSpinner from "./components/loading-spinner";

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import TextBanner from '../../components/banner/text-banner'
 import Sellers from './popular'
 import Discover from './discover'
+import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
 import TopSellers from './top-sellers'
 import Following from './following'
@@ -16,7 +17,8 @@ export default function Explore() {
           subtitle="Create, Explore, Collect Digital Art NFTs"
         />
       </div>
-      <Discover/>
+      {/* <Discover/> */}
+      <DiscoverSlider/>
       <TopSellers/>
       <FeaturedArtists/>
       <Following/>
