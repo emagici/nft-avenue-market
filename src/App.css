@@ -9,3 +9,8 @@
 .modal-container {
   z-index: 500;
 }
+
+.disable-link {
+  pointer-events: none;
+  cursor: default;
+}

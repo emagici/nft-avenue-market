@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import TextBanner from '../../components/banner/text-banner'
+import VideoBanner from '../../components/banner/video-banner'
 import Sellers from './popular'
 import Discover from './discover'
 import DiscoverSlider from './discover-slider'
@@ -16,6 +17,7 @@ export default function Explore() {
           title="The New Creative Economy"
           subtitle="Create, Explore, Collect Digital Art NFTs"
         />
+        {/* <VideoBanner /> */}
       </div>
       {/* <Discover/> */}
       <DiscoverSlider/>

@@ -7,6 +7,7 @@ import {
 import Navbar from './components/navbar'
 import Routes from './routes'
 import Footer from './components/footer'
+import ScrollToTop from './scrollToTop'
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -25,6 +26,7 @@ function App() {
         <UserProvider>
           <LoadingSpinner/>
           <Router>
+            <ScrollToTop/>
             <div className="min-h-screen bg-white">
               <Navbar />
               <div className="">
