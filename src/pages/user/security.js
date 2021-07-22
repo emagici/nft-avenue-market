@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from "axios";
 import { UserContext } from '../../context/user-context';
+import AppUrls  from '../../AppSettings';
 
 const appUrls = {
-    fomoHost: "http://localhost:4200",
-    fomoHostApi: "https://localhost:44301",
-    fomoClient: "http://localhost:3000"
-  
-    // fomoHost: "http://0.0.0.0:4200",
-    // fomoHostApi: "https://0.0.0.0:44301",
-    // fomoClient: "http://0.0.0.0:3001"
-  };
+    fomoHost: AppUrls.fomoHost,
+    fomoHostApi: AppUrls.fomoHostApi,
+    fomoClient: AppUrls.fomoClient
+};
 
 export default function Security() {
     const [accessToken, setAccessToken] = useState();
@@ -19,11 +16,11 @@ export default function Security() {
     const [isToggled, setIsToggled] = useState(false);
     const [qrCodeSetupImageUrl, setQrCodeSetupImageUrl] = useState("");
     const [isGoogleAuthenticatorEnabled, setIsGoogleAuthenticatorEnabled] = useState(false);
-
+    
     useEffect(() => {
         setAccessToken(userContext.state.accessToken);
     }, [userContext.state.accessToken]);
-
+    
     useEffect(() => {
         if(accessToken){
             setHasLoggedIn(true);
