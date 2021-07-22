@@ -14,7 +14,7 @@ export default function CardDefault(props) {
           <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
           {!props.nolink ? (
             <Link
-              to={`/item-detail?id=${props.id}&tokenid=${props.TokenId}&nftaddress=${props.NftAddress}`}
+              to={`/item-detail?listed=${props.Listed}&tokenid=${props.TokenId}&nftaddress=${props.NftAddress}`}
               className="absolute inset-0 focus:outline-none"
             >
               <span className="sr-only">View details for {props.title}</span>

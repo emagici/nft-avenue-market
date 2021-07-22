@@ -1,16 +1,94 @@
 import { Link } from 'react-router-dom'
+import React, { useEffect, useState, useContext } from "react";
 import SectionHeader from "../../components/section-header"
+import { UserContext } from '../../context/user-context'
+import { Web3Context } from '../../context/web3-context'
+import axios from "axios";
 
-const profileImage = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
-const coverImage = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
+var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
+const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
 
 export default function UserSettings() {
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+
+  const [profileImage, setProfileImage] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
+  const [displayName, setDisplayName] = useState("");
+  const [description, setDescription] = useState("");
+  const [facebookUrl, setFacebookUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    let formData = new FormData();
+
+    if(profileImage.file)
+      formData.append("ProfleImage", profileImage.file, profileImage.file.name);
+      
+    if(coverImage.file)
+      formData.append("ProfileBanner", coverImage.file, coverImage.file.name);
+
+      formData.append("Name", displayName);
+      formData.append("Description", description);
+      formData.append("FacebookUrl", facebookUrl);
+      formData.append("InstagramUrl", instagramUrl);
+
+    axios({
+      method: "post",
+      url: "https://0.0.0.0:44301/api/services/app/User/UpdateProfile",
+      data: formData,
+      headers: {
+        "Authorization": "Bearer " + userContext.state.accessToken + "",
+        'content-type': 'multipart/form-data'
+      },
+    })
+      .then(function (response) {
+        userContext.dispatch({
+          type: "UPDATE_DATA",
+          payload: response.data.result
+        })
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  };
+
+  const onProfileImageChange = (e) => {
+    const obj = {
+      imageUrl: URL.createObjectURL(e.target.files[0]),
+      file: e.target.files[0]
+    }
+    setProfileImage(obj)
+  };
+
+  const onCoverImageChange = (e) => {
+    const obj = {
+      imageUrl: URL.createObjectURL(e.target.files[0]),
+      file: e.target.files[0]
+    }
+    setCoverImage(obj)
+  };
+
+  useEffect(async () => {
+    console.log(userContext.state)
+    if(userContext.state){
+      if(userContext.state.profilePictureUrl) setProfileImage({imageUrl: userContext.state.profilePictureUrl});
+      if(userContext.state.bannerPictureUrl) setCoverImage({imageUrl: userContext.state.bannerPictureUrl});
+      setDisplayName(userContext.state.name);
+      setDescription(userContext.state.description);
+      setFacebookUrl(userContext.state.facebookUrl);
+      setInstagramUrl(userContext.state.instagramUrl);
+    }
+  }, [userContext.state]);
+
   return (
     <div className="max-w-screen-lg mx-auto py-10 px-4 sm:px-6">
 
       <SectionHeader title="Edit Profile" />
 
-      <form className="space-y-8 divide-y divide-gray-200">
+      <form onSubmit={handleSubmit} id="data" enctype="multipart/form-data" className="space-y-8 divide-y divide-gray-200">
         <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
           <div>
 
@@ -21,8 +99,8 @@ export default function UserSettings() {
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <input
                   type="text"
-                  name="first_name"
-                  id="first_name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
                   className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -34,13 +112,13 @@ export default function UserSettings() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <div className="flex items-center">
-                  <img src={profileImage} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100" />
+                  <img src={profileImage ? profileImage.imageUrl : profileImageDefault} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100" />
                   <label
                     htmlFor="file-upload"
                     className="relative cursor-pointer focus-within:outline-none"
                   >
                     <span className="ml-5 py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
-                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                    <input onChange={onProfileImageChange} id="file-upload" name="file-upload" accept="image/*" type="file" className="sr-only" />
                   </label>
                 </div>
               </div>
@@ -52,14 +130,14 @@ export default function UserSettings() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <div className="max-w-lg flex justify-center h-28 bg-gray-100 rounded-xl mb-4 overflow-hidden">
-                  <img src={coverImage} className="h-full w-full object-cover" />
+                  <img src={coverImage ? coverImage.imageUrl : coverImageDefault} className="h-full w-full object-cover" />
                 </div>
                 <label
-                  htmlFor="file-upload"
+                  htmlFor="coverfile-upload"
                   className="relative cursor-pointer focus-within:outline-none"
                 >
                   <span className="py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                  <input onChange={onCoverImageChange} id="coverfile-upload" name="coverfile-upload" type="file" accept="image/*" className="sr-only" />
                 </label>
               </div>
             </div>
@@ -73,8 +151,9 @@ export default function UserSettings() {
                   id="about"
                   name="about"
                   rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   className="max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={''}
                 />
                 <p className="mt-2 text-sm text-gray-500">Write a few sentences about yourself.</p>
               </div>
@@ -82,29 +161,32 @@ export default function UserSettings() {
           </div>
           
             <div className="space-y-6 sm:space-y-5">
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start pt-5">
-                <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Custom URL
-                </label>
-                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                  <input
-                    type="text"
-                    name="custom_url"
-                    id="custom_url"
-                    className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                  />
+
+            {false ? (
+               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start pt-5">
+                  <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
+                    Custom URL
+                  </label>
+                  <div className="mt-1 sm:mt-0 sm:col-span-2">
+                    <input
+                      type="text"
+                      name="custom_url"
+                      id="custom_url"
+                      className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
                 </div>
-              </div>
+            ) : null}
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Twitter Username
+                  Facebook Url
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
                     type="text"
-                    name="first_name"
-                    id="first_name"
+                    value={facebookUrl}
+                    onChange={(e) => setFacebookUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>
@@ -112,112 +194,118 @@ export default function UserSettings() {
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label htmlFor="last_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Instagram Username
+                  Instagram Url
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
                     type="text"
-                    name="last_name"
-                    id="last_name"
+                    value={instagramUrl}
+                    onChange={(e) => setInstagramUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>
               </div>
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Portfolio / Website URL
-                </label>
-                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                  />
+
+              {false ? (
+                  <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                  <label htmlFor="email" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
+                    Portfolio / Website URL
+                  </label>
+                  <div className="mt-1 sm:mt-0 sm:col-span-2">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
             </div>
 
-          <div className="divide-y divide-gray-200 pt-8 space-y-6 sm:pt-10 sm:space-y-5">
-            <div>
-              <h3 className="text-lg leading-6 font-bold text-gray-900">Notifications</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                We can send you marketplace notifications via email.
-              </p>
-            </div>
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                Email
-              </label>
-              <div className="mt-1 sm:mt-0 sm:col-span-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                />
-                <p className="mt-2 text-sm text-gray-500">To enable email notifications you must <a href="#" className="font-bold text-indigo-600">sign message</a> first.</p>
-              </div>
-            </div>
-            <div className="space-y-6 sm:space-y-5 divide-y divide-gray-200">
-              <div className="pt-6 sm:pt-5">
-                <div role="group" aria-labelledby="label-notifications">
-                  <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
-                    <div>
-                      <div
-                        className="text-base font-bold text-gray-900 sm:text-sm sm:text-gray-700"
-                        id="label-notifications"
-                      >
-                        Notification Level
-                      </div>
+            {false ? (
+                  <div className="divide-y divide-gray-200 pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+                  <div>
+                    <h3 className="text-lg leading-6 font-bold text-gray-900">Notifications</h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      We can send you marketplace notifications via email.
+                    </p>
+                  </div>
+                  <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label htmlFor="email" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
+                      Email
+                    </label>
+                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        className="block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      />
+                      <p className="mt-2 text-sm text-gray-500">To enable email notifications you must <a href="#" className="font-bold text-indigo-600">sign message</a> first.</p>
                     </div>
-                    <div className="sm:col-span-2">
-                      <div className="max-w-lg">
-                        <div className="mt-4 space-y-4">
-                          <div className="flex items-center">
-                            <input
-                              id="push_everything"
-                              name="push_notifications"
-                              type="radio"
-                              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                              selected
-                            />
-                            <label htmlFor="push_everything" className="ml-3 block text-sm font-bold text-gray-700">
-                              Off
-                            </label>
+                  </div>
+                  <div className="space-y-6 sm:space-y-5 divide-y divide-gray-200">
+                    <div className="pt-6 sm:pt-5">
+                      <div role="group" aria-labelledby="label-notifications">
+                        <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
+                          <div>
+                            <div
+                              className="text-base font-bold text-gray-900 sm:text-sm sm:text-gray-700"
+                              id="label-notifications"
+                            >
+                              Notification Level
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            <input
-                              id="push_email"
-                              name="push_notifications"
-                              type="radio"
-                              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                            />
-                            <label htmlFor="push_email" className="ml-3 block text-sm font-bold text-gray-700">
-                              Most important
-                            </label>
-                          </div>
-                          <div className="flex items-center">
-                            <input
-                              id="push_nothing"
-                              name="push_notifications"
-                              type="radio"
-                              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                            />
-                            <label htmlFor="push_nothing" className="ml-3 block text-sm font-bold text-gray-700">
-                              Everything
-                            </label>
+                          <div className="sm:col-span-2">
+                            <div className="max-w-lg">
+                              <div className="mt-4 space-y-4">
+                                <div className="flex items-center">
+                                  <input
+                                    id="push_everything"
+                                    name="push_notifications"
+                                    type="radio"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    selected
+                                  />
+                                  <label htmlFor="push_everything" className="ml-3 block text-sm font-bold text-gray-700">
+                                    Off
+                                  </label>
+                                </div>
+                                <div className="flex items-center">
+                                  <input
+                                    id="push_email"
+                                    name="push_notifications"
+                                    type="radio"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                  />
+                                  <label htmlFor="push_email" className="ml-3 block text-sm font-bold text-gray-700">
+                                    Most important
+                                  </label>
+                                </div>
+                                <div className="flex items-center">
+                                  <input
+                                    id="push_nothing"
+                                    name="push_notifications"
+                                    type="radio"
+                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                  />
+                                  <label htmlFor="push_nothing" className="ml-3 block text-sm font-bold text-gray-700">
+                                    Everything
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                  </div>
+            ) : null}
+
         </div>
 
         <div className="pt-5">
@@ -228,12 +316,12 @@ export default function UserSettings() {
             >
               Cancel
             </Link>
-            <Link
-              to="/user"
+            <button
+              type="submit"
               className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none "
             >
               Save
-            </Link>
+            </button>
           </div>
         </div>
       </form>

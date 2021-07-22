@@ -49,7 +49,9 @@ export default function Profile() {
   const [accessToken, setAccessToken] = useState("");
   const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
+  const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
   const tabs = [
     "On Sale",
     "Owned",
@@ -63,13 +65,45 @@ export default function Profile() {
 
   const transformOnSaleObj = (onSaleObj) => {
     var obj = {
-      id: onSaleObj.id,
+      Listed: onSaleObj.id > 0 ? true : false,
       TokenId: onSaleObj.tokenId,
       NftAddress: onSaleObj.nft,
       TokenName:  onSaleObj.tokenName,
       Image: onSaleObj.imageUrl
     };
     return obj;
+  }
+
+  const transformOwnNftObj = (ownObj) => {
+    console.log(ownObj)
+    var obj = {
+      Listed: ownObj.id > 0 ? true : false,
+      TokenId: ownObj.TokenId,
+      NftAddress: ownObj.NftAddress,
+      TokenName:  ownObj.TokenName,
+      Image: ownObj.Image
+    };
+    return obj;
+  }
+
+  const registerNewUser = () => {
+    console.log('sdads')
+    axios({
+      method: "POST",
+      url: "https://0.0.0.0:44301/api/services/app/Account/Register",
+      data: JSON.stringify({ name: registerItem.Name, surname: registerItem.Name, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function (response) {
+      setRegisterModalOpen(false);
+      alert('success');
+      console.log(response);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
   }
 
   const getAccessTokenAndLoadProfile = (sign) => {
@@ -92,10 +126,6 @@ export default function Profile() {
       console.log(response);
     });
   }
-
-  useEffect(() => {
-    console.log(userContext.state)
-  }, [userContext.state])
 
   const loadProfile = (accessToken) => {
     axios({
@@ -147,6 +177,12 @@ export default function Profile() {
           return obj;
       })
       setOwnNfts(items);
+
+      userContext.dispatch({
+        type: "SET_OWN_NFTS",
+        payload: items
+      })
+
     })
     .catch(function (response) {
       console.log(response);
@@ -251,6 +287,18 @@ export default function Profile() {
               ) : null}
 
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+              {!loggedIn ? (
+                  <button
+                    onClick={() => setRegisterModalOpen(true)}
+                    className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                  >
+                    <span>Register</span>
+                    <PlusCircleIcon
+                      className="-mr-1 ml-1 h-5 w-5 text-white"
+                      aria-hidden="true"
+                    />
+                  </button>
+                ) : null}
                 {loggedIn ? (
                   <button
                     onClick={() => alert("follow")}
@@ -372,7 +420,7 @@ export default function Profile() {
                 className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
               >
                 {ownNfts.map((item, index) => (
-                  <CardDefault key={index} {...item} />
+                  <CardDefault key={index} {...transformOwnNftObj(item)} />
                 ))}
               </ul>
             )}
@@ -504,6 +552,114 @@ export default function Profile() {
             </button>
           </div>
         </Modal>
+
+
+        <Modal
+          title="Register"
+          open={registerModalOpen}
+          setOpen={(v) => setRegisterModalOpen(v)}
+        >
+          <div>
+            <div className="mt-3 text-center sm:mt-5">
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-5">
+                </p>
+               
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Name
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        value={registerItem.Name}
+                        onChange={(e) => setRegisterItem({...registerItem, Name: e.target.value})}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Username
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        value={registerItem.Username}
+                        onChange={(e) => setRegisterItem({...registerItem, Username: e.target.value})}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Password
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        required
+                        value={registerItem.Password}
+                        onChange={(e) => setRegisterItem({...registerItem, Password: e.target.value})}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Email
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        value={registerItem.Email}
+                        onChange={(e) => setRegisterItem({...registerItem, Email: e.target.value})}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+            <button
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+              onClick={() => registerNewUser()}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => setRegisterModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
+
+
       </div>
     </div>
   );
