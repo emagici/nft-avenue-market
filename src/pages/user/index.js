@@ -84,7 +84,7 @@ export default function Profile() {
       setAccessToken(accessToken);
       clearUrlAccessToken();
       loadProfile(accessToken);
-      alert("you have successfully logged in!, get your accessToken in console log");
+      //alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
 
       userContext.dispatch({
@@ -237,7 +237,7 @@ export default function Profile() {
         <div className="relative">
           <img
             className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"
-            src={loggedIn ? userProfile.bannerPictureUrl : profile.backgroundImage}
+            src={loggedIn ? (userProfile.bannerPictureUrl ? userProfile.bannerPictureUrl : profile.backgroundImage) : profile.backgroundImage}
             alt=""
           />
           <div className="hidden sm:block absolute bottom-5 right-5 z-10">
