@@ -86,6 +86,11 @@ export default function Profile() {
       loadProfile(accessToken);
       alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
+
+      userContext.dispatch({
+        type: "SET_ACCESS_TOKEN",
+        payload: accessToken
+      })
     }
   }
 
