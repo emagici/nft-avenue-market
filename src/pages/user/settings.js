@@ -1,10 +1,24 @@
 import { Link } from 'react-router-dom'
 import SectionHeader from "../../components/section-header"
+import Security from './security';
+import { UserContext } from '../../context/user-context';
+import React, { useEffect, useState, useContext } from 'react';
 
 const profileImage = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
 const coverImage = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
 
 export default function UserSettings() {
+  const [accessToken, setAccessToken] = useState();
+  const userContext = useContext(UserContext);
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+
+  useEffect(() => {
+      setAccessToken(userContext.state.accessToken);
+      if(userContext.state.accessToken){
+        setHasLoggedIn(true);
+      }
+  }, [userContext.state.accessToken]);
+
   return (
     <div className="max-w-screen-lg mx-auto py-10 px-4 sm:px-6">
 
@@ -218,6 +232,9 @@ export default function UserSettings() {
               </div>
             </div>
           </div>
+          {hasLoggedIn ? (
+            <Security></Security>
+          ) : null}
         </div>
 
         <div className="pt-5">
