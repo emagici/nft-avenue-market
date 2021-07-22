@@ -13,8 +13,9 @@ import { CheckIcon } from "@heroicons/react/outline";
 import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
-import { UserContext } from '../../context/user-context'
-import { Web3Context } from '../../context/web3-context'
+import { UserContext } from '../../context/user-context';
+import { Web3Context } from '../../context/web3-context';
+import AppUrls from '../../AppSettings';
 
 const profile = {
   name: "CryptoChown",
@@ -42,13 +43,9 @@ function classNames(...classes) {
 }
 
 const appUrls = {
-  fomoHost: "http://localhost:4200",
-  fomoHostApi: "https://localhost:44301",
-  fomoClient: "http://localhost:3000"
-
-  // fomoHost: "http://0.0.0.0:4200",
-  // fomoHostApi: "https://0.0.0.0:44301",
-  // fomoClient: "http://0.0.0.0:3001"
+    fomoHost: AppUrls.fomoHost,
+    fomoHostApi: AppUrls.fomoHostApi,
+    fomoClient: AppUrls.fomoClient
 };
 
 export default function Profile() {
