@@ -41,6 +41,16 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const appUrls = {
+  fomoHost: "http://localhost:4200",
+  fomoHostApi: "https://localhost:44301",
+  fomoClient: "http://localhost:3000"
+
+  // fomoHost: "http://0.0.0.0:4200",
+  // fomoHostApi: "https://0.0.0.0:44301",
+  // fomoClient: "http://0.0.0.0:3001"
+};
+
 export default function Profile() {
   const [web3, setWeb3] = useState();
   const [ownNfts, setOwnNfts] = useState([]);
@@ -50,6 +60,7 @@ export default function Profile() {
   const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
+  const [isTwoFactorSignIn, setIsTwoFactorSignIn] = useState(false);
   const tabs = [
     "On Sale",
     "Owned",
@@ -58,8 +69,25 @@ export default function Profile() {
     "Following",
     "Followers",
   ];
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
+  const userContext = useContext(UserContext);
+  const web3Context = useContext(Web3Context);
+  
+
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  function init(){
+    let accessToken = getUrlAccessToken();
+    if(accessToken){
+      setAccessToken(accessToken);
+      clearUrlAccessToken();
+      loadProfile(accessToken);
+      alert("you have successfully logged in!, get your accessToken in console log");
+      console.warn("access token: ", accessToken);
+    }
+  }
 
   const transformOnSaleObj = (onSaleObj) => {
     var obj = {
@@ -75,7 +103,7 @@ export default function Profile() {
   const getAccessTokenAndLoadProfile = (sign) => {
     axios({
       method: "POST",
-      url: "https://0.0.0.0:44301/api/TokenAuth/FomoLogin",
+      url: `${appUrls.fomoHostApi}/api/TokenAuth/FomoLogin`,
       data: JSON.stringify({ sign: sign }),
       headers: {
         'Content-Type': 'application/json'
@@ -96,7 +124,7 @@ export default function Profile() {
   const loadProfile = (accessToken) => {
     axios({
       method: "GET",
-      url: "https://0.0.0.0:44301/api/services/app/User/GetProfile",
+      url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile`,
       headers: {
         "Authorization": "Bearer " + accessToken + ""
       }
@@ -116,14 +144,14 @@ export default function Profile() {
 
     var myListedNfts = await axios({
       method: "get",
-      url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"`,
     })
 
     setOnSaleNfts(myListedNfts.data.result)
 
     axios({
       method: "post",
-      url: "http://0.0.0.0:3001",
+      url: `${appUrls.fomoClient}`,
       data: JSON.stringify({ Signature: sign }),
     })
     .then(function (response) {
@@ -168,6 +196,36 @@ export default function Profile() {
     signAndGetUserData();
   }
 
+  function handleConfirmTwoFactorSignIn() {
+    setIsTwoFactorSignIn(false);
+    if(isTwoFactorSignIn) {
+      goToTwoFactorSignInPage();
+    }
+  }
+
+  function goToTwoFactorSignInPage(){
+    window.open(
+      `${appUrls.fomoHost}/account/login?fomoClient=1&returnUrl=${appUrls.fomoClient}/user`,
+      '_self'
+    );
+  }
+
+  function getUrlAccessToken(){
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    let accessToken = url.searchParams.get("accessToken");
+
+    return accessToken;
+  }
+
+  //reference: https://stackoverflow.com/a/22753103/4490058
+  function clearUrlAccessToken(){
+    window.history.pushState(
+      "object or string", 
+      "Title", 
+      "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+  }
+
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
@@ -206,7 +264,7 @@ export default function Profile() {
               <button
                 type="button"
                 // onClick={() => setLoggedIn(true)}
-                onClick={() => setSignInModalOpen(true)}
+                onClick={() => setIsTwoFactorSignIn(true)}
                 className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
               >
                 <span>Sign In</span>
@@ -492,6 +550,80 @@ export default function Profile() {
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
               onClick={() => setSignInModalOpen(false)}
+              // ref={cancelButtonRef}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
+        
+        <Modal
+          title="Fomo Lab Terms of Service"
+          open={isTwoFactorSignIn}
+          setOpen={(v) => setIsTwoFactorSignIn(v)}
+        >
+          <div>
+            <div className="mt-3 text-center sm:mt-5">
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-5">
+                  Please take a few minutes to read and understand the{" "}
+                  <a href="#" className="text-indigo-600 font-bold">
+                    Fomo Lab Terms of Service
+                  </a>
+                  . To continue, you'll need to accept the Terms of Service by
+                  checking the box.
+                </p>
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                    <input
+                      id="minage"
+                      name="minage"
+                      type="checkbox"
+                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label
+                      htmlFor="minage"
+                      className="font-medium text-gray-700"
+                    >
+                      I am at least 13 years old
+                    </label>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center px-5">
+                  <div className="h-5 flex items-center">
+                    <input
+                      id="terms"
+                      name="terms"
+                      type="checkbox"
+                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      I accept the Fomo Lab terms of service
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+            <button
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+              onClick={() => handleConfirmTwoFactorSignIn()}
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => setIsTwoFactorSignIn(false)}
               // ref={cancelButtonRef}
             >
               Cancel
