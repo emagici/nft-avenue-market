@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/solid'
 import AvenueLogo from '../../assets/img/theavenue-logo.png'
+import MailchimpSubscribe from "react-mailchimp-subscribe";
 
 const navigation = {
   pages: [
@@ -83,7 +85,71 @@ const navigation = {
   ],
 }
 
+const CustomForm = ({ status, message, onValidated }) => {
+
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    if(status === "success") clearFields();
+  }, [status])
+
+  const clearFields = () => {
+    setEmail('');
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    email &&
+    email.indexOf("@") > -1 &&
+    onValidated({
+      EMAIL: email,
+    });
+}
+
+  return (
+    <div>
+      <form
+        onSubmit={(e) => handleSubmit(e)}
+        className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0"
+      >
+        <input
+          className="appearance-none min-w-0 w-full bg-white border border-gray-300 py-2 px-4 text-base rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:placeholder-gray-400 sm:max-w-xs"
+          label="Email"
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          value={email}
+          placeholder="your@email.com"
+          isRequired
+        />
+        <div className="mt-3 rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+          <input
+            className="w-full bg-indigo-600 border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            label="subscribe"
+            type="submit"
+            value={status === "sending" ? "Please Wait" : "Subscribe"}
+            formValues={[email]}
+          />
+        </div>
+      </form>
+      {status === "error" && (
+        <div 
+          className="text-center font-medium text-red-600 pt-2"
+          dangerouslySetInnerHTML={{ __html: message }}
+        />
+      )}
+      {status === "success" && (
+        <div
+        className="text-center font-medium text-green-600 pt-2"
+          dangerouslySetInnerHTML={{ __html: message }}
+        />
+      )}
+    </div>
+  )
+};
+
 export default function Footer() {
+  const postUrl = "https://fomolab.us6.list-manage.com/subscribe/post?u=25284ccfd48fde835d02a2ad9&id=dfc9aa4be5"
+
   return (
     <footer className="bg-white mt-20 border-t" aria-labelledby="footerHeading">
       <h2 id="footerHeading" className="sr-only">
@@ -143,7 +209,19 @@ export default function Footer() {
               Get the latest news from the team at Fomo Lab
             </p>
           </div>
-          <form className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0">
+          <div>
+            <MailchimpSubscribe
+              url={postUrl}
+              render={({ subscribe, status, message }) => (
+                <CustomForm
+                  status={status} 
+                  message={message}
+                  onValidated={formData => subscribe(formData)}
+                />
+              )}
+            />
+          </div>
+          {/* <form className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0">
             <label htmlFor="emailAddress" className="sr-only">
               Email address
             </label>
@@ -164,7 +242,7 @@ export default function Footer() {
                 Subscribe
               </button>
             </div>
-          </form>
+          </form> */}
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
           <div className="flex space-x-6 md:order-2 justify-center">

@@ -7,7 +7,8 @@ const initialState = {
   instagramUrl: null,
   name: null,
   profilePictureUrl: null,
-  accessToken: null
+  accessToken: null,
+  ownNfts: []
 };
 
 let reducer = (state, action) => {
@@ -22,6 +23,12 @@ let reducer = (state, action) => {
       return {
         ...state,
         accessToken: action.payload
+      };
+
+    case 'SET_OWN_NFTS':
+      return {
+        ...state,
+        ownNfts: action.payload
       };
 
     default:

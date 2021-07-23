@@ -1,28 +1,26 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import NFT1 from "../../assets/img/nft/nft1.png";
 import Dropdown from "../../components/dropdown";
 import qs from "qs";
+import { Accordion, AccordionItem, AccordionPanel } from '../../components/accordion'
 import Web3 from "web3";
 import axios from "axios";
-import { Fragment } from "preact";
+import Modal from "../../components/modal";
+import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
   MARKETPLACE_ABI,
   MARKETPLACE_ADDRESS,
 } from "../../contracts/FomoMarketPlace";
-import {GENERICTOKENURI_ABI} from "../../contracts/GenericTokenURI";
 
 const tabs = [
-  { name: "Info", href: "#", current: true },
-  { name: "Owners", href: "#", current: false },
-  { name: "History", href: "#", current: false },
-  { name: "Bids", href: "#", current: false },
+  { name: 'Info', href: '#', current: true },
+  // { name: 'Creator', href: '#', current: false },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
 const listingTypes = ["Fixed Price"];
-const listingLengths = [1, 3, 7, 14, 30];
+const listingLengths = [3, 7, 14, 30];
 
 const user = {
   name: "",
@@ -34,15 +32,13 @@ function classNames(...classes) {
 }
 
 export default function ItemDetail(props) {
+
+  const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
   const [nftAddress, setNftAddress] = useState("");
   const [nftName, setNftName] = useState("");
-  const [nftOwnerAdd, setNftOwnerAdd] = useState("");
-  const [nftOwnerDetails, setNftOwnerDetails] = useState(user);
   const [nftDescription, setNftDescription] = useState("");
   const [nftSrc, setNftSrc] = useState("");
-  const [NftPrice, setNftPrice] = useState("");
-  const [nftListedQuantity, setNftListedQuantity] = useState(1);
   const [web3, setWeb3] = useState();
   const [marketplaceContract, setMarketplaceContract] = useState();
   const [myAdd, setMyadd] = useState();
@@ -50,41 +46,72 @@ export default function ItemDetail(props) {
   const [isOwner, setIsOwner] = useState(false);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [listingId, setListingId] = useState(0);
+  const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
 
+  const [offerLength, setOfferLength] = useState(7);
+  const [offerQuantity, setOfferQuantity] = useState(1);
+  const [offerPricePerItem, setOfferPricePerItem] = useState(0);
+
+  const [listings, setlistings] = useState([]);
+  const [offers, setOffers] = useState([]);
+
+  const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
   const getTokenURI = async () => {
-    if(listingId > 0){
+
+    var ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
+    if(ownCurrentNft)
+      setIsOwner(true);
+
+    if(isItemListed){
       axios({
         method: "get",
-        url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoById?id="+listingId+"",
+        url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress="+nftAddress+"&tokenId="+tokenid+"",
       })
       .then(function (nftListingResponse) {
-        console.log(nftListingResponse)
-        const nftDetails = nftListingResponse.data.result.nft;
-        const nftSellerDetails = nftListingResponse.data.result.seller;
-        const priceInBNB = Web3.utils.fromWei(nftDetails.pricePerItem.toString(), "ether");
-        setNftPrice(priceInBNB);
-        setNftListedQuantity(nftDetails.quantity);
-        setNftSrc(nftDetails.imageUrl)
-        setNftDescription(nftDetails.description)
-        setNftName(nftDetails.tokenName)
-        setNftOwnerAdd(nftDetails.owner)
-        setNftOwnerDetails(nftSellerDetails)
 
-        if(nftDetails.owner.toLowerCase()  === myAdd.toLowerCase())
-          setIsOwner(true);
+        const nftListingResult = nftListingResponse.data.result;
+
+        setNftDescription(nftListingResult[0].nft.description);
+        setNftName(nftListingResult[0].nft.tokenName)
+
+        var listingItems = nftListingResult.map((item) => (
+          {
+           id: item.nft.id,
+            TokenId: item.nft.tokenId,
+            NftAddress: item.nft.nft,
+            TokenName:  item.nft.tokenName,
+            owner: item.nft.owner,
+            pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
+            quantity: item.nft.quantity,
+            sellerName: item.seller.name
+          }
+        ))
+ 
+        setlistings(listingItems);
+
+        var offerItems = nftListingResult[0].offers.map((item) => (
+          {
+            TokenId: item.tokenId,
+            NftAddress: item.nftAddress,
+            creatorAddress: item.creatorAddress,
+            pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
+            quantity: item.quantity,
+            creatorUsername: item.creatorUsername,
+            deadline: item.deadline
+          }
+        ))
+
+        setOffers(offerItems);
       })
       .catch(function (response) {
         console.log(response);
       });
     }
     else{
-      setIsOwner(true);
-
       axios({
         method: "get",
         url: "https://0.0.0.0:44301/api/services/app/Nft/GetExternalNftInfo?TokenId="+tokenid+"&ContractAddress="+nftAddress+"",
@@ -110,10 +137,11 @@ export default function ItemDetail(props) {
     }
 
     const timestamp = new Date().getTime();
+    const timestampInSeconds = Math.trunc(timestamp / 1000);
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
 
     await marketplaceContract.methods
-      .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestamp, "0x0000000000000000000000000000000000000000")
+      .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
   };
 
@@ -135,9 +163,16 @@ export default function ItemDetail(props) {
       .send({ from: myAdd });
   };
 
-  const createOffer = async (payTokenAddress ,quantity, pricePerItem, deadline) => {
+  const createOffer = async () => {
+    const timestamp = new Date().getTime();
+    const timestampInSeconds = Math.trunc(timestamp / 1000);
+    var seconds = Number(timestampInSeconds) + (offerLength * 24 * 60 * 60);
+
+    const offerQuantityToSend = Web3.utils.toWei(offerQuantity.toString(), "ether");
+    const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
+
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, "0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985" ,1, 100, 1626354627, "0x0000000000000000000000000000000000000000")
+      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantityToSend, offerPricePerItemToSend, seconds)
       .send({ from: myAdd });
   };
 
@@ -147,11 +182,11 @@ export default function ItemDetail(props) {
       .send({ from: myAdd });
   };
 
-  const buyItem = async () => {
+  const buyItem = async (obj) => {
+    console.log(obj)
 
-    console.log(NftPrice)
-    console.log(nftListedQuantity)
-    const totalPrice = NftPrice * nftListedQuantity;
+    const totalPrice = obj.pricePerItem * obj.quantity;
+    const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     
     await marketplaceContract.methods
@@ -179,10 +214,10 @@ export default function ItemDetail(props) {
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
 
-    if(params.id > 0)
-      setListingId(params.id)
+    if(params.listed)
+      setIsItemListed(true)
     else
-      setListingId(0)
+      setIsItemListed(false)
 
     if(params.tokenid)
       setTokenId(params.tokenid)
@@ -193,7 +228,7 @@ export default function ItemDetail(props) {
     }, []);
 
   return (
-    <div className="p-6">
+    <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="mt-10 md:grid md:grid-cols-3 gap-x-6">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
@@ -208,63 +243,243 @@ export default function ItemDetail(props) {
             </div>
           </div>
           <div className="col-span-2">
-            <h1 className="font-bold text-3xl text-center md:text-left mb-2">
-             {nftName}
-            </h1>
+            <h1 className="font-bold text-3xl text-center md:text-left mb-4">{nftName}</h1>
 
-            {listingId > 0 ? (
-              <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">
-                  {NftPrice} BNB
-                </p>
-                {/* <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">
-                  $744.20
-                </p> */}
+            {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
+            {isItemListed && false ? (
+              <div class="-mt-4 mb-4">
+                <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
+                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
+                </div>
+                <div className="flex justify-center md:justify-start">
+                  {true ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Buy Now</span>
+                    </button>
+                  ) : null}
+                  {false ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Place Bid</span>
+                    </button>
+                  ) : null}
+                  {false ? (
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                    >
+                      <span>Make Offer</span>
+                    </button>
+                  ) : null}
+                </div>
               </div>
             ) : null}
 
-            <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
-              <div className="flex-shrink-0">
-                <img
-                  className="h-10 w-10 rounded-full"
-                  src={nftOwnerDetails.profilePictureUrl}
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0">
-                <Link to={`/user?id=${nftOwnerDetails.id}`} className="focus:outline-none">
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  <p className="text-sm font-medium text-gray-900">
-                    {nftOwnerDetails.name}
-                  </p>
-                  {/* <p className="text-sm text-gray-500 truncate">{nftOwnerDetails.role}</p> */}
-                </Link>
-              </div>
-            </div>
-
-            <p className="mb-6 text-center md:text-left">
-             {nftDescription}
-            </p>
-
-            {!isOwner && listingId > 0 ? (
-              <div className="flex gap-2 justify-center md:justify-start">
-                <button
-                  onClick={buyItem}
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
-                >
-                  <span>Buy Now</span>
-                </button>
-                <button
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                >
-                  <span>Place Bid</span>
-                </button>
-              </div>
+            {false ? (
+                <div className="flex justify-center md:justify-start space-x-8">
+                <div>
+                  <p className="mb-2 text-center md:text-left font-bold">Created By</p>
+                  <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
+                    <div className="flex-shrink-0">
+                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                    </div>
+                    <div className="min-w-0">
+                      <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                        <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-center md:text-left font-bold">Owned By</p>
+                  <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
+                    <div className="flex-shrink-0">
+                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                    </div>
+                    <div className="min-w-0">
+                      <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                        <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                </div>
             ) : null}
 
-            {isOwner && listingId == 0 ? (
+            <p className="mb-2 text-center md:text-left font-bold">Description</p>
+            <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+
+
+            {/* DYNAMICALLY SHOW EACH RELEVANT LISTING SECTION AS REQUIRED - E.G, HIDE BUY NOW IF BIDS ONLY SELECTED */}
+            <Accordion>
+
+              {/* <AccordionItem toggle="buy-now">Buy Now</AccordionItem>
+              <AccordionPanel id="buy-now">
+                <div className="px-2 mb-3">
+                  <p className="mb-1 text-left font-bold">Price</p>
+                  <div className="flex space-x-2 mb-3 items-center">
+                    <p className="block text-xl font-bold text-gray-800 truncate pointer-events-none">2.45 BNB</p>
+                    <p className="block text-md font-medium text-gray-400 truncate pointer-events-none">($744.20)</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                  >
+                    <span>Buy Now</span>
+                  </button>
+                </div>
+              </AccordionPanel> */}
+
+              <AccordionItem toggle="listings">Listings</AccordionItem>
+              <AccordionPanel id="listings">
+                <div className="px-0">
+                  <div className="flex flex-col">
+                    <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                      <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                        <div className="overflow-hidden sm:rounded-lg">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="">
+                              <tr>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Price per item
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Quantity
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  From
+                                </th>
+                                <th scope="col" className="relative px-6 py-3">
+                                  <span className="sr-only">Actions</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {listings.map((item) => (
+                                <tr key={item.id}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      Buy Now
+                                    </a>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </AccordionPanel>
+
+              <AccordionItem toggle="offers">Offers</AccordionItem>
+              <AccordionPanel id="offers">
+              <div className="px-0">
+                  <div className="flex flex-col">
+                    <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                      <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                        <div className="overflow-hidden sm:rounded-lg">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="">
+                              <tr>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Price per item
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Quantity
+                                </th>
+                                <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  From
+                                </th>
+                                <th scope="col" className="relative px-6 py-3">
+                                  <span className="sr-only">Actions</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {offers.map((item) => (
+                                <tr key={item.creatorAddress}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                   {isOwner ? (
+                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      Accept
+                                    </a>
+                                   ) : null}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-2 mb-4">
+                  {true ? (
+                    <div>
+                      <p className="mb-2">This item is accepting offers. To make an offer use the button below:</p>
+                      <button
+                        type="button"
+                        onClick={() => setMakeOfferModalOpen(true)}
+                        className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                      >
+                        <span>Make Offer</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="mb-4">This item is not accepting offers.</p>
+                    </div>
+                  )}
+                </div>
+              </AccordionPanel>
+
+              {/* <AccordionItem toggle="price-history">Price History</AccordionItem>
+              <AccordionPanel id="price-history">
+                <div className="px-2">
+                  <p className="mb-4">Price history content here.</p>
+                </div>
+              </AccordionPanel> */}
+
+            </Accordion>
+
+            {isOwner ? (
               <div className="py-5">
                 {/* <div className="mb-4">
                   <p className="text-sm font-medium mb-2">Listing type</p>
@@ -281,29 +496,32 @@ export default function ItemDetail(props) {
                     </p>
                   </div>
                   <div className="space-y-6 sm:space-y-5 border-b border-gray-200 pb-5">
-                    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                      <label
-                        htmlFor="country"
-                        className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                      >
-                        Listing Type
-                      </label>
-                      <div className="mt-1 sm:mt-0 sm:col-span-2">
-                        <select
-                          id="listing-type"
-                          name="listing-type"
-                          value={listingType}
-                          onChange={(e) => setListingType(e.target.value)}
-                          className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                        >
-                          {listingTypes.map((item) => (
-                            <option key={item} value={item}>
-                              {item}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+
+                    {false ? (
+                          <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                            <label
+                              htmlFor="country"
+                              className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                            >
+                              Listing Type
+                            </label>
+                            <div className="mt-1 sm:mt-0 sm:col-span-2">
+                              <select
+                                id="listing-type"
+                                name="listing-type"
+                                value={listingType}
+                                onChange={(e) => setListingType(e.target.value)}
+                                className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                              >
+                                {listingTypes.map((item) => (
+                                  <option key={item} value={item}>
+                                    {item}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                    ) : null}
 
                     {["Fixed Price"].includes(listingType) ? (
                       <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -385,7 +603,7 @@ export default function ItemDetail(props) {
                       </div>
                     ) : null}
 
-                    {["Fixed Price", "Timed Auction"].includes(listingType) ? (
+                    {["Fixed Price", "Timed Auction"].includes(listingType) && false ? (
                       <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                         <label
                           htmlFor="country"
@@ -446,7 +664,7 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-gray-200 mb-3">
               <div className="sm:flex sm:items-baseline">
                 <div className="mt-10">
                   <nav className="-mb-px flex space-x-8">
@@ -471,23 +689,136 @@ export default function ItemDetail(props) {
               </div>
             </div>
 
-            {activeTab === "Info" ? (
-              <h1 className="font-bold text-2xl">Info</h1>
+            {activeTab === 'Info' ? (
+              <div>
+                <dl className="sm:divide-y sm:divide-gray-200">
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-bold text-gray-800">Contract Address</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                      <a href="#">{nftAddress}</a>
+                    </dd>
+                  </div>
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-bold text-gray-800">Token ID</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">{tokenid}</dd>
+                  </div>
+                  <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
+                    <dt className="text-sm font-bold text-gray-800">Blockchain</dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">BSC</dd>
+                  </div>
+                </dl>
+              </div>
             ) : null}
 
-            {activeTab === "Owners" ? (
-              <h1 className="font-bold text-2xl">Owners</h1>
+            {activeTab === 'Creator' ? (
+              <div className="pt-3">
+                <h1 className="font-bold text-xl mb-3 text-center md:text-left">About CryptoChown</h1>
+                <p className="mb-3 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p className="text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+              </div>
             ) : null}
 
-            {activeTab === "History" ? (
-              <h1 className="font-bold text-2xl">History</h1>
-            ) : null}
-
-            {activeTab === "Bids" ? (
-              <h1 className="font-bold text-2xl">Bids</h1>
+            {activeTab === 'History' ? (
+              <div>
+                <h1 className="font-bold text-2xl">History</h1>
+              </div>
             ) : null}
           </div>
         </div>
+
+        <Modal
+          title="Make an Offer"
+          open={makeOfferModalOpen}
+          setOpen={(v) => setMakeOfferModalOpen(v)}
+        >
+          <div>
+            <div className="mt-3 text-center sm:mt-5">
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-5">
+                </p>
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Offer Duration
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <select
+                        value={offerLength}
+                        onChange={(e) => setOfferLength(e.target.value)}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      >
+                        {listingLengths.map((item) => (
+                          <option key={item} value={item}>
+                            {item} Days
+                          </option>
+                        ))}
+                      </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Quantity
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        value={offerQuantity}
+                        onChange={(e) => setOfferQuantity(e.target.value)}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+              
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Price Per Item
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <input
+                        value={offerPricePerItem}
+                        onChange={(e) => setOfferPricePerItem(e.target.value)}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+            <button
+              type="button"
+              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+              onClick={() => createOffer()}
+            >
+              Confirm
+            </button>
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => setMakeOfferModalOpen(false)}
+              // ref={cancelButtonRef}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
+
+
       </div>
     </div>
   );

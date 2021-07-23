@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import AppProtected from './AppProtected';
 import reportWebVitals from './reportWebVitals';
 
 import {
@@ -16,7 +17,7 @@ import {
 
 ReactDOM.render(
   <React.StrictMode>
-      <App />
+      {window.location.href.indexOf('staging') >= 0 ? <AppProtected/> : <App/>}
   </React.StrictMode>,
   document.getElementById('root')
 );
