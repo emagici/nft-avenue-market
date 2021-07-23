@@ -8,6 +8,7 @@ const initialState = {
   name: null,
   profilePictureUrl: null,
   accessToken: null,
+  sign: null,
   ownNfts: []
 };
 
@@ -24,6 +25,12 @@ let reducer = (state, action) => {
         ...state,
         accessToken: action.payload
       };
+
+    case 'SET_SIGN':
+        return {
+          ...state,
+          sign: action.payload
+        };
 
     case 'SET_OWN_NFTS':
       return {
