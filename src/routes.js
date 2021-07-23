@@ -6,6 +6,7 @@ import ItemDetail from './pages/item-detail';
 import Create from './pages/create'
 import User from './pages/user'
 import UserSettings from './pages/user/settings';
+import FeaturedDrop from './pages/featured-drop';
 
 export default [
 	{
@@ -21,6 +22,12 @@ export default [
 	  component: Featured,
 		exact: true,
 		nav: true
+	},
+	{
+	  path: "/featured-drop",
+		title: "Featured Drop",
+	  component: FeaturedDrop,
+		exact: true,
 	},
 	{
 	  path: "/user",
