@@ -15,7 +15,7 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
-import { SharedContext } from '../../context/shared-context'
+import { SharedContext } from '../../context/shared-context';
 import AppUrls from '../../AppSettings';
 
 
@@ -70,9 +70,9 @@ export default function Profile() {
     "Following",
     "Followers",
   ];
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
-  const sharedContext = useContext(SharedContext)
+  const userContext = useContext(UserContext);
+  const web3Context = useContext(Web3Context);
+  const sharedContext = useContext(SharedContext);
 
 
   useEffect(() => {
