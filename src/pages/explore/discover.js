@@ -3,55 +3,7 @@ import Dropdown from '../../components/dropdown'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import axios from "axios";
-
-import NFT1 from '../../assets/img/nft/nft1.png'
-import NFT2 from '../../assets/img/nft/nft2.jpeg'
-import NFT3 from '../../assets/img/nft/nft3.jpeg'
-import NFT4 from '../../assets/img/nft/nft4.png'
-import NFT5 from '../../assets/img/nft/nft5.png'
-
-const files = [
-  {
-    id: '1',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT1,
-  },
-  {
-    id: '2',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT5,
-  },
-  {
-    id: '3',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT2,
-  },
-  {
-    id: '4',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT4,
-  },
-  {
-    id: '5',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT3,
-  },
-]
+import Web3 from "web3";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -68,7 +20,6 @@ export default function Discover() {
     { id: 'popular', 'title': 'Popular' },
   ]
 
-
   useEffect(() => {
    
     axios({
@@ -79,14 +30,18 @@ export default function Discover() {
 
       console.log(response.data.result)
 
-      var items = response.data.result.map((item) => (
+      const allItems = response.data.result;
+
+      var items = allItems.map((item) => (
          {
-          id: item.nft.id,
-          TokenId: item.nft.tokenId,
-          NftAddress: item.nft.nft,
-          TokenName:  item.nft.tokenName,
-          Image: item.nft.videoUrl,
-          highestbid: '0.5 BNB',
+          id: 1,
+          TokenId: item.tokenId,
+          NftAddress: item.nft,
+          TokenName:  item.tokenName,
+          Image: item.imageUrl,
+          Video: item.videoUrl,
+          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") : "",
+          price: item.latestOffer ? Web3.utils.fromWei(item.price.toString(), "ether") + " BNB": "",
         }
       ))
 

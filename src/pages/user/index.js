@@ -15,7 +15,9 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
+import { SharedContext } from '../../context/shared-context'
 import AppUrls from '../../AppSettings';
+
 
 const profile = {
   name: "CryptoChown",
@@ -68,9 +70,9 @@ export default function Profile() {
     "Following",
     "Followers",
   ];
-  const userContext = useContext(UserContext);
-  const web3Context = useContext(Web3Context);
-  
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+  const sharedContext = useContext(SharedContext)
 
 
   useEffect(() => {
@@ -99,25 +101,25 @@ export default function Profile() {
       TokenId: onSaleObj.tokenId,
       NftAddress: onSaleObj.nft,
       TokenName:  onSaleObj.tokenName,
-      Image: onSaleObj.imageUrl
+      Image: onSaleObj.imageUrl,
+      Video: onSaleObj.videoUrl
     };
     return obj;
   }
 
   const transformOwnNftObj = (ownObj) => {
-    console.log(ownObj)
     var obj = {
       Listed: ownObj.id > 0 ? true : false,
       TokenId: ownObj.TokenId,
       NftAddress: ownObj.NftAddress,
       TokenName:  ownObj.TokenName,
-      Image: ownObj.Image
+      Image: ownObj.Image,
+      Video: ownObj.TokenIPFSVideoPreview
     };
     return obj;
   }
 
   const registerNewUser = () => {
-    console.log('sdads')
     axios({
       method: "POST",
       url: "https://0.0.0.0:44301/api/services/app/Account/Register",
@@ -180,6 +182,10 @@ export default function Profile() {
 
   const getOwnNfts = async (sign, myadd) => {
 
+    sharedContext.dispatch({
+      type: "START_LOADING"
+    })
+
     var myListedNfts = await axios({
       method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"`,
@@ -209,10 +215,18 @@ export default function Profile() {
       setOwnNfts(items);
 
       userContext.dispatch({
+        type: "SET_SIGN",
+        payload: sign
+      })
+
+      userContext.dispatch({
         type: "SET_OWN_NFTS",
         payload: items
       })
 
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
     })
     .catch(function (response) {
       console.log(response);
@@ -234,6 +248,18 @@ export default function Profile() {
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
   }, [web3Context.state.web3Data]);
+
+  useEffect(async () => {
+    console.log(userContext.state)
+    if(web3 && userContext.state.accessToken){
+      const accounts = await web3.eth.getAccounts();
+      var myadd = accounts[0];
+      
+      setUserProfile(userContext.state);
+      getOwnNfts(userContext.state.sign, myadd)
+      setLoggedIn(true);
+    }
+  }, [web3]);
 
   function handleConfirmSignIn() {
     setSignInModalOpen(false);
