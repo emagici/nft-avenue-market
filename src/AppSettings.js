@@ -1,7 +1,7 @@
 export default class AppUrls {
     static fomoHost = "http://fomobo.workinjupiter.club";
     static fomoHostApi = "https://fomoapi.workinjupiter.club";
-    static fomoClient = "https://locker.workinjupiter.club";
+    static fomoClient = "http://fomofa.attspace.com";
 
     // static fomoHost = "http://localhost:4200";
     // static fomoHostApi = "https://localhost:44301";
