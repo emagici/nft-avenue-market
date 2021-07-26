@@ -47,7 +47,8 @@ function classNames(...classes) {
 const appUrls = {
     fomoHost: AppUrls.fomoHost,
     fomoHostApi: AppUrls.fomoHostApi,
-    fomoClient: AppUrls.fomoClient
+    fomoClient: AppUrls.fomoClient,
+    fomoNodeAPI: AppUrls.fomoNodeAPI
 };
 
 export default function Profile() {
@@ -198,7 +199,7 @@ export default function Profile() {
 
     axios({
       method: "post",
-      url: `${appUrls.fomoClient}`,
+      url: `${appUrls.fomoNodeAPI}`,
       data: JSON.stringify({ Signature: sign }),
     })
     .then(function (response) {
