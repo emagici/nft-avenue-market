@@ -177,7 +177,6 @@ export default function Profile() {
         type: "UPDATE_DATA",
         payload: response.data.result
       })
-      setLoggedIn(true);
     })
     .catch(function (response) {
       console.log(response);
@@ -236,21 +235,6 @@ export default function Profile() {
       console.log(response);
     });
   }
-
-  const GetUserData = async () => {
-    const sign = userContext.state.sign;
-    console.log(sign)
-    const accounts = await web3.eth.getAccounts();
-    var myadd = accounts[0];
-
-    web3.eth.personal
-      .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
-      .then(async function (sign) {
-        //getAccessTokenAndLoadProfile(sign);
-        getOwnNfts(sign, myadd);
-      });
-  };
-
   
   // const signAndGetUserData = async () => {
   //   const accounts = await web3.eth.getAccounts();
@@ -265,20 +249,25 @@ export default function Profile() {
   // };
 
   useEffect(() => {
+    console.log('sdasa')
     setWeb3(web3Context.state.web3Data);
   }, [web3Context.state.web3Data]);
 
   useEffect(async () => {
-    console.log(userContext.state)
+    console.log('bbbbb')
     if(web3 && userContext.state.accessToken){
       const accounts = await web3.eth.getAccounts();
       var myadd = accounts[0];
       
-      setUserProfile(userContext.state);
+      if(userContext.state.name)
+        setUserProfile(userContext.state);
+      else
+        loadProfile(userContext.state.accessToken)
+
       getOwnNfts(userContext.state.sign, myadd)
       setLoggedIn(true);
     }
-  }, [web3]);
+  }, [web3, userContext.state.accessToken]);
 
   // function handleConfirmSignIn() {
   //   setSignInModalOpen(false);
@@ -321,7 +310,7 @@ export default function Profile() {
         <div className="relative">
           <img
             className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"
-            src={loggedIn ? (userProfile.bannerPictureUrl ? userProfile.bannerPictureUrl : profile.backgroundImage) : profile.backgroundImage}
+            src={loggedIn ? (userProfile && userProfile.bannerPictureUrl ? userProfile.bannerPictureUrl : profile.backgroundImage) : profile.backgroundImage}
             alt=""
           />
           <div className="hidden sm:block absolute bottom-5 right-5 z-10">
@@ -369,7 +358,7 @@ export default function Profile() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
             <div className="flex justify-center lg:justify-start">
-              {loggedIn ? (
+              {loggedIn && userProfile ? (
                 <img
                   className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32"
                   src={userProfile.profilePictureUrl}
@@ -382,11 +371,11 @@ export default function Profile() {
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
               <div className="block mt-6 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {loggedIn ? userProfile.name : "Sign in required"}
+                  {loggedIn && userProfile ? userProfile.name : "Sign in required"}
                 </h1>
               </div>
 
-              {loggedIn ? (
+              {loggedIn && userProfile ? (
                 <div className="text-center sm:hidden pt-5">
                   <p>{userProfile.description}</p>
                 </div>
@@ -460,7 +449,7 @@ export default function Profile() {
             </div>
           </div>
           <div className="">
-            {loggedIn ? (
+            {loggedIn && userProfile ? (
               <div className="hidden sm:block lg:px-10 text-center md:text-left">
                 <h6 className="font-bold hidden md:block">Bio</h6>
                 <p>{userProfile.description}</p>
