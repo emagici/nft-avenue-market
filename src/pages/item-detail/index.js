@@ -112,7 +112,7 @@ export default function ItemDetail(props) {
             NftAddress: item.nftAddress,
             creatorAddress: item.creatorAddress,
             pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
-            quantity: Web3.utils.fromWei(item.quantity.toString(), "ether"),
+            quantity: item.quantity,
             creatorUsername: item.creatorUsername,
             deadline: item.deadline
           }
@@ -182,11 +182,10 @@ export default function ItemDetail(props) {
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     var seconds = Number(timestampInSeconds) + (offerLength * 24 * 60 * 60);
 
-    const offerQuantityToSend = Web3.utils.toWei(offerQuantity.toString(), "ether");
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantityToSend, offerPricePerItemToSend, seconds)
+      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd });
   };
 
