@@ -45,7 +45,7 @@ export default function UserSettings() {
 
     axios({
       method: "post",
-      url: `${appUrls.fomoClient}/api/services/app/User/UpdateProfile`,
+      url: `${appUrls.fomoHostApi}/api/services/app/User/UpdateProfile`,
       data: formData,
       headers: {
         "Authorization": "Bearer " + userContext.state.accessToken + "",
