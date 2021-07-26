@@ -824,7 +824,7 @@ export default function Profile() {
         </Modal>
 
         <Modal
-          title="Seed words"
+          title="Wallet seed words"
           open={seedWordsModalOpen}
           setOpen={(v) => setSeedWordsModalOpen(v)}
         >
@@ -840,7 +840,7 @@ export default function Profile() {
                       htmlFor="terms"
                       className="font-medium text-gray-700"
                     >
-                      Your account seed words:
+                      A wallet has been created for you!
                     </label>
                   </div>
                 </div>
@@ -848,7 +848,7 @@ export default function Profile() {
                 <div className="flex items-center justify-center px-5 mb-3">
                   <div className="h-5 flex items-center">
                     <div className="italic">
-                      {seedWords}
+                      Check your email inbox for your new wallet's seed words.
                     </div>
                   </div>
                 </div>
