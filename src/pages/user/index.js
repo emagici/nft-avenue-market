@@ -58,10 +58,10 @@ export default function Profile() {
   const [accessToken, setAccessToken] = useState("");
   const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
-  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  // const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
-  const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
-  const [isTwoFactorSignIn, setIsTwoFactorSignIn] = useState(false);
+  // const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
+  // const [isTwoFactorSignIn, setIsTwoFactorSignIn] = useState(false);
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [seedWords, setSeedWords] = useState("");
   const tabs = [
@@ -121,47 +121,47 @@ export default function Profile() {
     return obj;
   }
 
-  const registerNewUser = () => {
-    axios({
-      method: "POST",
-      url: `${appUrls.fomoHostApi}/api/services/app/Account/Register`,
-      data: JSON.stringify({ name: registerItem.Name, surname: registerItem.Name, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(function (response) {
-      setRegisterModalOpen(false);
-      alert('success');
-      console.log(response);
-      setSeedWords(response.data.result.seedWords);
-      setSeedWordsModalOpen(true);
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
-  }
+  // const registerNewUser = () => {
+  //   axios({
+  //     method: "POST",
+  //     url: `${appUrls.fomoHostApi}/api/services/app/Account/Register`,
+  //     data: JSON.stringify({ name: registerItem.Name, surname: registerItem.Name, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     setRegisterModalOpen(false);
+  //     alert('success');
+  //     console.log(response);
+  //     setSeedWords(response.data.result.seedWords);
+  //     setSeedWordsModalOpen(true);
+  //   })
+  //   .catch(function (response) {
+  //     console.log(response);
+  //   });
+  // }
 
-  const getAccessTokenAndLoadProfile = (sign) => {
-    axios({
-      method: "POST",
-      url: `${appUrls.fomoHostApi}/api/TokenAuth/FomoLogin`,
-      data: JSON.stringify({ sign: sign }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(function (response) {
-      userContext.dispatch({
-        type: "SET_ACCESS_TOKEN",
-        payload: response.data.result.accessToken
-      })
-      loadProfile(response.data.result.accessToken);
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
-  }
+  // const getAccessTokenAndLoadProfile = (sign) => {
+  //   axios({
+  //     method: "POST",
+  //     url: `${appUrls.fomoHostApi}/api/TokenAuth/FomoLogin`,
+  //     data: JSON.stringify({ sign: sign }),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     userContext.dispatch({
+  //       type: "SET_ACCESS_TOKEN",
+  //       payload: response.data.result.accessToken
+  //     })
+  //     loadProfile(response.data.result.accessToken);
+  //   })
+  //   .catch(function (response) {
+  //     console.log(response);
+  //   });
+  // }
 
   const loadProfile = (accessToken) => {
     axios({
@@ -192,7 +192,7 @@ export default function Profile() {
 
     var myListedNfts = await axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address="+myadd+"`,
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}`,
     })
 
     setOnSaleNfts(myListedNfts.data.result);
@@ -218,10 +218,10 @@ export default function Profile() {
       })
       setOwnNfts(items);
 
-      userContext.dispatch({
-        type: "SET_SIGN",
-        payload: sign
-      })
+      // userContext.dispatch({
+      //   type: "SET_SIGN",
+      //   payload: sign
+      // })
 
       userContext.dispatch({
         type: "SET_OWN_NFTS",
@@ -236,18 +236,33 @@ export default function Profile() {
       console.log(response);
     });
   }
-  
-  const signAndGetUserData = async () => {
+
+  const GetUserData = async () => {
+    const sign = userContext.state.sign;
+    console.log(sign)
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
 
     web3.eth.personal
       .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
       .then(async function (sign) {
-        getAccessTokenAndLoadProfile(sign);
+        //getAccessTokenAndLoadProfile(sign);
         getOwnNfts(sign, myadd);
       });
   };
+
+  
+  // const signAndGetUserData = async () => {
+  //   const accounts = await web3.eth.getAccounts();
+  //   var myadd = accounts[0];
+
+  //   web3.eth.personal
+  //     .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
+  //     .then(async function (sign) {
+  //       getAccessTokenAndLoadProfile(sign);
+  //       getOwnNfts(sign, myadd);
+  //     });
+  // };
 
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
@@ -265,24 +280,24 @@ export default function Profile() {
     }
   }, [web3]);
 
-  function handleConfirmSignIn() {
-    setSignInModalOpen(false);
-    signAndGetUserData();
-  }
+  // function handleConfirmSignIn() {
+  //   setSignInModalOpen(false);
+  //   signAndGetUserData();
+  // }
 
-  function handleConfirmTwoFactorSignIn() {
-    setIsTwoFactorSignIn(false);
-    if(isTwoFactorSignIn) {
-      goToTwoFactorSignInPage();
-    }
-  }
+  // function handleConfirmTwoFactorSignIn() {
+  //   setIsTwoFactorSignIn(false);
+  //   if(isTwoFactorSignIn) {
+  //     goToTwoFactorSignInPage();
+  //   }
+  // }
 
-  function goToTwoFactorSignInPage(){
-    window.open(
-      `${appUrls.fomoHost}/account/login?fomoClient=1&returnUrl=${appUrls.fomoClient}/user`,
-      '_self'
-    );
-  }
+  // function goToTwoFactorSignInPage(){
+  //   window.open(
+  //     `${appUrls.fomoHost}/account/login?fomoClient=1&returnUrl=${appUrls.fomoClient}/user`,
+  //     '_self'
+  //   );
+  // }
 
   function getUrlAccessToken(){
     let url_string = window.location.href;
@@ -335,18 +350,19 @@ export default function Profile() {
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                // onClick={() => setLoggedIn(true)}
-                onClick={() => setIsTwoFactorSignIn(true)}
-                className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-              >
-                <span>Sign In</span>
-                <LoginIcon
-                  className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                  aria-hidden="true"
-                />
-              </button>
+              null
+              // <button
+              //   type="button"
+              //   // onClick={() => setLoggedIn(true)}
+              //   // onClick={() => setIsTwoFactorSignIn(true)}
+              //   className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+              // >
+              //   <span>Sign In</span>
+              //   <LoginIcon
+              //     className="-mr-1 ml-2 h-5 w-5 text-gray-500"
+              //     aria-hidden="true"
+              //   />
+              // </button>
             )}
           </div>
         </div>
@@ -356,7 +372,7 @@ export default function Profile() {
               {loggedIn ? (
                 <img
                   className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32"
-                  src={profile.avatar}
+                  src={userProfile.profilePictureUrl}
                   alt=""
                 />
               ) : (
@@ -377,7 +393,7 @@ export default function Profile() {
               ) : null}
 
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              {!loggedIn ? (
+              {/* {!loggedIn ? (
                   <button
                     onClick={() => setRegisterModalOpen(true)}
                     className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
@@ -388,7 +404,7 @@ export default function Profile() {
                       aria-hidden="true"
                     />
                   </button>
-                ) : null}
+                ) : null} */}
                 {loggedIn ? (
                   <button
                     onClick={() => alert("follow")}
@@ -426,18 +442,19 @@ export default function Profile() {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    // onClick={() => setLoggedIn(true)}
-                    onClick={() => setSignInModalOpen(true)}
-                    className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
-                  >
-                    <span>Sign In</span>
-                    <LoginIcon
-                      className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </button>
+                  null
+                  // <button
+                  //   type="button"
+                  //   // onClick={() => setLoggedIn(true)}
+                  //   onClick={() => setSignInModalOpen(true)}
+                  //   className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
+                  // >
+                  //   <span>Sign In</span>
+                  //   <LoginIcon
+                  //     className="-mr-1 ml-2 h-5 w-5 text-gray-500"
+                  //     aria-hidden="true"
+                  //   />
+                  // </button>
                 )}
               </div>
             </div>
@@ -568,7 +585,7 @@ export default function Profile() {
             ) : null}
           </div>
         ) : null}
-
+{/* 
         <Modal
           title="Fomo Lab Terms of Service"
           open={signInModalOpen}
@@ -641,9 +658,9 @@ export default function Profile() {
               Cancel
             </button>
           </div>
-        </Modal>
+        </Modal> */}
         
-        <Modal
+        {/* <Modal
           title="Fomo Lab Terms of Service"
           open={isTwoFactorSignIn}
           setOpen={(v) => setIsTwoFactorSignIn(v)}
@@ -715,10 +732,10 @@ export default function Profile() {
               Cancel
             </button>
           </div>
-        </Modal>
+        </Modal> */}
 
 
-        <Modal
+        {/* <Modal
           title="Register"
           open={registerModalOpen}
           setOpen={(v) => setRegisterModalOpen(v)}
@@ -821,7 +838,7 @@ export default function Profile() {
               Cancel
             </button>
           </div>
-        </Modal>
+        </Modal> */}
 
         <Modal
           title="Wallet seed words"

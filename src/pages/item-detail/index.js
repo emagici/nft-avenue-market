@@ -38,7 +38,8 @@ export default function ItemDetail(props) {
   const [nftAddress, setNftAddress] = useState("");
   const [nftName, setNftName] = useState("");
   const [nftDescription, setNftDescription] = useState("");
-  const [nftSrc, setNftSrc] = useState("");
+  const [nftVideoSrc, setVideoNftSrc] = useState("");
+  const [nftImageSrc, setImageNftSrc] = useState("");
   const [web3, setWeb3] = useState();
   const [marketplaceContract, setMarketplaceContract] = useState();
   const [myAdd, setMyadd] = useState();
@@ -62,7 +63,7 @@ export default function ItemDetail(props) {
 
   const getTokenURI = async () => {
 
-    var ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
+    const ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
     if(ownCurrentNft)
       setIsOwner(true);
 
@@ -73,12 +74,16 @@ export default function ItemDetail(props) {
       })
       .then(function (nftListingResponse) {
 
+        console.log(nftListingResponse)
+
         const nftListingResult = nftListingResponse.data.result;
 
         setNftDescription(nftListingResult[0].nft.description);
         setNftName(nftListingResult[0].nft.tokenName)
+        setImageNftSrc(nftListingResult[0].nft.imageUrl)
+        setVideoNftSrc(nftListingResult[0].nft.videoUrl)
 
-        var listingItems = nftListingResult.map((item) => (
+        const listingItems = nftListingResult.map((item) => (
           {
            id: item.nft.id,
             TokenId: item.nft.tokenId,
@@ -93,7 +98,7 @@ export default function ItemDetail(props) {
  
         setlistings(listingItems);
 
-        var offerItems = nftListingResult[0].offers.map((item) => (
+        const offerItems = nftListingResult[0].offers.map((item) => (
           {
             TokenId: item.tokenId,
             NftAddress: item.nftAddress,
@@ -118,7 +123,7 @@ export default function ItemDetail(props) {
       })
         .then(function (response) {
           const nftDetails = response.data.result;
-          setNftSrc(nftDetails.imageUrl)
+          setImageNftSrc(nftDetails.imageUrl)
           setNftDescription(nftDetails.description)
           setNftName(nftDetails.tokenName)
         })
@@ -157,9 +162,10 @@ export default function ItemDetail(props) {
       .send({ from: myAdd });
   };
 
-  const acceptOffer = async () => {
+  const acceptOffer = async (offerOwnerAdd) => {
+    console.log(offerOwnerAdd)
     await marketplaceContract.methods
-      .acceptOffer(nftAddress, tokenid, myAdd)
+      .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd });
   };
 
@@ -209,6 +215,10 @@ export default function ItemDetail(props) {
     );
   }, [web3]);
 
+  useEffect(() => {
+    setWeb3(web3Context.state.web3Data);
+  }, [web3Context.state.web3Data]);
+
   useEffect(async () => {
     setWeb3(web3Context.state.web3Data);
 
@@ -234,11 +244,20 @@ export default function ItemDetail(props) {
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
             <div className="flex-1 max-w-sm">
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
-                <img
-                  src={nftSrc}
-                  alt=""
-                  className="object-cover pointer-events-none group-hover:opacity-90"
-                />
+
+                {nftVideoSrc ? (
+                  <video
+                    autoPlay muted
+                    src={nftVideoSrc}
+                    className="object-cover pointer-events-none group-hover:opacity-90"
+                  />
+                ) : (
+                  <img
+                    src={nftImageSrc}
+                    alt="nft"
+                    className="object-cover pointer-events-none group-hover:opacity-90"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -436,7 +455,7 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                    {isOwner ? (
-                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                       Accept
                                     </a>
                                    ) : null}
