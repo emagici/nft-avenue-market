@@ -1,92 +1,110 @@
-import { Fragment, useEffect, useState, useContext } from 'react'
-import { Link, useLocation } from "react-router-dom"
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon, SearchIcon } from '@heroicons/react/outline'
-import { useWallet } from 'use-wallet'
-import AvenueLogo from '../../assets/img/theavenue-logo.png'
-import Routes from '../../routes'
+import { Fragment, useEffect, useState, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import {
+  BellIcon,
+  MenuIcon,
+  XIcon,
+  SearchIcon,
+} from "@heroicons/react/outline";
+import { useWallet } from "use-wallet";
+import AvenueLogo from "../../assets/img/theavenue-logo.png";
+import Routes from "../../routes";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Register from "./register";
+import MetamaskSignIn from "./MetamaskSignIn";
+import UsernameSignIn from "./UsernameSignIn";
 
-import { UserContext } from '../../context/user-context'
-import { Web3Context } from '../../context/web3-context'
-
+import { UserContext } from "../../context/user-context";
+import { Web3Context } from "../../context/web3-context";
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
+  const userContext = useContext(UserContext);
+  const web3Context = useContext(Web3Context);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [metamaskSignInModalOpen, setMetamaskSignInModalOpen] = useState(false);
+  const [usernameModalOpen, setUsernameModalOpen] = useState(false);
 
-  const location = useLocation()
+  const location = useLocation();
   // const { account, chainId, connect, error, reset, status } = useWallet()
-  const [myAdd, setMyAdd] = useState(null)
-  const [connected, setCommnected] = useState(false)
-  const [errorStr, setErrorStr] = useState(null)
+  const [myAdd, setMyAdd] = useState(null);
+  const [connected, setCommnected] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [walletSigned, setWalletSigned] = useState(false);
+  const [errorStr, setErrorStr] = useState(null);
 
   useEffect(() => {
     // if (status !== 'connected') {
-      connectWallet()
+    connectWallet();
     // }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (userContext.state.accessToken) setLoggedIn(true);
+  }, [userContext.state.accessToken]);
+
+  useEffect(() => {
+    if (userContext.state.sign) setWalletSigned(true);
+  }, [userContext.state.sign]);
 
   async function connectWallet() {
-
-    if(connected)
-      return;
+    if (connected) return;
 
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider, // required
         options: {
           rpc: {
-            97:"https://data-seed-prebsc-1-s1.binance.org:8545" 
-          }// required
-        } 
-      }
+            97: "https://data-seed-prebsc-1-s1.binance.org:8545",
+          }, // required
+        },
+      },
     };
-    
+
     const web3Modal = new Web3Modal({
-      providerOptions // required
+      providerOptions, // required
     });
 
     const provider = await web3Modal.connect();
 
-    if(provider.http){
+    if (provider.http) {
       provider.chainId = 97;
       provider.http.url = "https://data-seed-prebsc-1-s1.binance.org:8545";
       provider.rpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545";
     }
 
-     const web3 = new Web3(provider);
+    const web3 = new Web3(provider);
 
-     console.log(web3)
-     web3Context.dispatch({
+    console.log(web3);
+    web3Context.dispatch({
       type: "SET_WEB3_DATA",
-      payload: web3
-    })
+      payload: web3,
+    });
 
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
-    setMyAdd(myadd)
-    setCommnected(true)
+    setMyAdd(myadd);
+    setCommnected(true);
 
-        // Subscribe to accounts change
+    // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
-      document.location.href="/";
+      document.location.href = "/";
     });
 
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId) => {
-      document.location.href="/";
+      document.location.href = "/";
     });
 
     // Subscribe to provider disconnection
     provider.on("disconnect", (error) => {
-      document.location.href="/";
+      document.location.href = "/";
     });
   }
 
@@ -105,7 +123,6 @@ export default function Navbar() {
   //     setErrorStr(null)
   //   }
   // }, [error])
-
 
   // function updateUserContext(data) {
   //   userContext.dispatch({
@@ -135,7 +152,6 @@ export default function Navbar() {
   //   // etc etc
   // }
 
-  
   return (
     <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
       {({ open }) => (
@@ -155,7 +171,7 @@ export default function Navbar() {
                   </Disclosure.Button>
                 </div>
                 <div className="flex-shrink-0 flex items-center">
-                  <Link to='/'>
+                  <Link to="/">
                     <img
                       className="hidden sm:block h-8 w-auto"
                       src={AvenueLogo}
@@ -164,15 +180,15 @@ export default function Navbar() {
                   </Link>
                 </div>
                 <div className="hidden md:ml-6 md:flex md:space-x-8">
-                  {Routes.filter(item => item.nav).map((item, index) => (
+                  {Routes.filter((item) => item.nav).map((item, index) => (
                     <Link
                       key={index}
                       to={item.path}
                       className={classNames(
                         item.path == location.pathname
-                          ? 'border-indigo-500 text-gray-900'
-                          : 'border-transparent text-gray-700 hover:border-gray-500 hover:text-gray-900',
-                        'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold'
+                          ? "border-indigo-500 text-gray-900"
+                          : "border-transparent text-gray-700 hover:border-gray-500 hover:text-gray-900",
+                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold"
                       )}
                     >
                       {item.title}
@@ -187,7 +203,10 @@ export default function Navbar() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <SearchIcon
+                        className="h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
                     </div>
                     <input
                       id="search"
@@ -230,8 +249,8 @@ export default function Navbar() {
                                 <a
                                   href="#"
                                   className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
                                   Notification #1
@@ -243,8 +262,8 @@ export default function Navbar() {
                                 <a
                                   href="#"
                                   className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
                                   Notification #2
@@ -256,8 +275,8 @@ export default function Navbar() {
                                 <a
                                   href="#"
                                   className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700"
                                   )}
                                 >
                                   Notification #3
@@ -282,12 +301,60 @@ export default function Navbar() {
                   </div>
                 ) : null}
                 <div className="flex-shrink-0">
+                  {!loggedIn || !walletSigned ? (
+                    <button
+                      type="button"
+                      onClick={() => setRegisterModalOpen(true)}
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    >
+                      <span>Register</span>
+                    </button>
+                  ) : null}
+                  <Register
+                    registerModalOpen={registerModalOpen}
+                    setRegisterModalOpen={(v) => setRegisterModalOpen(v)}
+                  />
+
+                  {!loggedIn || !walletSigned ? (
+                    <button
+                      type="button"
+                      onClick={() => setMetamaskSignInModalOpen(true)}
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    >
+                      <span>Sign in with Metamask</span>
+                    </button>
+                  ) : null}
+                  <MetamaskSignIn
+                    metamaskSignInModalOpen={metamaskSignInModalOpen}
+                    setMetamaskSignInModalOpen={(v) =>
+                      setMetamaskSignInModalOpen(v)
+                    }
+                  />
+
+                  {!loggedIn || !walletSigned ? (
+                    <button
+                      type="button"
+                      onClick={() => setUsernameModalOpen(true)}
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    >
+                      <span>Sign in with Username & Password</span>
+                    </button>
+                  ) : null}
+                  <UsernameSignIn
+                    usernameModalOpen={usernameModalOpen}
+                    setUsernameModalOpen={(v) =>
+                      setUsernameModalOpen(v)
+                    }
+                  />
+
                   <button
                     type="button"
                     onClick={() => connectWallet()}
                     className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                   >
-                    <span>{myAdd ? myAdd.substr(0,6) + '...' : 'Connect Wallet'}</span>
+                    <span>
+                      {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -296,16 +363,16 @@ export default function Navbar() {
 
           <Disclosure.Panel className="md:hidden">
             <div className="">
-              {Routes.filter(item => item.nav).map((item, index) => (
+              {Routes.filter((item) => item.nav).map((item, index) => (
                 <Link
                   key={index}
-                  onClick={() => open = false}
+                  onClick={() => (open = false)}
                   to={item.path}
                   className={classNames(
                     item.path == location.pathname
-                      ? 'bg-indigo-50 border-indigo-500 text-indigo-700 border-l-4'
-                      : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700',
-                    'text-center block pl-3 pr-4 py-3 border-l-4 text-base font-medium sm:pl-5 sm:pr-6'
+                      ? "bg-indigo-50 border-indigo-500 text-indigo-700 border-l-4"
+                      : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
+                    "text-center block pl-3 pr-4 py-3 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
                   )}
                 >
                   {item.title}
@@ -316,5 +383,5 @@ export default function Navbar() {
         </>
       )}
     </Disclosure>
-  )
+  );
 }

@@ -29,7 +29,9 @@ export default function CardDefault(props) {
         </div>
         <div className="flex justify-between">
           <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.TokenName}</p>
-          <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
+         {props.price ? (
+           <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
+         ) : null} 
         </div>
         {/* <div className="flex justify-between items-end border-b border-gray-200 pb-3">
           {props.nolink ? (
@@ -56,7 +58,9 @@ export default function CardDefault(props) {
           <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p>
         </div> */}
         <div className="flex justify-between">
-          <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
+          {props.highestbid ? (
+            <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
+          ) : null}
           {props.sellItem && false ? (
             // <p className="mt-2 block text-sm text-gray-900 truncate pointer-events-none font-light">New Bid</p>
             <button
