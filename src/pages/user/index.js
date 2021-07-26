@@ -293,7 +293,7 @@ export default function Profile() {
               {loggedIn ? (
                 <img
                   className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white sm:h-32 sm:w-32"
-                  src={profile.avatar}
+                  src={userProfile.profilePictureUrl}
                   alt=""
                 />
               ) : (
