@@ -1,16 +1,17 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from "react";
-import SectionHeader from "../../components/section-header"
-import { UserContext } from '../../context/user-context'
-import { Web3Context } from '../../context/web3-context'
+import SectionHeader from "../../components/section-header";
+import Security from './security';
+import { UserContext } from '../../context/user-context';
+import { Web3Context } from '../../context/web3-context';
 import axios from "axios";
 
 var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
 const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
 
 export default function UserSettings() {
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
+  const userContext = useContext(UserContext);
+  const web3Context = useContext(Web3Context);
 
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
@@ -82,6 +83,16 @@ export default function UserSettings() {
       setInstagramUrl(userContext.state.instagramUrl);
     }
   }, [userContext.state]);
+
+  const [accessToken, setAccessToken] = useState();
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+
+  useEffect(() => {
+      setAccessToken(userContext.state.accessToken);
+      if(userContext.state.accessToken){
+        setHasLoggedIn(true);
+      }
+  }, [userContext.state.accessToken]);
 
   return (
     <div className="max-w-screen-lg mx-auto py-10 px-4 sm:px-6">
@@ -306,6 +317,9 @@ export default function UserSettings() {
                   </div>
             ) : null}
 
+          {hasLoggedIn ? (
+            <Security></Security>
+          ) : null}
         </div>
 
         <div className="pt-5">
