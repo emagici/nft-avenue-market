@@ -4,10 +4,18 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import axios from "axios";
 import Web3 from "web3";
+import AppUrls from '../../AppSettings';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
+
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient
+};
+
 
 export default function Discover() {
   const [activeTab, setActiveTab] = useState('All Items');
@@ -24,7 +32,7 @@ export default function Discover() {
    
     axios({
       method: "get",
-      url: "https://0.0.0.0:44301/api/services/app/Nft/GetListedNfts"
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts`
     })
     .then(function (response) {
 
