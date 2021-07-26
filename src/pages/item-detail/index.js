@@ -12,6 +12,7 @@ import {
   MARKETPLACE_ABI,
   MARKETPLACE_ADDRESS,
 } from "../../contracts/FomoMarketPlace";
+import AppUrls from '../../AppSettings';
 
 const tabs = [
   { name: 'Info', href: '#', current: true },
@@ -30,6 +31,13 @@ const user = {
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient
+};
+
 
 export default function ItemDetail(props) {
 
@@ -70,7 +78,7 @@ export default function ItemDetail(props) {
     if(isItemListed){
       axios({
         method: "get",
-        url: "https://0.0.0.0:44301/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress="+nftAddress+"&tokenId="+tokenid+"",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`,
       })
       .then(function (nftListingResponse) {
 
@@ -104,7 +112,7 @@ export default function ItemDetail(props) {
             NftAddress: item.nftAddress,
             creatorAddress: item.creatorAddress,
             pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
-            quantity: item.quantity,
+            quantity: Web3.utils.fromWei(item.quantity.toString(), "ether"),
             creatorUsername: item.creatorUsername,
             deadline: item.deadline
           }
@@ -119,7 +127,7 @@ export default function ItemDetail(props) {
     else{
       axios({
         method: "get",
-        url: "https://0.0.0.0:44301/api/services/app/Nft/GetExternalNftInfo?TokenId="+tokenid+"&ContractAddress="+nftAddress+"",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
       })
         .then(function (response) {
           const nftDetails = response.data.result;
