@@ -246,7 +246,7 @@ export default function Profile() {
     web3.eth.personal
       .sign(web3.utils.utf8ToHex("TheAvenue"), myadd)
       .then(async function (sign) {
-        getAccessTokenAndLoadProfile(sign);
+        //getAccessTokenAndLoadProfile(sign);
         getOwnNfts(sign, myadd);
       });
   };
