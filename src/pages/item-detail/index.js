@@ -104,7 +104,7 @@ export default function ItemDetail(props) {
             NftAddress: item.nftAddress,
             creatorAddress: item.creatorAddress,
             pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
-            quantity: item.quantity,
+            quantity: Web3.utils.fromWei(item.quantity.toString(), "ether"),
             creatorUsername: item.creatorUsername,
             deadline: item.deadline
           }
