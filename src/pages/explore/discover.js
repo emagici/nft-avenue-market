@@ -34,7 +34,7 @@ export default function Discover() {
 
       var items = allItems.map((item) => (
          {
-          id: 1,
+          Listed: true,
           TokenId: item.tokenId,
           NftAddress: item.nft,
           TokenName:  item.tokenName,
