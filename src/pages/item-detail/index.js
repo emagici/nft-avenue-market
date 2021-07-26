@@ -162,9 +162,10 @@ export default function ItemDetail(props) {
       .send({ from: myAdd });
   };
 
-  const acceptOffer = async () => {
+  const acceptOffer = async (offerOwnerAdd) => {
+    console.log(offerOwnerAdd)
     await marketplaceContract.methods
-      .acceptOffer(nftAddress, tokenid, myAdd)
+      .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd });
   };
 
@@ -213,6 +214,10 @@ export default function ItemDetail(props) {
       new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS)
     );
   }, [web3]);
+
+  useEffect(() => {
+    setWeb3(web3Context.state.web3Data);
+  }, [web3Context.state.web3Data]);
 
   useEffect(async () => {
     setWeb3(web3Context.state.web3Data);
@@ -450,7 +455,7 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                    {isOwner ? (
-                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                       Accept
                                     </a>
                                    ) : null}
