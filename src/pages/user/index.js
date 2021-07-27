@@ -59,10 +59,7 @@ export default function Profile() {
   const [accessToken, setAccessToken] = useState("");
   const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
-  // const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
-  // const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
-  // const [isTwoFactorSignIn, setIsTwoFactorSignIn] = useState(false);
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [seedWords, setSeedWords] = useState("");
   const tabs = [
