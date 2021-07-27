@@ -34,16 +34,24 @@ export default function Navbar() {
   const location = useLocation();
   // const { account, chainId, connect, error, reset, status } = useWallet()
   const [myAdd, setMyAdd] = useState(null);
-  const [connected, setCommnected] = useState(false);
+  const [connected, setConnected] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [walletSigned, setWalletSigned] = useState(false);
   const [errorStr, setErrorStr] = useState(null);
 
   useEffect(() => {
     // if (status !== 'connected') {
-    connectWallet();
+    // connectWallet();
     // }
   }, []);
+
+  const walletSignIn = () => {
+    connectWallet(() => setMetamaskSignInModalOpen(true));
+  };
+
+  const signOut = () => {
+    document.location.href = "/";
+  };
 
   useEffect(() => {
     if (userContext.state.accessToken) setLoggedIn(true);
@@ -53,8 +61,8 @@ export default function Navbar() {
     if (userContext.state.sign) setWalletSigned(true);
   }, [userContext.state.sign]);
 
-  async function connectWallet() {
-    if (connected) return;
+  async function connectWallet(callback) {
+    // if (connected) return;
 
     const providerOptions = {
       walletconnect: {
@@ -81,7 +89,6 @@ export default function Navbar() {
 
     const web3 = new Web3(provider);
 
-    console.log(web3);
     web3Context.dispatch({
       type: "SET_WEB3_DATA",
       payload: web3,
@@ -90,7 +97,8 @@ export default function Navbar() {
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyAdd(myadd);
-    setCommnected(true);
+    setConnected(true);
+    if (callback) callback();
 
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
@@ -318,7 +326,7 @@ export default function Navbar() {
                   {!loggedIn || !walletSigned ? (
                     <button
                       type="button"
-                      onClick={() => setMetamaskSignInModalOpen(true)}
+                      onClick={() => walletSignIn()}
                       className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Sign in with Metamask</span>
@@ -331,6 +339,16 @@ export default function Navbar() {
                     }
                   />
 
+                  {loggedIn || walletSigned ? (
+                    <button
+                      type="button"
+                      onClick={() => signOut()}
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    >
+                      <span>Sign Out</span>
+                    </button>
+                  ) : null}
+
                   {!loggedIn || !walletSigned ? (
                     <button
                       type="button"
@@ -342,20 +360,20 @@ export default function Navbar() {
                   ) : null}
                   <UsernameSignIn
                     usernameModalOpen={usernameModalOpen}
-                    setUsernameModalOpen={(v) =>
-                      setUsernameModalOpen(v)
-                    }
+                    setUsernameModalOpen={(v) => setUsernameModalOpen(v)}
                   />
 
-                  <button
-                    type="button"
-                    onClick={() => connectWallet()}
-                    className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                  >
-                    <span>
-                      {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
-                    </span>
-                  </button>
+                  {myAdd ? (
+                    <button
+                      type="button"
+                      // onClick={() => connectWallet()}
+                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                    >
+                      <span>
+                        {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
+                      </span>
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </div>
