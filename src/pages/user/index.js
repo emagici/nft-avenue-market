@@ -84,6 +84,7 @@ export default function Profile() {
     if(accessToken){
       setAccessToken(accessToken);
       clearUrlAccessToken();
+      setLoggedIn(true);
       loadProfile(accessToken);
       //alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
