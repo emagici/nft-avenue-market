@@ -12,6 +12,10 @@ import {
   MARKETPLACE_ABI,
   MARKETPLACE_ADDRESS,
 } from "../../contracts/FomoMarketPlace";
+import {
+  GENERICNFT_ABI
+} from "../../contracts/GenericNFT";
+
 import AppUrls from '../../AppSettings';
 
 const tabs = [
@@ -75,6 +79,8 @@ export default function ItemDetail(props) {
     if(ownCurrentNft)
       setIsOwner(true);
 
+console.log(isItemListed)
+
     if(isItemListed){
       axios({
         method: "get",
@@ -112,7 +118,7 @@ export default function ItemDetail(props) {
             NftAddress: item.nftAddress,
             creatorAddress: item.creatorAddress,
             pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
-            quantity: Web3.utils.fromWei(item.quantity.toString(), "ether"),
+            quantity: item.quantity,
             creatorUsername: item.creatorUsername,
             deadline: item.deadline
           }
@@ -131,7 +137,7 @@ export default function ItemDetail(props) {
       })
         .then(function (response) {
           const nftDetails = response.data.result;
-          setImageNftSrc(nftDetails.imageUrl)
+          setVideoNftSrc(nftDetails.imageUrl)
           setNftDescription(nftDetails.description)
           setNftName(nftDetails.tokenName)
         })
@@ -149,6 +155,25 @@ export default function ItemDetail(props) {
       return;
     }
 
+    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
+    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
+
+    if(!isApprovedForAll){
+        await genericNftContract.methods.setApprovalForAll(MARKETPLACE_ADDRESS, true)
+        .send({
+          from: myAdd
+        })
+        .then( async function (result) {
+          listItemConfirm();
+        })
+        .catch(error => {
+        });
+    }
+    else
+      listItemConfirm();
+  };
+
+  const listItemConfirm = async () => {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
@@ -156,7 +181,7 @@ export default function ItemDetail(props) {
     await marketplaceContract.methods
       .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
-  };
+  }
 
   const updateListing = async (newPricePerItem) => {
     await marketplaceContract.methods
@@ -182,11 +207,10 @@ export default function ItemDetail(props) {
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     var seconds = Number(timestampInSeconds) + (offerLength * 24 * 60 * 60);
 
-    const offerQuantityToSend = Web3.utils.toWei(offerQuantity.toString(), "ether");
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantityToSend, offerPricePerItemToSend, seconds)
+      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd });
   };
 
@@ -232,10 +256,17 @@ export default function ItemDetail(props) {
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
 
-    if(params.listed)
+    console.log(params.listed)
+
+    if(params.listed === "true"){
       setIsItemListed(true)
+    }
     else
+    {
+      console.log('22222')
       setIsItemListed(false)
+
+    }
 
     if(params.tokenid)
       setTokenId(params.tokenid)
