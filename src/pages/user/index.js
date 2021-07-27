@@ -111,6 +111,7 @@ export default function Profile() {
   }
 
   const transformOwnNftObj = (ownObj) => {
+    console.log(ownObj)
     var obj = {
       Listed: ownObj.id > 0 ? true : false,
       TokenId: ownObj.TokenId,
@@ -205,14 +206,15 @@ export default function Profile() {
     .then(function (response) {
 
       var items = response.data.map((item, i) => {   
-          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.NftAddress.toLowerCase());
+          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
         
           var obj = {
             id: listedItem ? listedItem.nft.id : 0,
             TokenName: item.TokenName,
             Image: item.Image,
+            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
             TokenId: item.TokenId,
-            NftAddress: item.NftAddress
+            NftAddress: item.TokenContractAddress
           };
           return obj;
       })
@@ -327,7 +329,7 @@ export default function Profile() {
                     aria-hidden="true"
                   />
                 </Link>
-                <button
+                {/* <button
                   type="button"
                   onClick={() => setLoggedIn(false)}
                   className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
@@ -337,7 +339,7 @@ export default function Profile() {
                     className="-mr-1 ml-2 h-5 w-5 text-gray-500"
                     aria-hidden="true"
                   />
-                </button>
+                </button> */}
               </div>
             ) : (
               null
