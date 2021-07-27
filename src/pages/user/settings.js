@@ -32,10 +32,10 @@ export default function UserSettings() {
 
     let formData = new FormData();
 
-    if(profileImage.file)
+    if(profileImage && profileImage.file)
       formData.append("ProfleImage", profileImage.file, profileImage.file.name);
       
-    if(coverImage.file)
+    if(coverImage && coverImage.file)
       formData.append("ProfileBanner", coverImage.file, coverImage.file.name);
 
       formData.append("Name", displayName);
