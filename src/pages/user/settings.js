@@ -6,6 +6,7 @@ import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
 import axios from "axios";
 import AppUrls from '../../AppSettings';
+import Wallet from './wallet';
 
 var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
 const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
@@ -325,7 +326,10 @@ export default function UserSettings() {
             ) : null}
 
           {hasLoggedIn ? (
+            <>
+            <Wallet accessToken={accessToken}></Wallet>
             <Security></Security>
+            </>
           ) : null}
         </div>
 

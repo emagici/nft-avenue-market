@@ -13,6 +13,7 @@ const appUrls = {
 export default function Register(props) {
   const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
+  const [walletAddress, setWalletAddress] = useState('');
 
   const registerNewUser = () => {
     axios({
@@ -28,6 +29,7 @@ export default function Register(props) {
         alert('success');
         console.log(response);
         // setSeedWords(response.data.result.seedWords);
+        setWalletAddress(response.data.result.address);
         setSeedWordsModalOpen(true);
     })
     .catch(function (response) {
@@ -143,7 +145,7 @@ export default function Register(props) {
     </Modal>
   
     <Modal
-          title="Seed words"
+          title="Wallet"
           open={seedWordsModalOpen}
           setOpen={(v) => setSeedWordsModalOpen(v)}
         >
@@ -161,6 +163,13 @@ export default function Register(props) {
                     >
                       A wallet has been created for you!
                     </label>
+                  </div>
+                </div>
+                <br />
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                    Your wallet address: <br />
+                    {walletAddress}
                   </div>
                 </div>
                 <br />

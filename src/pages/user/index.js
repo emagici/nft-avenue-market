@@ -59,10 +59,7 @@ export default function Profile() {
   const [accessToken, setAccessToken] = useState("");
   const [userProfile, setUserProfile] = useState();
   const [signInModalOpen, setSignInModalOpen] = useState(false);
-  // const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
-  // const [registerItem, setRegisterItem] = useState({Name: '', Username: '', Password: '', Email: ''});
-  // const [isTwoFactorSignIn, setIsTwoFactorSignIn] = useState(false);
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [seedWords, setSeedWords] = useState("");
   const tabs = [
@@ -87,6 +84,7 @@ export default function Profile() {
     if(accessToken){
       setAccessToken(accessToken);
       clearUrlAccessToken();
+      setLoggedIn(true);
       loadProfile(accessToken);
       //alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
@@ -122,48 +120,6 @@ export default function Profile() {
     };
     return obj;
   }
-
-  // const registerNewUser = () => {
-  //   axios({
-  //     method: "POST",
-  //     url: `${appUrls.fomoHostApi}/api/services/app/Account/Register`,
-  //     data: JSON.stringify({ name: registerItem.Name, surname: registerItem.Name, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //   .then(function (response) {
-  //     setRegisterModalOpen(false);
-  //     alert('success');
-  //     console.log(response);
-  //     setSeedWords(response.data.result.seedWords);
-  //     setSeedWordsModalOpen(true);
-  //   })
-  //   .catch(function (response) {
-  //     console.log(response);
-  //   });
-  // }
-
-  // const getAccessTokenAndLoadProfile = (sign) => {
-  //   axios({
-  //     method: "POST",
-  //     url: `${appUrls.fomoHostApi}/api/TokenAuth/FomoLogin`,
-  //     data: JSON.stringify({ sign: sign }),
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //   .then(function (response) {
-  //     userContext.dispatch({
-  //       type: "SET_ACCESS_TOKEN",
-  //       payload: response.data.result.accessToken
-  //     })
-  //     loadProfile(response.data.result.accessToken);
-  //   })
-  //   .catch(function (response) {
-  //     console.log(response);
-  //   });
-  // }
 
   const loadProfile = (accessToken) => {
     axios({
@@ -272,25 +228,6 @@ export default function Profile() {
     }
   }, [web3, userContext.state.accessToken]);
 
-  // function handleConfirmSignIn() {
-  //   setSignInModalOpen(false);
-  //   signAndGetUserData();
-  // }
-
-  // function handleConfirmTwoFactorSignIn() {
-  //   setIsTwoFactorSignIn(false);
-  //   if(isTwoFactorSignIn) {
-  //     goToTwoFactorSignInPage();
-  //   }
-  // }
-
-  // function goToTwoFactorSignInPage(){
-  //   window.open(
-  //     `${appUrls.fomoHost}/account/login?fomoClient=1&returnUrl=${appUrls.fomoClient}/user`,
-  //     '_self'
-  //   );
-  // }
-
   function getUrlAccessToken(){
     let url_string = window.location.href;
     let url = new URL(url_string);
@@ -329,32 +266,9 @@ export default function Profile() {
                     aria-hidden="true"
                   />
                 </Link>
-                {/* <button
-                  type="button"
-                  onClick={() => setLoggedIn(false)}
-                  className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-                >
-                  <span>Sign Out</span>
-                  <LogoutIcon
-                    className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                    aria-hidden="true"
-                  />
-                </button> */}
               </div>
             ) : (
               null
-              // <button
-              //   type="button"
-              //   // onClick={() => setLoggedIn(true)}
-              //   // onClick={() => setIsTwoFactorSignIn(true)}
-              //   className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-              // >
-              //   <span>Sign In</span>
-              //   <LoginIcon
-              //     className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-              //     aria-hidden="true"
-              //   />
-              // </button>
             )}
           </div>
         </div>
@@ -385,18 +299,6 @@ export default function Profile() {
               ) : null}
 
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              {/* {!loggedIn ? (
-                  <button
-                    onClick={() => setRegisterModalOpen(true)}
-                    className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-                  >
-                    <span>Register</span>
-                    <PlusCircleIcon
-                      className="-mr-1 ml-1 h-5 w-5 text-white"
-                      aria-hidden="true"
-                    />
-                  </button>
-                ) : null} */}
                 {loggedIn ? (
                   <button
                     onClick={() => alert("follow")}
@@ -435,18 +337,6 @@ export default function Profile() {
                   </div>
                 ) : (
                   null
-                  // <button
-                  //   type="button"
-                  //   // onClick={() => setLoggedIn(true)}
-                  //   onClick={() => setSignInModalOpen(true)}
-                  //   className="inline-flex justify-center px-4 py-2 mr-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
-                  // >
-                  //   <span>Sign In</span>
-                  //   <LoginIcon
-                  //     className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                  //     aria-hidden="true"
-                  //   />
-                  // </button>
                 )}
               </div>
             </div>
@@ -577,260 +467,7 @@ export default function Profile() {
             ) : null}
           </div>
         ) : null}
-{/* 
-        <Modal
-          title="Fomo Lab Terms of Service"
-          open={signInModalOpen}
-          setOpen={(v) => setSignInModalOpen(v)}
-        >
-          <div>
-            <div className="mt-3 text-center sm:mt-5">
-              <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-5">
-                  Please take a few minutes to read and understand the{" "}
-                  <a href="#" className="text-indigo-600 font-bold">
-                    Fomo Lab Terms of Service
-                  </a>
-                  . To continue, you'll need to accept the Terms of Service by
-                  checking the box.
-                </p>
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                    <input
-                      id="minage"
-                      name="minage"
-                      type="checkbox"
-                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="minage"
-                      className="font-medium text-gray-700"
-                    >
-                      I am at least 13 years old
-                    </label>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center px-5">
-                  <div className="h-5 flex items-center">
-                    <input
-                      id="terms"
-                      name="terms"
-                      type="checkbox"
-                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      I accept the Fomo Lab terms of service
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-            <button
-              type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-              onClick={() => handleConfirmSignIn()}
-            >
-              Confirm
-            </button>
-            <button
-              type="button"
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
-              onClick={() => setSignInModalOpen(false)}
-              // ref={cancelButtonRef}
-            >
-              Cancel
-            </button>
-          </div>
-        </Modal> */}
-        
-        {/* <Modal
-          title="Fomo Lab Terms of Service"
-          open={isTwoFactorSignIn}
-          setOpen={(v) => setIsTwoFactorSignIn(v)}
-        >
-          <div>
-            <div className="mt-3 text-center sm:mt-5">
-              <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-5">
-                  Please take a few minutes to read and understand the{" "}
-                  <a href="#" className="text-indigo-600 font-bold">
-                    Fomo Lab Terms of Service
-                  </a>
-                  . To continue, you'll need to accept the Terms of Service by
-                  checking the box.
-                </p>
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                    <input
-                      id="minage"
-                      name="minage"
-                      type="checkbox"
-                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="minage"
-                      className="font-medium text-gray-700"
-                    >
-                      I am at least 13 years old
-                    </label>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center px-5">
-                  <div className="h-5 flex items-center">
-                    <input
-                      id="terms"
-                      name="terms"
-                      type="checkbox"
-                      className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      I accept the Fomo Lab terms of service
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-            <button
-              type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-              onClick={() => handleConfirmTwoFactorSignIn()}
-            >
-              Confirm
-            </button>
-            <button
-              type="button"
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
-              onClick={() => setIsTwoFactorSignIn(false)}
-              // ref={cancelButtonRef}
-            >
-              Cancel
-            </button>
-          </div>
-        </Modal> */}
 
-
-        {/* <Modal
-          title="Register"
-          open={registerModalOpen}
-          setOpen={(v) => setRegisterModalOpen(v)}
-        >
-          <div>
-            <div className="mt-3 text-center sm:mt-5">
-              <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-5">
-                </p>
-               
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      Name
-                    </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
-                        value={registerItem.Name}
-                        onChange={(e) => setRegisterItem({...registerItem, Name: e.target.value})}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                      />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      Username
-                    </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
-                        value={registerItem.Username}
-                        onChange={(e) => setRegisterItem({...registerItem, Username: e.target.value})}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                      />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      Password
-                    </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
-                        required
-                        value={registerItem.Password}
-                        onChange={(e) => setRegisterItem({...registerItem, Password: e.target.value})}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                      />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      Email
-                    </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
-                        value={registerItem.Email}
-                        onChange={(e) => setRegisterItem({...registerItem, Email: e.target.value})}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                      />
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-          <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-            <button
-              type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-              onClick={() => registerNewUser()}
-            >
-              Submit
-            </button>
-            <button
-              type="button"
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
-              onClick={() => setRegisterModalOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </Modal> */}
 
         <Modal
           title="Wallet seed words"
