@@ -15,11 +15,12 @@ export default function Register(props) {
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
 
-  const registerNewUser = () => {
+  const registerNewUser = (e) => {
+    e.preventDefault();
     axios({
       method: "POST",
       url: `${appUrls.fomoHostApi}/api/services/app/Account/Register`,
-      data: JSON.stringify({ name: registerItem.Name, surname: registerItem.Name, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
+      data: JSON.stringify({ name: registerItem.Username, surname: registerItem.Username, userName: registerItem.Username, emailAddress: registerItem.Email, password: registerItem.Password }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -116,8 +117,8 @@ export default function Register(props) {
           </div>
 
           <div>
-            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Sign in
+            <button onClick={(e) => registerNewUser(e)} class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Submit
             </button>
           </div>
         </form>

@@ -217,7 +217,6 @@ export default function Profile() {
   // };
 
   useEffect(() => {
-    console.log('sdasa')
     setWeb3(web3Context.state.web3Data);
   }, [web3Context.state.web3Data]);
 
