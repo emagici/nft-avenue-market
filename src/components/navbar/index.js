@@ -16,6 +16,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import Register from "./register";
 import MetamaskSignIn from "./MetamaskSignIn";
 import UsernameSignIn from "./UsernameSignIn";
+import SignInRegisterModal from "./SignInRegisterModal";
 
 import { UserContext } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
@@ -30,6 +31,7 @@ export default function Navbar() {
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [metamaskSignInModalOpen, setMetamaskSignInModalOpen] = useState(false);
   const [usernameModalOpen, setUsernameModalOpen] = useState(false);
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
 
   const location = useLocation();
   // const { account, chainId, connect, error, reset, status } = useWallet()
@@ -308,8 +310,9 @@ export default function Navbar() {
                     </Link>
                   </div>
                 ) : null}
+
                 <div className="flex-shrink-0">
-                  {!loggedIn || !walletSigned ? (
+                  {/* {!loggedIn || !walletSigned ? (
                     <button
                       type="button"
                       onClick={() => setRegisterModalOpen(true)}
@@ -321,9 +324,9 @@ export default function Navbar() {
                   <Register
                     registerModalOpen={registerModalOpen}
                     setRegisterModalOpen={(v) => setRegisterModalOpen(v)}
-                  />
+                  /> */}
 
-                  {!loggedIn || !walletSigned ? (
+                  {/* {!loggedIn || !walletSigned ? (
                     <button
                       type="button"
                       onClick={() => walletSignIn()}
@@ -337,19 +340,9 @@ export default function Navbar() {
                     setMetamaskSignInModalOpen={(v) =>
                       setMetamaskSignInModalOpen(v)
                     }
-                  />
+                  /> */}
 
-                  {loggedIn || walletSigned ? (
-                    <button
-                      type="button"
-                      onClick={() => signOut()}
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Sign Out</span>
-                    </button>
-                  ) : null}
-
-                  {!loggedIn || !walletSigned ? (
+                  {/* {!loggedIn || !walletSigned ? (
                     <button
                       type="button"
                       onClick={() => setUsernameModalOpen(true)}
@@ -360,20 +353,46 @@ export default function Navbar() {
                   ) : null}
                   <UsernameSignIn
                     usernameModalOpen={usernameModalOpen}
-                    setUsernameModalOpen={(v) => setUsernameModalOpen(v)}
-                  />
+                    setUsernameModalOpen={(v) =>
+                      setUsernameModalOpen(v)
+                    }
+                  /> */}
 
-                  {myAdd ? (
+                  <Fragment>
                     <button
                       type="button"
-                      // onClick={() => connectWallet()}
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                      onClick={() => setSignInModalOpen(true)}
+                      className={classNames(
+                        loggedIn
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-indigo-600 hover:bg-indigo-700",
+                        "relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
+                      )}
                     >
                       <span>
-                        {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
+                        {loggedIn ? "Sign Out" : "Sign In / Register"}
                       </span>
                     </button>
-                  ) : null}
+                    <SignInRegisterModal
+                      modalOpen={signInModalOpen}
+                      setModalOpen={(v) => setSignInModalOpen(v)}
+                    />
+                  </Fragment>
+
+                  <button
+                    type="button"
+                    onClick={() => connectWallet()}
+                    className={classNames(
+                      myAdd
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-indigo-600 hover:bg-indigo-700",
+                      "relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
+                    )}
+                  >
+                    <span>
+                      {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
