@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../context/user-context";
 import AppUrls from "../../AppSettings";
 import Modal from "../../components/modal";
+import Spinner from '../../components/loading-spinner/spinner';
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -14,6 +15,10 @@ export default function Register(props) {
   const [registerItem, setRegisterItem] = useState({Username: '', Password: '', Email: ''});
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
+  const [passwordResetItem, setPasswordResetItem] = useState({ UserEmail: ''});
+  const [passwordResetModalOpen, setPasswordResetModalOpen] = useState(false);
+  const [passwordResetSuccessModalOpen, setPasswordResetSuccessModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const registerNewUser = (e) => {
     e.preventDefault();
@@ -36,6 +41,40 @@ export default function Register(props) {
     .catch(function (response) {
         console.log(response);
     });
+  }
+
+  const resetPassword = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    axios({
+      method: "POST",
+      url: `${appUrls.fomoHostApi}/api/services/app/Account/SendPasswordResetCode`,
+      data: JSON.stringify({ emailAddress: passwordResetItem.UserEmail }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(function (response) {
+        setPasswordResetModalOpen(false);
+        setPasswordResetSuccessModalOpen(true);
+        alert('success');
+        console.log(response);
+    })
+    .catch(function (response) {
+        alert("Invalid email address");
+        setPasswordResetModalOpen(true);
+        console.log(response);
+    })
+    .finally(function(){
+      setLoading(false);
+    });
+  }
+
+  const openPasswordResetModal = (e) => {
+    e.preventDefault();
+    props.setRegisterModalOpen(false);
+    setPasswordResetModalOpen(true);
+    
   }
 
   return (
@@ -110,7 +149,7 @@ export default function Register(props) {
             </div>
 
             <div class="text-sm">
-              <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+              <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500" onClick={(e) => openPasswordResetModal(e)}>
                 Reset Password
               </a>
             </div>
@@ -215,6 +254,87 @@ export default function Register(props) {
             </button>
           </div>
         </Modal>
+
+        <Modal
+          title="Reset password"
+          open={passwordResetModalOpen}
+          setOpen={(v) => setPasswordResetModalOpen(v)}
+          >
+            <div class="">
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <h1 className="text-2xl font-bold text-center capitalize">Processing</h1>
+                  <Spinner className="h-6 w-6 ml-2" />
+                </div>
+              ) : (
+                <form class="space-y-3" action="#" method="POST">
+                  
+                    <div>
+                      <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email
+                      </label>
+                      <div class="mt-1">
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          autocomplete="email"
+                          required
+                          class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                          value={passwordResetItem.UserEmail}
+                          onChange={(e) => setPasswordResetItem({...passwordResetItem, UserEmail: e.target.value})}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <button onClick={(e) => resetPassword(e)} class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Submit
+                      </button>
+                    </div>
+
+                </form>
+              )}
+            </div>
+          </Modal>
+
+        <Modal
+          title="Reset password"
+          open={passwordResetSuccessModalOpen}
+          setOpen={(v) => setPasswordResetSuccessModalOpen(v)}
+        >
+          <div>
+            <div className="mt-3 text-center sm:mt-5">
+              <div className="mt-2">
+                <p className="text-sm text-gray-500 mb-5">
+                </p>
+               
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      A password reset link sent to your e-mail address. Please check your emails.
+                    </label>
+                  </div>
+                </div>
+                <br />
+
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 sm:mt-6 sm:grid sm:gap-3 sm:grid-flow-row-dense">
+            <button
+              type="button"
+              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+              onClick={() => setPasswordResetSuccessModalOpen(false)}
+            >
+              Ok
+            </button>
+          </div>
+        </Modal>
+        
     </>
   );
 }
