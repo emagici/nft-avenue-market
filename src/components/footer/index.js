@@ -113,7 +113,7 @@ const CustomForm = ({ status, message, onValidated }) => {
         className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0"
       >
         <input
-          className="appearance-none min-w-0 w-full bg-white border border-gray-300 py-2 px-4 text-base rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:placeholder-gray-400 sm:max-w-xs"
+          className="appearance-none min-w-0 w-full bg-white border border-gray-300 py-2 px-4 text-base rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:placeholder-gray-400 sm:max-w-xs"
           label="Email"
           onChange={(e) => setEmail(e.target.value)}
           type="email"
@@ -123,7 +123,7 @@ const CustomForm = ({ status, message, onValidated }) => {
         />
         <div className="mt-3 rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
           <input
-            className="w-full bg-indigo-600 border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full bg-indigo-600 border border-transparent rounded-full py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             label="subscribe"
             type="submit"
             value={status === "sending" ? "Please Wait" : "Subscribe"}
