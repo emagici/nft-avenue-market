@@ -3,8 +3,8 @@ import axios from "axios";
 import AppUrls from "../../AppSettings";
 import Modal from "../../components/modal";
 
-import { UserContext } from '../../context/user-context';
-import { Web3Context } from '../../context/web3-context';
+import { UserContext } from "../../context/user-context";
+import { Web3Context } from "../../context/web3-context";
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -59,6 +59,11 @@ export default function MetamaskSignIn(props) {
   };
 
   function handleConfirmSignIn() {
+    if (!web3) {
+      alert("Please connect wallet");
+      return;
+    }
+
     props.setMetamaskSignInModalOpen(false);
     signAndGetUserData();
   }
