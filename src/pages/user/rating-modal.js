@@ -6,6 +6,7 @@ import { SharedContext } from '../../context/shared-context';
 import Spinner from '../../components/loading-spinner/spinner';
 import axios from "axios";
 import AppUrls from "../../AppSettings";
+import { UserContext } from "../../context/user-context";
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -19,19 +20,26 @@ function classNames(...classes) {
 
 export default function RatingModal(props) {
   const sharedContext = useContext(SharedContext);
+  const userContext = useContext(UserContext);
 
   const [web3, setWeb3] = useState();
   const [rating, setRating] = useState(0);
   const ratings = [1,2,3,4,5];
   const [loading, setLoading] = useState(false);
-
+  
   useEffect(() => {
     init();
   }, []);
 
   function init(){
-    getRate();
+    
   }
+
+  useEffect(() => {
+    if (userContext.state.accessToken){
+      getRate();
+    }
+  }, [userContext.state.accessToken]);
 
   function ratingSelected(val) {
     if (!val) return;
@@ -40,7 +48,9 @@ export default function RatingModal(props) {
 
   function confirmRating(e) {
     //props.setModalOpen(false);
-    setRate(e);
+    if (userContext.state.accessToken){
+      setRate(e);
+    }
   }
 
   const setRate = (e) => {
@@ -52,7 +62,7 @@ export default function RatingModal(props) {
       data: JSON.stringify({ rate: rating, giverUserId: 1, receiverUserId: 1 }),
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": "Bearer " + props.accessToken + ""
+        "Authorization": "Bearer " + userContext.state.accessToken + ""
       }
     })
     .then(function (response) {
@@ -75,7 +85,7 @@ export default function RatingModal(props) {
       url: `${appUrls.fomoHostApi}/api/services/app/UserRates/GetAverageRateForUser?userId=${1}`,
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": "Bearer " + props.accessToken + ""
+        "Authorization": "Bearer " + userContext.state.accessToken + ""
       }
     })
     .then(function (response) {
