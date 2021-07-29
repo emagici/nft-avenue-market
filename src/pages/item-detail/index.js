@@ -17,7 +17,8 @@ import {
 const tabs = [
   { name: 'Info', href: '#', current: true },
   // { name: 'Creator', href: '#', current: false },
-  { name: 'History', href: '#', current: true },
+  { name: 'History', href: '#', current: false },
+  { name: 'Transfer', href: '#', current: false },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
@@ -337,8 +338,12 @@ export default function ItemDetail(props) {
                 </div>
             ) : null}
 
-            <p className="mb-2 text-center md:text-left font-bold">Description</p>
-            <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+            {nftDescription ? (
+              <div>
+                <p className="mb-2 text-center md:text-left font-bold">Description</p>
+                <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+              </div>
+            ) : null}
 
 
             {/* DYNAMICALLY SHOW EACH RELEVANT LISTING SECTION AS REQUIRED - E.G, HIDE BUY NOW IF BIDS ONLY SELECTED */}
@@ -749,6 +754,18 @@ export default function ItemDetail(props) {
                     <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" />
                   </ul>
                 </div>
+              </div>
+            ) : null}
+
+            {activeTab === 'Transfer' ? (
+              <div>
+                <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
+                <Link
+                  to="/transfer-item?id="
+                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+                >
+                  Transfer
+                </Link>
               </div>
             ) : null}
           </div>
