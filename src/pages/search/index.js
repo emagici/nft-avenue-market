@@ -52,7 +52,7 @@ export default function SearchPage() {
     
     axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${searchNft}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${searchStr}`
     })
     .then(function (response) {
 
