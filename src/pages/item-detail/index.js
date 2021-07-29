@@ -6,6 +6,7 @@ import { Accordion, AccordionItem, AccordionPanel } from '../../components/accor
 import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
+import ItemHistoryRow from "./item-history-row";
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
@@ -21,6 +22,7 @@ import AppUrls from '../../AppSettings';
 const tabs = [
   { name: 'Info', href: '#', current: true },
   // { name: 'Creator', href: '#', current: false },
+  { name: 'History', href: '#', current: true },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
@@ -778,7 +780,14 @@ console.log(isItemListed)
 
             {activeTab === 'History' ? (
               <div>
-                <h1 className="font-bold text-2xl">History</h1>
+                <div>
+                  <ul className="">
+                    <ItemHistoryRow type="bid" price="1.49" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="19/07/2021, 15:11" />
+                    <ItemHistoryRow type="bid-cancelled" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="18/07/2021, 06:29" />
+                    <ItemHistoryRow type="bid-accepted" price="1.87" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="17/07/2021, 09:42" />
+                    <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" />
+                  </ul>
+                </div>
               </div>
             ) : null}
           </div>

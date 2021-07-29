@@ -21,6 +21,7 @@ export default function Discover() {
   const [activeTab, setActiveTab] = useState('All Items');
   const tabs = ['All Items', 'Featured', 'Art', 'Game'];
   
+  const [filterText, setFilerText] = useState('');
   const [activeDropdown, setActiveDropdown] = useState('recent');
   const [listedItems, setListedItems] = useState([]);
   const options = [
@@ -32,7 +33,7 @@ export default function Discover() {
    
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}`
     })
     .then(function (response) {
 

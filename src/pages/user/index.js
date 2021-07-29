@@ -322,7 +322,6 @@ export default function Profile() {
                     <RatingModal
                       modalOpen={ratingModalOpen}
                       setModalOpen={(v) => setRatingModalOpen(v)}
-                      accessToken={accessToken}
                     />
 
                     <button

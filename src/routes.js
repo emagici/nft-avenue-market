@@ -7,6 +7,7 @@ import Create from './pages/create'
 import User from './pages/user'
 import UserSettings from './pages/user/settings';
 import FeaturedDrop from './pages/featured-drop';
+import SearchPage from './pages/search';
 
 export default [
 	{
@@ -46,6 +47,12 @@ export default [
 	  path: "/item-detail",
 		title: "Item Detail",
 	  component: ItemDetail,
+		exact: true,
+	},
+	{
+	  path: "/search",
+		title: "Search",
+	  component: SearchPage,
 		exact: true,
 	},
 	{
