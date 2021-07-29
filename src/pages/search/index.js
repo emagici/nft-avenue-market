@@ -42,14 +42,23 @@ export default function SearchPage() {
   function onSearch(e){
     e.preventDefault();
     if (!searchStr){
-     return;
+      return;
     }  
-    setLoading(true);
     searchNft();
   }
 
+  //reference: https://stackoverflow.com/a/11365682/4490058
+  function onEnter(e){
+      if (!e) e = window.event;
+      var keyCode = e.code || e.key;
+      if (keyCode == 'Enter'){
+        // Enter pressed
+        onSearch(e);
+      }
+  }
+
   function searchNft(){
-    
+    setLoading(true);
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${searchStr}`
@@ -122,6 +131,8 @@ export default function SearchPage() {
                       placeholder="Enter search phrase"
                       type="search"
                       onChange={(e) => setSearchStr(e.target.value)}
+                      value={searchStr}
+                      onKeyPress={(e) => onEnter(e)}
                     />
                   </div>
                 </div>
@@ -166,6 +177,8 @@ export default function SearchPage() {
                         placeholder="Enter search phrase"
                         type="search"
                         onChange={(e) => setSearchStr(e.target.value)}
+                        value={searchStr}
+                        onKeyPress={(e) => onEnter(e)}
                       />
                     </div>
                   </div>
@@ -197,6 +210,8 @@ export default function SearchPage() {
                         placeholder="Enter search phrase"
                         type="search"
                         onChange={(e) => setSearchStr(e.target.value)}
+                        value={searchStr}
+                        onKeyPress={(e) => onEnter(e)}
                       />
                     </div>
                   </div>
