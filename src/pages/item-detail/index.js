@@ -16,6 +16,9 @@ import {
 import {
   GENERICNFT_ABI
 } from "../../contracts/GenericNFT";
+import {
+  GENERIC_TOKEN_ABI
+} from "../../contracts/GenericToken";
 
 import AppUrls from '../../AppSettings';
 
@@ -23,6 +26,12 @@ const tabs = [
   { name: 'Info', href: '#', current: true },
   // { name: 'Creator', href: '#', current: false },
   { name: 'History', href: '#', current: true },
+];
+
+const tokenTypes = [
+  { name: 'Fomo', tokenAddress: "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" },
+  { name: 'BNB', tokenAddress: "abc" },
+  { name: 'BUSD', tokenAddress: "123" },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
@@ -59,8 +68,10 @@ export default function ItemDetail(props) {
   const [myAdd, setMyadd] = useState();
   const [activeTab, setActiveTab] = useState("Info");
   const [isOwner, setIsOwner] = useState(false);
+  const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
+  const [ListingToken, setListingToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
@@ -68,28 +79,42 @@ export default function ItemDetail(props) {
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
+  const [offerToken, setOfferToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
 
   const [listings, setlistings] = useState([]);
   const [offers, setOffers] = useState([]);
+  const [history, setHistory] = useState([]);
 
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
   const getTokenURI = async () => {
 
-    const ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
-    if(ownCurrentNft)
-      setIsOwner(true);
+    const ownCurrentNft = userContext.state.ownNfts.filter(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
 
-console.log(isItemListed)
+    if(ownCurrentNft && ownCurrentNft.length > 0){
+      setNftQuantityOwned(ownCurrentNft.length)
+      setIsOwner(true);
+    }
 
     if(isItemListed){
       axios({
         method: "get",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
+      })
+      .then(async function (response) {
+        console.log(response)
+        setHistory(response.data.result)
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+
+      axios({
+        method: "get",
         url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`,
       })
-      .then(function (nftListingResponse) {
-
+      .then(async function (nftListingResponse) {
         console.log(nftListingResponse)
 
         const nftListingResult = nftListingResponse.data.result;
@@ -99,19 +124,20 @@ console.log(isItemListed)
         setImageNftSrc(nftListingResult[0].nft.imageUrl)
         setVideoNftSrc(nftListingResult[0].nft.videoUrl)
 
-        const listingItems = nftListingResult.map((item) => (
+        const listingItems = await Promise.all(nftListingResult.map( async (item) => (
           {
-           id: item.nft.id,
+            id: item.nft.id,
             TokenId: item.nft.tokenId,
             NftAddress: item.nft.nft,
             TokenName:  item.nft.tokenName,
             owner: item.nft.owner,
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
-            sellerName: item.seller.name
+            sellerName: item.seller.name,
+            payTokenName: await getPayTokenFromListing(item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
-        ))
- 
+        )));
+          
         setlistings(listingItems);
 
         const offerItems = nftListingResult[0].offers.map((item) => (
@@ -122,7 +148,8 @@ console.log(isItemListed)
             pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
             quantity: item.quantity,
             creatorUsername: item.creatorUsername,
-            deadline: item.deadline
+            deadline: item.deadline,
+            offerTokenName: getPayTokenNameByAddress(item.payToken)
           }
         ))
 
@@ -148,6 +175,18 @@ console.log(isItemListed)
         });
     }
   };
+
+  const getPayTokenFromListing = async (chkAddress, chkTokenId, chkOwnerAdd) => {
+    var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
+    const listingDetails = await contract.methods.listings(chkAddress, chkTokenId, chkOwnerAdd).call();
+
+    return getPayTokenNameByAddress(listingDetails.payToken);
+  }
+
+  const getPayTokenNameByAddress = (tokenAddress) =>{
+    var tokenDetail = tokenTypes.find(x => x.tokenAddress.toLowerCase() === tokenAddress.toLowerCase());
+    return tokenDetail.name;
+  }
 
   const listItem = async () => {
     if (!web3) return;
@@ -181,7 +220,7 @@ console.log(isItemListed)
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
 
     await marketplaceContract.methods
-      .listItem(nftAddress, tokenid, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
+      .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd });
   }
 
@@ -205,6 +244,27 @@ console.log(isItemListed)
   };
 
   const createOffer = async () => {
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const totalAmount = offerQuantity * offerPricePerItem;
+    const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
+
+    if(currentAllowance < totalAmountToSend){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAmountToSend)
+        .send({
+          from: myAdd
+        })
+        .then( async function (result) {
+          createOfferConfirm();
+        })
+        .catch(error => {
+        });
+    }
+    else
+      createOfferConfirm();
+  };
+
+  const createOfferConfirm = async () => {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     var seconds = Number(timestampInSeconds) + (offerLength * 24 * 60 * 60);
@@ -212,7 +272,7 @@ console.log(isItemListed)
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" ,offerQuantity, offerPricePerItemToSend, seconds)
+      .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd });
   };
 
@@ -223,8 +283,6 @@ console.log(isItemListed)
   };
 
   const buyItem = async (obj) => {
-    console.log(obj)
-
     const totalPrice = obj.pricePerItem * obj.quantity;
     const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
@@ -258,17 +316,10 @@ console.log(isItemListed)
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
 
-    console.log(params.listed)
-
-    if(params.listed === "true"){
+    if(params.listed === "true")
       setIsItemListed(true)
-    }
     else
-    {
-      console.log('22222')
       setIsItemListed(false)
-
-    }
 
     if(params.tokenid)
       setTokenId(params.tokenid)
@@ -410,6 +461,12 @@ console.log(isItemListed)
                           <table className="min-w-full divide-y divide-gray-200">
                             <thead className="">
                               <tr>
+                              <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Token
+                                </th>
                                 <th
                                   scope="col"
                                   className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
@@ -436,6 +493,7 @@ console.log(isItemListed)
                             <tbody className="bg-white divide-y divide-gray-200">
                               {listings.map((item) => (
                                 <tr key={item.id}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payTokenName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
@@ -465,6 +523,12 @@ console.log(isItemListed)
                           <table className="min-w-full divide-y divide-gray-200">
                             <thead className="">
                               <tr>
+                              <th
+                                  scope="col"
+                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                >
+                                  Token
+                                </th>
                                 <th
                                   scope="col"
                                   className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
@@ -491,6 +555,7 @@ console.log(isItemListed)
                             <tbody className="bg-white divide-y divide-gray-200">
                               {offers.map((item) => (
                                 <tr key={item.creatorAddress}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
@@ -583,13 +648,36 @@ console.log(isItemListed)
                           </div>
                     ) : null}
 
+                    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                      <label
+                        htmlFor="country"
+                        className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                      >
+                        Token
+                      </label>
+                      <div className="mt-1 sm:mt-0 sm:col-span-2">
+                        <select
+                          value={ListingToken}
+                          onChange={(e) => setListingToken(e.target.value)}
+                          className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                        >
+                          {tokenTypes.map((item) => (
+                            <option key={item.tokenAddress} value={item.tokenAddress}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
                     {["Fixed Price"].includes(listingType) ? (
+                      
                       <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                         <label
                           htmlFor="price"
                           className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                         >
-                          Price (BNB)
+                          Price per item
                         </label>
                         <div className="mt-1 sm:mt-0 sm:col-span-2">
                           <input
@@ -610,7 +698,7 @@ console.log(isItemListed)
                           htmlFor="price"
                           className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                         >
-                          Quantity
+                          Quantity (Available : {nftQuantityOwned})
                         </label>
                         <div className="mt-1 sm:mt-0 sm:col-span-2">
                           <input
@@ -782,10 +870,16 @@ console.log(isItemListed)
               <div>
                 <div>
                   <ul className="">
-                    <ItemHistoryRow type="bid" price="1.49" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="19/07/2021, 15:11" />
-                    <ItemHistoryRow type="bid-cancelled" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="18/07/2021, 06:29" />
-                    <ItemHistoryRow type="bid-accepted" price="1.87" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="17/07/2021, 09:42" />
-                    <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" />
+
+                  {history.map((item) => (
+                    // console.log(item)
+                    <ItemHistoryRow type={item.eventName} userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date={item.blockNumber} />
+
+                  ))}
+
+
+                    {/* <ItemHistoryRow type="bid-accepted" price="1.87" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="17/07/2021, 09:42" />
+                    <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" /> */}
                   </ul>
                 </div>
               </div>
@@ -803,6 +897,30 @@ console.log(isItemListed)
               <div className="mt-2">
                 <p className="text-sm text-gray-500 mb-5">
                 </p>
+                <div className="flex items-center justify-center px-5 mb-3">
+                  <div className="h-5 flex items-center">
+                  <label
+                      htmlFor="terms"
+                      className="font-medium text-gray-700"
+                    >
+                      Token
+                    </label>
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <select
+                        value={offerToken}
+                        onChange={(e) => setOfferToken(e.target.value)}
+                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                      >
+                        {tokenTypes.map((item) => (
+                          <option key={item.tokenAddress} value={item.tokenAddress}>
+                           {item.name}
+                          </option>
+                        ))}
+                      </select>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-center px-5 mb-3">
                   <div className="h-5 flex items-center">
                   <label

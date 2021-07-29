@@ -38,6 +38,11 @@ export default function ItemHistoryRow(props) {
       );
 
     default:
-      <div></div>
+      return (
+        <li className="py-3 border-b">
+          <p className="text-sm font-bold">{`${props.type}`}</p>
+          <p className="text-sm font-medium">by <Link to={`/user?id=${props.userId}`} className="underline hover:opacity-80">{`${props.userId.substr(0,6)}...${props.userId.substr(-4,4)}`}</Link> Block: {props.date}</p>
+        </li>
+      );
   }
 }
