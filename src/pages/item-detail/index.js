@@ -180,6 +180,8 @@ export default function ItemDetail(props) {
     var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
     const listingDetails = await contract.methods.listings(chkAddress, chkTokenId, chkOwnerAdd).call();
 
+    console.log(listingDetails)
+
     return getPayTokenDetailByAddress(listingDetails.payToken);
   }
 
@@ -250,7 +252,7 @@ export default function ItemDetail(props) {
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
 
-    if(currentAllowance < totalAmountToSend){
+    if(Number(currentAllowance) < Number(totalAmountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAmountToSend)
         .send({
           from: myAdd
@@ -290,7 +292,7 @@ export default function ItemDetail(props) {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
 
-    if(currentAllowance < amountToSend){
+    if(Number(currentAllowance) < Number(amountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
         .send({
           from: myAdd
