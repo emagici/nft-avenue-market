@@ -47,6 +47,16 @@ export default function SearchPage() {
     searchNft();
   }
 
+  //reference: https://stackoverflow.com/a/11365682/4490058
+  function onEnter(e){
+      if (!e) e = window.event;
+      var keyCode = e.code || e.key;
+      if (keyCode == 'Enter'){
+        // Enter pressed
+        onSearch(e);
+      }
+  }
+
   function searchNft(){
     setLoading(true);
     axios({
@@ -122,6 +132,7 @@ export default function SearchPage() {
                       type="search"
                       onChange={(e) => setSearchStr(e.target.value)}
                       value={searchStr}
+                      onKeyPress={(e) => onEnter(e)}
                     />
                   </div>
                 </div>
@@ -167,6 +178,7 @@ export default function SearchPage() {
                         type="search"
                         onChange={(e) => setSearchStr(e.target.value)}
                         value={searchStr}
+                        onKeyPress={(e) => onEnter(e)}
                       />
                     </div>
                   </div>
@@ -199,6 +211,7 @@ export default function SearchPage() {
                         type="search"
                         onChange={(e) => setSearchStr(e.target.value)}
                         value={searchStr}
+                        onKeyPress={(e) => onEnter(e)}
                       />
                     </div>
                   </div>
