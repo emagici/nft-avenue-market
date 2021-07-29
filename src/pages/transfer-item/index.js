@@ -68,7 +68,7 @@ export default function TransferItem(props) {
           </div>
           <div className="col-span-2">
             <h1 className="font-bold text-3xl text-center md:text-left mb-1">Transfer</h1>
-            <p className="mb-6 text-center md:text-left">Complete the details below to transfer owndership of your item to another wallet.</p>
+            <p className="mb-6 text-center md:text-left">Complete the details below to transfer ownership of your item to another wallet.</p>
             
             <div className="space-y-6 sm:space-y-5">
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
