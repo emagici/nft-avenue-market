@@ -17,27 +17,44 @@ const appUrls = {
 };
 
 export default function SearchPage() {
-  const location = useLocation()
-  const [loading, setLoading] = useState(true)
-  const [searchStr, setSearchStr] = useState(null)
-  const [results, setResults] = useState(null)
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [searchStr, setSearchStr] = useState(null);
+  const [results, setResults] = useState(null);
+  const [isAutoSearch, setIsAutoSearch] = useState(false);
 
   useEffect(() => {
-    const params = qs.parse(location.search, { ignoreQueryPrefix: true })
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
     if (params.search) {
-      setSearchStr(params.search)
+      if(+params.auto){
+        setIsAutoSearch(true);
+      }
+      setSearchStr(params.search);
     } else {
-      setSearchStr(null)
-      setLoading(false)
+      setSearchStr(null);
+      setLoading(false);
     }
   }, [])
 
   useEffect(() => {
-    if (!searchStr) return
+    if (!searchStr) return;
     setLoading(false);
     // handle search string here, then set loading to false when ready
     
-  }, [searchStr])
+    if(isAutoSearch){
+      setUrlAutoSearchParameterToDefault();
+      setIsAutoSearch(false);
+      searchNft();
+    }
+  }, [searchStr]);
+
+   //reference: https://stackoverflow.com/a/22753103/4490058
+   function setUrlAutoSearchParameterToDefault(){
+    window.history.pushState(
+      "object or string", 
+      "Title", 
+      "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1, window.location.href.lastIndexOf('&'))+ "&auto=0");
+  }
 
   function onSearch(e){
     e.preventDefault();
@@ -51,7 +68,9 @@ export default function SearchPage() {
   function onEnter(e){
       if (!e) e = window.event;
       var keyCode = e.code || e.key;
-      if (keyCode == 'Enter'){
+      
+      if (keyCode == 'Enter' || 
+          keyCode == 'NumpadEnter'){
         // Enter pressed
         onSearch(e);
       }
