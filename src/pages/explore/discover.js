@@ -5,6 +5,7 @@ import SectionHeader from '../../components/section-header'
 import axios from "axios";
 import Web3 from "web3";
 import AppUrls from '../../AppSettings';
+import Spinner from '../../components/loading-spinner/spinner';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -27,13 +28,27 @@ export default function Discover() {
   const options = [
     { id: 'recent', 'title': 'Recently added' },
     { id: 'popular', 'title': 'Popular' },
-  ]
+  ];
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   
+    init();
+  }, []);
+
+  useEffect(() => {
+    GetListedNfts();
+  }, [activeDropdown]);
+
+  function init(){
+    GetListedNfts();
+  }
+
+  function GetListedNfts(){
+    setLoading(true);
+
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&sorting=${activeDropdown}`
     })
     .then(function (response) {
 
@@ -58,9 +73,12 @@ export default function Discover() {
     })
     .catch(function (response) {
       console.log(response);
+    })
+    .finally(function(){
+      setLoading(false);
     });
-  }, []);
-
+  }
+  
   return (  
     <div className="">
       <SectionHeader title="Discover">
@@ -90,7 +108,15 @@ export default function Discover() {
           </div>
         </div>
       </SectionHeader>
-      <CardList items={listedItems} />
+      {loading ? (
+          <div className="flex items-center justify-center">
+            <h1 className="text-2xl font-bold text-center capitalize">Loading</h1>
+            <Spinner className="h-6 w-6 ml-2" />
+          </div>
+        ) : (
+            <CardList items={listedItems} />
+        )
+      }
     </div>
   )
 }
