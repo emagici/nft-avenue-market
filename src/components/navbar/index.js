@@ -20,10 +20,53 @@ import SignInRegisterModal from "./SignInRegisterModal";
 
 import { UserContext } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import { useAsync } from 'react-async-hook';
+import useConstant from 'use-constant';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+
+//reference: https://stackoverflow.com/a/28046731
+// Generic reusable hook
+const useDebouncedSearch = (searchFunction) => {
+
+  // Handle the input text state
+  const [inputText, setInputText] = useState('');
+
+  // Debounce the original search async function
+  const debouncedSearchFunction = useConstant(() =>
+    AwesomeDebouncePromise(searchFunction, 1000)
+  );
+
+  // The async callback is run each time the text changes,
+  // but as the search function is debounced, it does not
+  // fire a new request on each keystroke
+  const searchResults = useAsync(
+    async () => {
+      if (inputText.length === 0) {
+        return [];
+      } else {
+        return debouncedSearchFunction(inputText);
+      }
+    },
+    [debouncedSearchFunction, inputText]
+  );
+
+  // Return everything needed for the hook consumer
+  return {
+    inputText,
+    setInputText,
+    searchResults,
+  };
+};
+
+function goToSearchPage(text){
+  document.location.href = `/search?search=${text}&auto=1`;
+}
+
+const useSearch = () => useDebouncedSearch(text => goToSearchPage(text));
 
 export default function Navbar() {
   const userContext = useContext(UserContext);
@@ -40,6 +83,7 @@ export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [walletSigned, setWalletSigned] = useState(false);
   const [errorStr, setErrorStr] = useState(null);
+  const { inputText, setInputText, searchResults } = useSearch();
 
   useEffect(() => {
     // if (status !== 'connected') {
@@ -224,6 +268,8 @@ export default function Navbar() {
                       className="block w-full pl-10 pr-3 py-2 border-gray-300 rounded-full leading-5 bg-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       placeholder="Search"
                       type="search"
+                      onChange={(e) => setInputText(e.target.value)}
+                      value={inputText}
                     />
                   </div>
                 </div>
