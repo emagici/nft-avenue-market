@@ -137,7 +137,7 @@ export default function UserSettings() {
                     className="relative cursor-pointer focus-within:outline-none"
                   >
                     <span className="ml-5 py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
-                    <input onChange={onProfileImageChange} id="file-upload" name="file-upload" accept="image/*" type="file" className="sr-only" />
+                    <input id="file-input-profile" onChange={onProfileImageChange} id="file-upload" name="file-upload" accept="image/*" type="file" className="sr-only" />
                   </label>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function UserSettings() {
                   className="relative cursor-pointer focus-within:outline-none"
                 >
                   <span className="py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
-                  <input onChange={onCoverImageChange} id="coverfile-upload" name="coverfile-upload" type="file" accept="image/*" className="sr-only" />
+                  <input id="file-input-banner" onChange={onCoverImageChange} id="coverfile-upload" name="coverfile-upload" type="file" accept="image/*" className="sr-only" />
                 </label>
               </div>
             </div>
