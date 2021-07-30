@@ -83,7 +83,8 @@ export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [walletSigned, setWalletSigned] = useState(false);
   const [errorStr, setErrorStr] = useState(null);
-  const { inputText, setInputText, searchResults } = useSearch();
+  //const { inputText, setInputText, searchResults } = useSearch();
+  const [inputText, setInputText] = useState(null);
 
   useEffect(() => {
     // if (status !== 'connected') {
@@ -160,6 +161,18 @@ export default function Navbar() {
     provider.on("disconnect", (error) => {
       document.location.href = "/";
     });
+  }
+
+  //reference: https://stackoverflow.com/a/11365682/4490058
+  function onEnter(e){
+    if (!e) e = window.event;
+    var keyCode = e.code || e.key;
+    
+    if (keyCode == 'Enter' || 
+        keyCode == 'NumpadEnter'){
+      // Enter pressed
+      goToSearchPage(e.target.value);
+    }
   }
 
   // useEffect(() => {
@@ -270,6 +283,7 @@ export default function Navbar() {
                       type="search"
                       onChange={(e) => setInputText(e.target.value)}
                       value={inputText}
+                      onKeyPress={(e) => onEnter(e)}
                     />
                   </div>
                 </div>
