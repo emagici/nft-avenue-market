@@ -97,8 +97,8 @@ export default function Navbar() {
   };
 
   const signOut = () => {
-    document.location.href = "/";
     userContext.dispatch(initialState);
+    document.location.href = "/";
   };
 
   useEffect(() => {
