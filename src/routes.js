@@ -32,7 +32,7 @@ export default [
 	},
 	{
 	  path: "/user",
-		title: "My Items",
+		title: "My Profile",
 	  component: User,
 		exact: true,
 		nav: true
