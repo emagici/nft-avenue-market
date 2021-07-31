@@ -13,13 +13,11 @@ import Routes from "../../routes";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Register from "./register";
-import MetamaskSignIn from "./MetamaskSignIn";
-import UsernameSignIn from "./UsernameSignIn";
 import SignInRegisterModal from "./SignInRegisterModal";
 
 import { UserContext } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
+import UserMenu from "./user-menu";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -28,9 +26,6 @@ function classNames(...classes) {
 export default function Navbar() {
   const userContext = useContext(UserContext);
   const web3Context = useContext(Web3Context);
-  const [registerModalOpen, setRegisterModalOpen] = useState(false);
-  const [metamaskSignInModalOpen, setMetamaskSignInModalOpen] = useState(false);
-  const [usernameModalOpen, setUsernameModalOpen] = useState(false);
   const [signInModalOpen, setSignInModalOpen] = useState(false);
 
   const location = useLocation();
@@ -304,67 +299,18 @@ export default function Navbar() {
                 ) : null}
 
                 <div className="flex-shrink-0">
-                  {/* {!loggedIn || !walletSigned ? (
-                    <button
-                      type="button"
-                      onClick={() => setRegisterModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Register</span>
-                    </button>
-                  ) : null}
-                  <Register
-                    registerModalOpen={registerModalOpen}
-                    setRegisterModalOpen={(v) => setRegisterModalOpen(v)}
-                  /> */}
-
-                  {/* {!loggedIn || !walletSigned ? (
-                    <button
-                      type="button"
-                      onClick={() => setMetamaskSignInModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Sign in with Metamask</span>
-                    </button>
-                  ) : null}
-                  <MetamaskSignIn
-                    metamaskSignInModalOpen={metamaskSignInModalOpen}
-                    setMetamaskSignInModalOpen={(v) =>
-                      setMetamaskSignInModalOpen(v)
-                    }
-                  /> */}
-
-                  {/* {!loggedIn || !walletSigned ? (
-                    <button
-                      type="button"
-                      onClick={() => setUsernameModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Sign in with Username & Password</span>
-                    </button>
-                  ) : null}
-                  <UsernameSignIn
-                    usernameModalOpen={usernameModalOpen}
-                    setUsernameModalOpen={(v) =>
-                      setUsernameModalOpen(v)
-                    }
-                  /> */}
-
                   <Fragment>
-                    <button
-                      type="button"
-                      onClick={() => setSignInModalOpen(true)}
-                      className={classNames(
-                        loggedIn
-                          ? "bg-red-500 hover:bg-red-600"
-                          : "bg-indigo-600 hover:bg-indigo-700",
-                        "relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
-                      )}
-                    >
-                      <span>
-                        {loggedIn ? "Sign Out" : "Sign In / Register"}
-                      </span>
-                    </button>
+                    {loggedIn ? (
+                      <UserMenu />
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSignInModalOpen(true)}
+                        className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        <span>Sign In / Register</span>
+                      </button>
+                    )}
                     <SignInRegisterModal
                       modalOpen={signInModalOpen}
                       setModalOpen={(v) => setSignInModalOpen(v)}

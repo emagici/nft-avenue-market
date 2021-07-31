@@ -7,6 +7,7 @@ import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
 import TopSellers from './top-sellers'
 import Following from './following'
+import FeaturedSlider from './featured-slider'
 
 
 export default function Explore() {
@@ -19,6 +20,7 @@ export default function Explore() {
         />
         {/* <VideoBanner /> */}
       </div>
+      <FeaturedSlider/>
       <Discover/>
       {/* <DiscoverSlider/>
       <TopSellers/>

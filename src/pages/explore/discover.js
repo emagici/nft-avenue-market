@@ -10,8 +10,8 @@ function classNames(...classes) {
 }
 
 export default function Discover() {
-  const [activeTab, setActiveTab] = useState('All Items');
-  const tabs = ['All Items', 'Featured', 'Art', 'Game'];
+  const [activeTab, setActiveTab] = useState('Featured');
+  const tabs = ['Featured', 'Music', 'Games', 'Art', 'Utility'];
   
   const [activeDropdown, setActiveDropdown] = useState('recent');
   const [listedItems, setListedItems] = useState([]);
