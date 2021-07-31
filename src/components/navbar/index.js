@@ -18,7 +18,7 @@ import MetamaskSignIn from "./MetamaskSignIn";
 import UsernameSignIn from "./UsernameSignIn";
 import SignInRegisterModal from "./SignInRegisterModal";
 
-import { UserContext } from "../../context/user-context";
+import { UserContext, initialState } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { useAsync } from 'react-async-hook';
@@ -97,6 +97,7 @@ export default function Navbar() {
   };
 
   const signOut = () => {
+    userContext.dispatch(initialState);
     document.location.href = "/";
   };
 
