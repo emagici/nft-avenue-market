@@ -233,6 +233,21 @@ export default function Profile() {
 
       getOwnNfts(userContext.state.sign, myadd)
       setLoggedIn(true);
+    }else if (userContext.state.accessToken){
+
+      //TODO: [Kugan] - whats the flow to get nfts if logged in via email
+      if(userContext.state.accessToken){
+        // const accounts = await web3.eth.getAccounts();
+        // var myadd = accounts[0];
+        
+        // if(userContext.state.name)
+        //   setUserProfile(userContext.state);
+        // else
+          loadProfile(userContext.state.accessToken);
+  
+        // getOwnNfts(userContext.state.sign, myadd);
+        setLoggedIn(true);
+      }
     }
   }, [web3, userContext.state.accessToken]);
 
