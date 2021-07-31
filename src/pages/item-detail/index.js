@@ -134,7 +134,7 @@ export default function ItemDetail(props) {
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
-            payTokenName: await getPayTokenFromListing(item.nft.nft, item.nft.tokenId, item.nft.owner)
+            payToken: await getPayTokenFromListing(item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
         )));
           
@@ -149,7 +149,7 @@ export default function ItemDetail(props) {
             quantity: item.quantity,
             creatorUsername: item.creatorUsername,
             deadline: item.deadline,
-            offerTokenName: getPayTokenNameByAddress(item.payToken)
+            offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
           }
         ))
 
@@ -180,12 +180,15 @@ export default function ItemDetail(props) {
     var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
     const listingDetails = await contract.methods.listings(chkAddress, chkTokenId, chkOwnerAdd).call();
 
-    return getPayTokenNameByAddress(listingDetails.payToken);
+    console.log(listingDetails)
+
+    return getPayTokenDetailByAddress(listingDetails.payToken);
   }
 
-  const getPayTokenNameByAddress = (tokenAddress) =>{
+  const getPayTokenDetailByAddress = (tokenAddress) =>{
+    console.log(tokenAddress)
     var tokenDetail = tokenTypes.find(x => x.tokenAddress.toLowerCase() === tokenAddress.toLowerCase());
-    return tokenDetail.name;
+    return { payTokenName: tokenDetail.name, payTokenAddress:tokenAddress };
   }
 
   const listItem = async () => {
@@ -249,7 +252,7 @@ export default function ItemDetail(props) {
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
 
-    if(currentAllowance < totalAmountToSend){
+    if(Number(currentAllowance) < Number(totalAmountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAmountToSend)
         .send({
           from: myAdd
@@ -283,13 +286,35 @@ export default function ItemDetail(props) {
   };
 
   const buyItem = async (obj) => {
+    console.log(obj)
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const totalPrice = obj.pricePerItem * obj.quantity;
+    const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
+
+    if(Number(currentAllowance) < Number(amountToSend)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
+        .send({
+          from: myAdd
+        })
+        .then( async function (result) {
+            buyItemConfirm(obj);
+        })
+        .catch(error => {
+        });
+    }
+    else
+      buyItemConfirm(obj);
+  };
+
+  const buyItemConfirm = async (obj) => {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     
     await marketplaceContract.methods
-      .buyItem(nftAddress, tokenid, nftOwnerAdd)
-      .send({ from: myAdd, value: amountToSend });
+      .buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
+      .send({ from: myAdd });
   };
 
   useEffect(async () => {
@@ -493,7 +518,7 @@ export default function ItemDetail(props) {
                             <tbody className="bg-white divide-y divide-gray-200">
                               {listings.map((item) => (
                                 <tr key={item.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payTokenName}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
