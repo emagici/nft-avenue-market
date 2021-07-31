@@ -1,4 +1,8 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useReducer, useEffect } from 'react';
+
+//react local storage
+//reference: https://stackoverflow.com/a/64547542/4490058
+const storageKey = "fomo-local-storage";
 
 const initialState = {
   bannerPictureUrl: null,
@@ -46,8 +50,16 @@ let reducer = (state, action) => {
 const UserContext = createContext(initialState);
 
 function UserProvider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    reducer, 
+    initialState, 
+    (initial) => JSON.parse(localStorage.getItem(storageKey)) || initial
+  );
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }, [state]);
 
   return <UserContext.Provider value={{ state, dispatch }}>{props.children}</UserContext.Provider>;
 }
-export { UserContext, UserProvider };
+export { UserContext, UserProvider, initialState };
