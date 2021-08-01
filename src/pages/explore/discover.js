@@ -4,8 +4,12 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import axios from "axios";
 import Web3 from "web3";
+import { Web3Context } from '../../context/web3-context'
 import AppUrls from '../../AppSettings';
 import Spinner from '../../components/loading-spinner/spinner';
+import {
+  getPayTokenFromListing, getPayTokenDetailByAddress
+} from "../../utilities/utils";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -19,8 +23,9 @@ const appUrls = {
 
 
 export default function Discover() {
-  const [activeTab, setActiveTab] = useState('All Items');
-  const tabs = ['All Items', 'Featured', 'Art', 'Game'];
+  const [web3, setWeb3] = useState();
+  const [activeTab, setActiveTab] = useState('Featured');
+  const tabs = ['Featured', 'Music', 'Games', 'Art', 'Utility'];
   
   const [filterText, setFilerText] = useState('');
   const [activeDropdown, setActiveDropdown] = useState('recent');
@@ -30,18 +35,17 @@ export default function Discover() {
     { id: 'popular', 'title': 'Popular' },
   ];
   const [loading, setLoading] = useState(true);
+  const web3Context = useContext(Web3Context)
 
   useEffect(() => {
-    init();
-  }, []);
+    setWeb3(web3Context.state.web3Data);
+  }, [web3Context.state.web3Data]);
 
   useEffect(() => {
+    if (!web3) return;
+    
     GetListedNfts();
-  }, [activeDropdown]);
-
-  function init(){
-    GetListedNfts();
-  }
+  }, [web3, activeDropdown]);
 
   function GetListedNfts(){
     setLoading(true);
@@ -50,13 +54,13 @@ export default function Discover() {
       method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&sorting=${activeDropdown}`
     })
-    .then(function (response) {
+    .then(async function (response) {
 
       console.log(response.data.result)
 
       const allItems = response.data.result;
 
-      var items = allItems.map((item) => (
+      var items = await Promise.all(allItems.map(async (item) => (
          {
           Listed: true,
           TokenId: item.tokenId,
@@ -64,10 +68,10 @@ export default function Discover() {
           TokenName:  item.tokenName,
           Image: item.imageUrl,
           Video: item.videoUrl,
-          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") : "",
-          price: item.latestOffer ? Web3.utils.fromWei(item.price.toString(), "ether") + " BNB": "",
+          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken).payTokenName : "",
+          price: Web3.utils.fromWei(item.price.toString(), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress)).payTokenName,
         }
-      ))
+      )))
 
       setListedItems(items);
     })

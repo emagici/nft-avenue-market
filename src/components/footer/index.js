@@ -8,7 +8,7 @@ const navigation = {
   pages: [
     { name: 'Explore', href: '/explore' },
     { name: 'Featured', href: '/featured' },
-    { name: 'My Items', href: '/user' },
+    { name: 'My Profile', href: '/user' },
     { name: 'FAQ', href: '/faq' },
   ],
   contactus: [

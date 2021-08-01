@@ -8,6 +8,7 @@ import User from './pages/user'
 import UserSettings from './pages/user/settings';
 import FeaturedDrop from './pages/featured-drop';
 import SearchPage from './pages/search';
+import TransferItem from './pages/transfer-item';
 
 export default [
 	{
@@ -32,7 +33,7 @@ export default [
 	},
 	{
 	  path: "/user",
-		title: "My Items",
+		title: "My Profile",
 	  component: User,
 		exact: true,
 		nav: true
@@ -47,6 +48,12 @@ export default [
 	  path: "/item-detail",
 		title: "Item Detail",
 	  component: ItemDetail,
+		exact: true,
+	},
+	{
+	  path: "/transfer-item",
+		title: "Transfer Item",
+	  component: TransferItem,
 		exact: true,
 	},
 	{

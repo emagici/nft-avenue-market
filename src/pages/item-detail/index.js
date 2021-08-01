@@ -19,19 +19,17 @@ import {
 import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
+import {
+  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
+} from "../../utilities/utils";
 
 import AppUrls from '../../AppSettings';
 
 const tabs = [
   { name: 'Info', href: '#', current: true },
   // { name: 'Creator', href: '#', current: false },
-  { name: 'History', href: '#', current: true },
-];
-
-const tokenTypes = [
-  { name: 'Fomo', tokenAddress: "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" },
-  { name: 'BNB', tokenAddress: "abc" },
-  { name: 'BUSD', tokenAddress: "123" },
+  { name: 'History', href: '#', current: false },
+  { name: 'Transfer', href: '#', current: false },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
@@ -71,7 +69,7 @@ export default function ItemDetail(props) {
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [ListingToken, setListingToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
+  const [ListingToken, setListingToken] = useState(fomoTokenAddress);
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
@@ -79,7 +77,7 @@ export default function ItemDetail(props) {
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
-  const [offerToken, setOfferToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
+  const [offerToken, setOfferToken] = useState(fomoTokenAddress);
 
   const [listings, setlistings] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -134,7 +132,7 @@ export default function ItemDetail(props) {
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
-            payToken: await getPayTokenFromListing(item.nft.nft, item.nft.tokenId, item.nft.owner)
+            payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
         )));
           
@@ -175,21 +173,6 @@ export default function ItemDetail(props) {
         });
     }
   };
-
-  const getPayTokenFromListing = async (chkAddress, chkTokenId, chkOwnerAdd) => {
-    var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
-    const listingDetails = await contract.methods.listings(chkAddress, chkTokenId, chkOwnerAdd).call();
-
-    console.log(listingDetails)
-
-    return getPayTokenDetailByAddress(listingDetails.payToken);
-  }
-
-  const getPayTokenDetailByAddress = (tokenAddress) =>{
-    console.log(tokenAddress)
-    var tokenDetail = tokenTypes.find(x => x.tokenAddress.toLowerCase() === tokenAddress.toLowerCase());
-    return { payTokenName: tokenDetail.name, payTokenAddress:tokenAddress };
-  }
 
   const listItem = async () => {
     if (!web3) return;
@@ -452,8 +435,12 @@ export default function ItemDetail(props) {
                 </div>
             ) : null}
 
-            <p className="mb-2 text-center md:text-left font-bold">Description</p>
-            <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+            {nftDescription ? (
+              <div>
+                <p className="mb-2 text-center md:text-left font-bold">Description</p>
+                <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+              </div>
+            ) : null}
 
 
             {/* DYNAMICALLY SHOW EACH RELEVANT LISTING SECTION AS REQUIRED - E.G, HIDE BUY NOW IF BIDS ONLY SELECTED */}
@@ -907,6 +894,18 @@ export default function ItemDetail(props) {
                     <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" /> */}
                   </ul>
                 </div>
+              </div>
+            ) : null}
+
+            {activeTab === 'Transfer' ? (
+              <div>
+                <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
+                <Link
+                  to="/transfer-item?id="
+                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+                >
+                  Transfer
+                </Link>
               </div>
             ) : null}
           </div>

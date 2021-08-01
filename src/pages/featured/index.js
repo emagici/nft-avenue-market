@@ -6,7 +6,7 @@ import FegImg from '../../assets/img/feg/feg-bg.png'
 export default function Featured() {
   return (
     <div className="p-6">
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
+      <div className="max-w-screen-2xl mx-auto">
         <PromoBanner
           title="FEG Trading Card Game"
           subtitle="First ever Play-to-Earn NFT Based Digital Game"
