@@ -20,11 +20,11 @@ export default function Explore() {
         {/* <VideoBanner /> */}
       </div>
       <Discover/>
-      {/* <DiscoverSlider/>
+      {/* <DiscoverSlider/> */}
       <TopSellers/>
-      <FeaturedArtists/>
-      <Following/>
-      <Sellers/> */}
+      {/* <FeaturedArtists/>
+      <Following/> */}
+      <Sellers/>
     </div>
   )
 }

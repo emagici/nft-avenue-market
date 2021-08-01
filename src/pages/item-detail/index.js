@@ -19,6 +19,9 @@ import {
 import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
+import {
+  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
+} from "../../utilities/utils";
 
 import AppUrls from '../../AppSettings';
 
@@ -27,12 +30,6 @@ const tabs = [
   // { name: 'Creator', href: '#', current: false },
   { name: 'History', href: '#', current: false },
   { name: 'Transfer', href: '#', current: false },
-];
-
-const tokenTypes = [
-  { name: 'Fomo', tokenAddress: "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" },
-  { name: 'BNB', tokenAddress: "abc" },
-  { name: 'BUSD', tokenAddress: "123" },
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
@@ -72,7 +69,7 @@ export default function ItemDetail(props) {
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [ListingToken, setListingToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
+  const [ListingToken, setListingToken] = useState(fomoTokenAddress);
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
@@ -80,7 +77,7 @@ export default function ItemDetail(props) {
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
-  const [offerToken, setOfferToken] = useState("0xbbb9bda313708f7505347ae3b60232ed4a41e0b1");
+  const [offerToken, setOfferToken] = useState(fomoTokenAddress);
 
   const [listings, setlistings] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -135,7 +132,7 @@ export default function ItemDetail(props) {
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
-            payToken: await getPayTokenFromListing(item.nft.nft, item.nft.tokenId, item.nft.owner)
+            payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
         )));
           
@@ -176,21 +173,6 @@ export default function ItemDetail(props) {
         });
     }
   };
-
-  const getPayTokenFromListing = async (chkAddress, chkTokenId, chkOwnerAdd) => {
-    var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
-    const listingDetails = await contract.methods.listings(chkAddress, chkTokenId, chkOwnerAdd).call();
-
-    console.log(listingDetails)
-
-    return getPayTokenDetailByAddress(listingDetails.payToken);
-  }
-
-  const getPayTokenDetailByAddress = (tokenAddress) =>{
-    console.log(tokenAddress)
-    var tokenDetail = tokenTypes.find(x => x.tokenAddress.toLowerCase() === tokenAddress.toLowerCase());
-    return { payTokenName: tokenDetail.name, payTokenAddress:tokenAddress };
-  }
 
   const listItem = async () => {
     if (!web3) return;
