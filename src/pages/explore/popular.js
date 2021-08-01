@@ -1,59 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState, useContext } from "react";
 import Dropdown from '../../components/dropdown'
+import axios from "axios";
+import AppUrls from '../../AppSettings';
 import TitleDropdown from '../../components/dropdown/title-dropdown'
 import SectionHeader from '../../components/section-header'
 import CardList from '../../components/cards/card-list'
+import Web3 from "web3";
+import { Web3Context } from '../../context/web3-context'
+import {
+  getPayTokenFromListing, getPayTokenDetailByAddress
+} from "../../utilities/utils";
 
-import NFT1 from '../../assets/img/nft/nft1.png'
-import NFT2 from '../../assets/img/nft/nft2.jpeg'
-import NFT3 from '../../assets/img/nft/nft3.jpeg'
-import NFT4 from '../../assets/img/nft/nft4.png'
-import NFT5 from '../../assets/img/nft/nft5.png'
-
-const files = [
-  {
-    id: '1',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT1,
-  },
-  {
-    id: '2',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT2,
-  },
-  {
-    id: '3',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT3,
-  },
-  {
-    id: '4',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT4,
-  },
-  {
-    id: '5',
-    title: 'Amazing digital art',
-    available: '3 in stock',
-    price: '2.45 BNB',
-    highestbid: '0.5 BNB',
-    Image: NFT5,
-  },
-]
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient
+};
 
 export default function PopularSection() {
+  const [web3, setWeb3] = useState();
+  const [items, setItems] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState('auctions');
   const [activeFilterDropdown, setActiveFilterDropdown] = useState('today');
   const options = [
@@ -66,13 +32,50 @@ export default function PopularSection() {
     { id: 'week', 'title': 'This Week' },
     { id: 'month', 'title': 'This Month' },
   ]
+  const web3Context = useContext(Web3Context)
+
+  useEffect(async () => {
+    if (!web3) return;
+
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetHottestBids`
+    })
+    .then(async function (response) {
+      console.log(response.data.result)
+      var allItems = response.data.result;
+
+      var items = await Promise.all(allItems.map(async (item) => (
+        {
+         Listed: true,
+         TokenId: item.tokenId,
+         NftAddress: item.contractAddress,
+         TokenName:  item.tokenName,
+         Image: item.imageUrl,
+         Video: item.videoUrl,
+         highestbid: item.highestBid ? Web3.utils.fromWei(item.highestBid.toString(), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress).payTokenName : "",
+         price: item.buyNowPrice ? Web3.utils.fromWei(item.buyNowPrice.toString(), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress)).payTokenName : "",
+       }
+     )))
+
+     console.log(items)
+     setItems(items)
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }, [web3]);
+
+  useEffect(() => {
+    setWeb3(web3Context.state.web3Data);
+  }, [web3Context.state.web3Data]);
 
   return (
     <div className="py-10">
       <div className="max-w-screen-2xl mx-auto">
 
-        <SectionHeader title="Popular">
-          <div className="sm:flex sm:items-center sm:justify-between">
+        <SectionHeader title="Hottest Bids">
+          {/* <div className="sm:flex sm:items-center sm:justify-between">
             <div>
               <TitleDropdown
                 options={options}
@@ -89,10 +92,10 @@ export default function PopularSection() {
                 menuPosition='right'
               />
             </div>
-          </div>
+          </div> */}
         </SectionHeader>
 
-        <CardList items={files} />
+        <CardList items={items} />
         
       </div>
     </div>

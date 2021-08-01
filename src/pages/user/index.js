@@ -23,8 +23,6 @@ import { SharedContext } from '../../context/shared-context';
 
 import AppUrls from '../../AppSettings';
 
-
-
 const profile = {
   name: "CryptoChown",
   email: "ricardo.cooper@example.com",
