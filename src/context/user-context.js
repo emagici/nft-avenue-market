@@ -42,6 +42,19 @@ let reducer = (state, action) => {
         ownNfts: action.payload
       };
 
+    case 'RESET_ALL':
+      return {
+        bannerPictureUrl: null,
+        description: null,
+        facebookUrl: null,
+        instagramUrl: null,
+        name: null,
+        profilePictureUrl: null,
+        accessToken: null,
+        sign: null,
+        ownNfts: []
+      };
+
     default:
       return;
   }

@@ -12,7 +12,7 @@ export default function Featured() {
           subtitle="First ever Play-to-Earn NFT Based Digital Game"
           text="The highly anticipated FEG Trading Card Game is nearly upon us. FEG have teamed up with Fomo Lab to bring you the first of it's kind digital NFT trading card game. Get your NFP now to gain access to the drop, coming soon."
           image={FegImg}
-          link="https://fegnft.games"
+          link="/featured-drop?id=fegtcg"
         />
         <PromoBanner
           title="Mark Cavendish"
@@ -29,11 +29,11 @@ export default function Featured() {
           link="/featured-drop?id=pvlace"
         />
         <PromoBanner
-          title="Porsche 911 NFT Auction"
+          title="Miami Crypto"
           subtitle="Hand-painted by Rich B. Caliente & Signed by Rick Ross"
           text="The first of a series of forthcoming newly created luxury artwork as minted high-end art NFT’s, the NFT #RBC9ELEVEN Porsche will bring the first luxury art car on the market as a minted high-end NFT."
           image={"https://rennlist.com/wp-content/uploads/2021/05/Porsche-911-Carrera-Rich-B-Caliene-Rick-Ross-1-e1622224637548.jpg"}
-          link="/featured-drop?id=porsche911"
+          link="/featured-drop?id=miamicrypto"
         />
       </div>
     </div>

@@ -81,12 +81,6 @@ export default function Navbar() {
   //const { inputText, setInputText, searchResults } = useSearch();
   const [inputText, setInputText] = useState(null);
 
-  useEffect(() => {
-    // if (status !== 'connected') {
-    // connectWallet();
-    // }
-  }, []);
-
   // const walletSignIn = () => {
   //   connectWallet(() => setMetamaskSignInModalOpen(true));
   // };
@@ -97,11 +91,11 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    if (userContext.state.accessToken) setLoggedIn(true);
+    setLoggedIn(userContext.state.accessToken ? true : false)
   }, [userContext.state.accessToken]);
 
   useEffect(() => {
-    if (userContext.state.sign) setWalletSigned(true);
+    setWalletSigned(userContext.state.sign ? true : false);
   }, [userContext.state.sign]);
 
   async function connectWallet(callback) {

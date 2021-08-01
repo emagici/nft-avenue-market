@@ -1,25 +1,13 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
+import { Fragment, useContext } from 'react'
 import { Popover, Transition } from '@headlessui/react'
-import {
-  ChartBarIcon,
-  CursorClickIcon,
-  PhoneIcon,
-  PlayIcon,
-  RefreshIcon,
-  ShieldCheckIcon,
-  ViewGridIcon,
-  LogoutIcon
-} from '@heroicons/react/outline'
+import { LogoutIcon } from '@heroicons/react/outline'
+import { Web3Context } from '../../context/web3-context'
+import { UserContext } from '../../context/user-context'
 
 const menuItems = [
   { name: 'My Items', href: '/user' },
   { name: 'Edit Profile', href: '/settings' },
-]
-
-const callsToAction = [
-  { name: 'Sign Out', href: '#', icon: LogoutIcon },
-  // { name: 'Contact Sales', href: '#', icon: PhoneIcon },
 ]
 
 function classNames(...classes) {
@@ -27,6 +15,20 @@ function classNames(...classes) {
 }
 
 export default function Example() {
+  const web3Context = useContext(Web3Context)
+  const userContext = useContext(UserContext)
+
+  function handleSignOut() {
+    console.log('signing out')
+    web3Context.dispatch({
+      type: "RESET_ALL"
+    })
+    userContext.dispatch({
+      type: "RESET_ALL"
+    })
+  }
+
+
   return (
     <Popover className="sm:relative inline-flex">
       {({ open }) => (
@@ -64,9 +66,13 @@ export default function Example() {
                     />
                     <h2 className="font-bold sm:font-extrabold text-lg sm:text-lg">CryptoChown</h2>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-500">Balance</p>
+                  <div className="mb-3">
+                    <p className="text-sm font-bold text-gray-500">BNB Balance</p>
                     <p className="text-lg font-bold text-gray-800">5.86 BNB</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
+                    <p className="text-lg font-bold text-gray-800">8500 FOMO</p>
                   </div>
                 </div>
                 <div className="p-2 pt-1">
@@ -84,7 +90,7 @@ export default function Example() {
                   ))}
                   <a
                     href="javascript:void(0);"
-                    onClick={() => console.log('sign out')}
+                    onClick={() => handleSignOut()}
                     className="py-2 my-1 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
                   >
                     <div className="ml-4">
