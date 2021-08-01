@@ -19,8 +19,8 @@ const appUrls = {
 
 
 export default function Discover() {
-  const [activeTab, setActiveTab] = useState('All Items');
-  const tabs = ['All Items', 'Featured', 'Art', 'Game'];
+  const [activeTab, setActiveTab] = useState('Featured');
+  const tabs = ['Featured', 'Music', 'Games', 'Art', 'Utility'];
   
   const [filterText, setFilerText] = useState('');
   const [activeDropdown, setActiveDropdown] = useState('recent');
