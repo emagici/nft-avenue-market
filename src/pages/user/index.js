@@ -75,6 +75,7 @@ export default function Profile() {
     "Liked",
     "Following",
     "Followers",
+    "Activity",
   ];
 
   const [ratingModalOpen, setRatingModalOpen] = useState(false)
@@ -408,7 +409,7 @@ export default function Profile() {
                     activeTab === tab
                       ? "text-white bg-gray-900 hover:bg-gray-900"
                       : "text-gray-600 bg-white hover:bg-gray-100",
-                    "inline-flex items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                    "inline-flex items-center px-4 py-2 m-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
                   )}
                 >
                   {tab}
@@ -485,12 +486,6 @@ export default function Profile() {
               </div>
             ) : null}
 
-            {activeTab === "Following" ? (
-              <div className="">
-                <AvatarList />
-              </div>
-            ) : null}
-
             {activeTab === "Followers" ? (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No followers</h1>
@@ -505,9 +500,18 @@ export default function Profile() {
                 </Link>
               </div>
             ) : null}
+
+            {activeTab === "Activity" ? (
+              <div className="text-center">
+                <h1 className="font-bold text-2xl mb-2">No activity</h1>
+                <p className="font-medium text-gray-600 mb-5">
+                  Your site activity will display here
+                </p>
+              </div>
+            ) : null}
+
           </div>
         ) : null}
-
 
         <Modal
           title="Wallet seed words"
