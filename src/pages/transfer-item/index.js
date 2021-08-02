@@ -3,37 +3,77 @@ import { Link } from "react-router-dom";
 import qs from "qs";
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
-
+import axios from "axios";
+import AppUrls from '../../AppSettings';
+import {
+  GENERICNFT_ABI, GENERICNFT721_ABI
+} from "../../contracts/GenericNFT";
+import { useHistory } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient
+};
+
 export default function TransferItem(props) {
+  let history = useHistory();
   const [tokenid, setTokenId] = useState("");
   const [nftAddress, setNftAddress] = useState("");
   const [nftName, setNftName] = useState("");
   const [nftVideoSrc, setVideoNftSrc] = useState("");
   const [nftImageSrc, setImageNftSrc] = useState("");
   const [web3, setWeb3] = useState();
-  const [isItemListed, setIsItemListed] = useState(false);
+  const [myAdd, setMyadd] = useState();
 
-  const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
   const [qty, setQty] = useState(1);
   const [toAddress, setToAddress] = useState("");
 
+  const transfer = async () => {
+    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
+
+    await genericNftContract.methods
+      .safeTransferFrom(myAdd, toAddress, tokenid, qty, "0x00")
+      .send({ from: myAdd })
+       .then( async function (result) {
+          history.push('/user')
+        })
+        .catch(error => {
+        });
+  }
+
+  const getData = () => {
+    axios({
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
+    })
+      .then(function (response) {
+        console.log(response)
+        setImageNftSrc(response.data.result.imageUrl)
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  }
+
+  useEffect(async () => {
+    if (!web3) return;
+    const accounts = await web3.eth.getAccounts();
+    var myadd = accounts[0];
+    setMyadd(myadd);
+    getData();
+  }, [web3]);
 
   useEffect(async () => {
     setWeb3(web3Context.state.web3Data);
 
     const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
-
-    if(params.listed)
-      setIsItemListed(true)
-    else
-      setIsItemListed(false)
 
     if(params.tokenid)
       setTokenId(params.tokenid)
@@ -100,7 +140,7 @@ export default function TransferItem(props) {
               <div className="sm:border-t pt-2 sm:pt-5 text-right">
                 <button
                   type="button"
-                  onClick={() => console.log('confirm transfer')}
+                  onClick={() => transfer()}
                   className="inline-flex justify-center w-full sm:w-auto py-3 sm:py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none "
                 >
                   Confirm Transfer
