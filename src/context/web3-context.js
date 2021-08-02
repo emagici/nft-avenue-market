@@ -25,6 +25,12 @@ let reducer = (state, action) => {
         web3Data: action.payload
       };
 
+    case 'RESET_ALL':
+      return {
+        userConnected: false,
+        web3Data: null
+      };
+
     default:
       return;
   }
