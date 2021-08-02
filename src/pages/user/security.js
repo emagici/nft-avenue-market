@@ -18,6 +18,7 @@ export default function Security() {
     const [qrCodeSetupImageUrl, setQrCodeSetupImageUrl] = useState("");
     const [isGoogleAuthenticatorEnabled, setIsGoogleAuthenticatorEnabled] = useState(false);
     const [areSureModal, setAreSureModal] = useState(false);
+    const [reenableInfoModal, setReenableInfoModal] = useState(false);
     
     useEffect(() => {
         setAccessToken(userContext.state.accessToken);
@@ -63,7 +64,7 @@ export default function Security() {
         e.preventDefault();
         setAreSureModal(false);
         setIsToggled(!isToggled);
-        
+        setReenableInfoModal(true);
     }
 
     const handleToggle = () => {
@@ -312,6 +313,39 @@ export default function Security() {
                 onClick={() => setAreSureModal(false)}
                 >
                 Cancel
+                </button>
+            </div>
+        </Modal>
+
+        <Modal
+            title="Successfully disabled"
+            open={reenableInfoModal}
+            setOpen={(v) => setReenableInfoModal(v)}
+            >
+            <div>
+                <div className="mt-3 text-center sm:mt-5">
+                    <div className="mt-2">
+                        <p className="text-sm text-gray-500 mb-5">
+                        Take note: Re-enabling back google two factor authentication in future will reset any of your existing binding with your google authenticator app.
+                        You may need to scan the new QR code and setup again.
+                        </p>
+
+                        <p className="text-sm text-gray-500 mb-5">
+                        Learn more:  <a href="https://support.google.com/accounts/answer/1066447" 
+                                                       target="_blank" 
+                                                       rel="noopener noreferrer"
+                                                       className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Google Authenticator</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div className="mt-5 sm:mt-6 sm:grid sm:gap-3 sm:grid-flow-row-dense">
+                <button
+                type="button"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+                onClick={() => setReenableInfoModal(false)}
+                >
+                Ok
                 </button>
             </div>
         </Modal>
