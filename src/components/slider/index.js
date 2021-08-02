@@ -12,6 +12,7 @@ export default function SliderContainer(props) {
     autoplay: props.autoplay ? props.autoplay : false,
     pauseOnHover: props.pauseOnHover ? props.pauseOnHover : true,
     responsive: props.responsive ? props.responsive : null,
+    rows: 1
   };
 
   return (

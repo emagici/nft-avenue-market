@@ -77,7 +77,7 @@ export default function SectionHeader(props) {
   return (  
     <div>
       <div className="pb-5 mb-10 border-b border-gray-200">
-        <h3 className="text-2xl leading-6 font-bold text-gray-900 text-center md:text-left">{props.title}</h3>
+        <h1 className="block text-3xl text-center md:text-left leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">{props.title}</h1>
         {props.children ? (
           <div className="mt-5">
             {props.children}

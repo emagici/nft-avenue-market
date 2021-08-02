@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
+import SectionTitle from '../../components/section-title'
 
 const items = [
   {
@@ -77,7 +78,7 @@ export default function CavendishDrop() {
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4">About The Drop</h3>
+          <SectionTitle title="About The Drop" />
           <p className="mb-3 font-medium">The Avenue by FOMO Lab are proud to debut the Mark Cavendish Limited Edition, Tour de France 2021 NFT Series in collaboration with Futurproof.</p>
           <p className="mb-3 font-medium">The NFT Collection is a digital non-fungible token (NFT) that commemorates CAVs thirty historic Official Tour de France stage wins. It is launching with SIX limited edition NFT trading cards with different exclusive versions to celebrate the Mark Cavendish success & historic moments to date. Each card is a unique piece of memorabilia. Limited to just 30 & 100 editions of each card, each edition will be minted on the blockchain and the series will never be replicated.</p>
         </div>
@@ -88,7 +89,7 @@ export default function CavendishDrop() {
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-8">Find Out More</h3>
+          <SectionTitle title="Find Out More" />
           <p>To find out more about this drop you can <a className="font-bold text-indigo-700" href="https://thefomolab.medium.com/mark-cavendish-tour-de-france-series-nft-collection-faq-dccee086a4c4">read the article on Medium</a> now.</p>
         </div>
 

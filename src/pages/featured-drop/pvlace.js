@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from "react-router-dom"
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
+import SectionTitle from '../../components/section-title'
 
 import PvlaceImg from '../../assets/img/pvlace/pvlace-lg.jpeg'
 import CTLogo from '../../assets/img/logos/cointelegraph.png'
@@ -119,13 +120,13 @@ export default function PvlaceDrop() {
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-24">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4">About The Drop</h3>
+          <SectionTitle title="About The Drop" />
           <p className="mb-3 font-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nibh tellus molestie nunc non. Massa tincidunt dui ut ornare. Platea dictumst quisque sagittis purus. Lacus laoreet non curabitur gravida. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Tempus egestas sed sed risus pretium quam.</p>
           <p className="mb-3 font-medium">Dolor morbi non arcu risus quis varius quam. Volutpat est velit egestas dui. Enim neque volutpat ac tincidunt. Est pellentesque elit ullamcorper dignissim.</p>
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4">As Featured In</h3>
+          <SectionTitle title="As Featured In" />
           <img src={CTLogo} alt="forbes" className="h-14 mb-3 mx-auto mb-5" />
           <p><a className="font-bold text-indigo-700" href="https://cointelegraph.com/press-releases/fomo-lab-to-launch-for-the-culture-nft-collection-by-pvlace-and-gunboi" target="_blank">Read the article</a> now to find out more.</p>
         </div>

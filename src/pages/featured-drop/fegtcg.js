@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import ReactPlayer from 'react-player'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
+import SectionTitle from '../../components/section-title'
 
 import FegBg from '../../assets/img/feg/feg-bg.png'
 
@@ -38,7 +39,7 @@ export default function FegTcgDrop() {
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-24">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4">About The Drop</h3>
+          <SectionTitle title="About The Drop" />
           <p className="mb-3 font-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nibh tellus molestie nunc non. Massa tincidunt dui ut ornare. Platea dictumst quisque sagittis purus. Lacus laoreet non curabitur gravida. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Tempus egestas sed sed risus pretium quam.</p>
           <p className="mb-3 font-medium">Dolor morbi non arcu risus quis varius quam. Volutpat est velit egestas dui. Enim neque volutpat ac tincidunt. Est pellentesque elit ullamcorper dignissim.</p>
         </div>
@@ -49,7 +50,7 @@ export default function FegTcgDrop() {
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-8">Media</h3>
+          <SectionTitle title="Media" />
           <div className="flex item-center justify-center mb-8">
             <ReactPlayer url="https://youtu.be/CwrHrDz8Ufg" className="max-w-95 object-contain" />
           </div>
