@@ -127,7 +127,7 @@ export default function MiamiDrop() {
           </div>
         </div>
 
-        <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="Collaborators" />
           <div className="flex flex-wrap justify-center items-center">
             {collaborators.map(item => (
@@ -141,7 +141,7 @@ export default function MiamiDrop() {
         </div>
 
 
-        <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="About The Drop" />
           <p className="mb-3 font-bold">The Miami Crypto Experience was one of the most exclusive NFT/Crypto events in the 2021 Calendar!</p>
           <p className="mb-3 font-medium">With collaborations from Rick Ross, Rich B Caliente, Ali Spagnola, AAVE and many others the Miami Crypto EXP was truly a landmark event for blockchain and a sign of things to come for the crypto communities growth in Miami.</p>
@@ -150,7 +150,7 @@ export default function MiamiDrop() {
           <p className="mb-3 font-medium">For more information on the NFTs and the RBC 9 Eleven scroll down to see more content below.</p>
         </div>
 
-        <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="As Featured In" />
           <img src={ForbesLogo} alt="forbes" className="h-14 mb-3 mx-auto mb-5" />
           <p><a className="font-bold text-indigo-700" href="https://www.forbes.com/sites/andreabossi/2021/06/04/porsche-911-nft-made-by-rick-ross-caliente-startup-auctions-in-miami/" target="_blank">Read the article</a> now to find out more.</p>
@@ -175,7 +175,7 @@ export default function MiamiDrop() {
         </div>
 
         <div className="mb-20">
-          <SectionHeader title="In The Collection" />
+          <SectionHeader title="In The Collection" titleClasses="text-center" />
           <CardList items={items} />
         </div>
 
