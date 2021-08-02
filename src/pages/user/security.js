@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserContext } from '../../context/user-context';
 import AppUrls  from '../../AppSettings';
 import Modal from "../../components/modal";
+import Spinner from '../../components/loading-spinner/spinner';
 
 const appUrls = {
     fomoHost: AppUrls.fomoHost,
@@ -19,6 +20,7 @@ export default function Security() {
     const [isGoogleAuthenticatorEnabled, setIsGoogleAuthenticatorEnabled] = useState(false);
     const [areSureModal, setAreSureModal] = useState(false);
     const [reenableInfoModal, setReenableInfoModal] = useState(false);
+    const [isQRCodeLoading, setIsQRCodeLoading] = useState(false);
     
     useEffect(() => {
         setAccessToken(userContext.state.accessToken);
@@ -75,6 +77,15 @@ export default function Security() {
         }
     }
 
+    const onQrCodeLoad = () => {
+        console.log("qr code fully loaded");
+        setIsQRCodeLoading(false);
+    }
+
+    const getQrCodeSetupImageUrl = () => {
+        return qrCodeSetupImageUrl;
+    }
+
     const getCurrentUserProfileForEdit = () => {
         console.log(accessToken);
 
@@ -90,6 +101,9 @@ export default function Security() {
             if(response.data.result){
                 let userProfile = response.data.result;
                 setIsGoogleAuthenticatorEnabled(userProfile.isGoogleAuthenticatorEnabled);
+                if(!getQrCodeSetupImageUrl()){
+                    setIsQRCodeLoading(true);
+                }
                 setQrCodeSetupImageUrl(userProfile.qrCodeSetupImageUrl);
             }
         })
@@ -112,6 +126,9 @@ export default function Security() {
             console.log(response);
             if(response.data.result.qrCodeSetupImageUrl){
                 setIsGoogleAuthenticatorEnabled(true);
+                if(!getQrCodeSetupImageUrl()){
+                    setIsQRCodeLoading(true);
+                }
                 setQrCodeSetupImageUrl(response.data.result.qrCodeSetupImageUrl);
             }
         })
@@ -264,8 +281,15 @@ export default function Security() {
                                     <div className="sm:col-span-2">
                                         <div className="max-w-lg">
                                             <div className="mt-4 space-y-4">
+                                                {isQRCodeLoading && (
+                                                        <div className="flex items-center justify-center">
+                                                            <h1 className="text-2xl font-bold text-center capitalize">Generating QR code</h1>
+                                                            <Spinner className="h-6 w-6 ml-2" />
+                                                        </div>
+                                                )}
                                                 <div class="text-center">
-                                                    <img src={qrCodeSetupImageUrl} />
+                                                    <img src={qrCodeSetupImageUrl} 
+                                                         onLoad={onQrCodeLoad}/>
                                                 </div>
                                                 <div className="mt-4 space-y-4">
                                                     Not sure what this screen means? You may need to check this:  <a href="https://support.google.com/accounts/answer/1066447" 
