@@ -20,13 +20,18 @@ export default function Example() {
   const [userName, setUserName] = useState("User");
 
   function handleSignOut() {
-    console.log('signing out')
+    console.log('signing out');
     web3Context.dispatch({
       type: "RESET_ALL"
-    })
+    });
     userContext.dispatch({
       type: "RESET_ALL"
-    })
+    });
+    goToUserPage();
+  }
+
+  function goToUserPage(){
+    document.location.href = `/user`;
   }
 
   useEffect(() => {
