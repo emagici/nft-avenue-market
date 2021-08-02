@@ -88,7 +88,7 @@ export default function Security() {
         console.log(accessToken);
 
         axios({
-          method: "PUT",
+          method: "POST",
           url: `${appUrls.fomoHostApi}/api/services/app/Profile/UpdateGoogleAuthenticatorKey`,
           headers: {
             "Authorization": "Bearer " + accessToken + ""
