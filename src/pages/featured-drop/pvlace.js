@@ -7,6 +7,28 @@ import SectionTitle from '../../components/section-title'
 import PvlaceImg from '../../assets/img/pvlace/pvlace-lg.jpeg'
 import CTLogo from '../../assets/img/logos/cointelegraph.png'
 
+import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
+import PvlaceLogo from '../../assets/img/logos/pvlace-logo.jpeg'
+import GunboiLogo from '../../assets/img/logos/gunboi-logo.png'
+
+const collaborators = [
+  {
+    image: FomoLogo,
+    url: "https://fomolab.io",
+    name: "Fomo Lab"
+  },
+  {
+    image: PvlaceLogo,
+    url: "https://www.instagram.com/pvlace808mafia/?hl=en",
+    name: "Pvlace"
+  },
+  {
+    image: GunboiLogo,
+    url: "https://www.instagram.com/gunboi/?hl=en",
+    name: "Gunboi"
+  },
+]
+
 const items = [
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmVsR6hEmS6WSUqepvoH9bJQy1UuRA6ZNzhBUWrid3yavC",
@@ -116,6 +138,19 @@ export default function PvlaceDrop() {
           <div className="relative max-w-6xl mx-auto py-12 px-4 sm:py-28 text-center">
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-7xl">PVLACE 808 MAFIA x GUNBOI</h1>
             <p className="mt-1 text-lg sm:text-3xl font-medium sm:font-extrabold text-white">For The Culture NFT Drop</p>
+          </div>
+        </div>
+
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="Collaborators" />
+          <div className="flex flex-wrap justify-center items-center">
+            {collaborators.map(item => (
+              <div key={item.name} className="flex justify-center items-center p-5">
+                <a href={item.url} target="_blank">
+                  <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
+                </a>
+              </div>
+            ))}
           </div>
         </div>
 

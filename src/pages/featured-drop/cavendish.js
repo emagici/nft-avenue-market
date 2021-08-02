@@ -5,6 +5,34 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
 
+import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
+import BlakMadreLogo from '../../assets/img/logos/blkmadre-logo.jpeg'
+import FutureTechLogo from '../../assets/img/logos/futuretech-logo.png'
+import FutureProofLogo from '../../assets/img/logos/futurproof-logo.png'
+
+const collaborators = [
+  {
+    image: FomoLogo,
+    url: "https://fomolab.io",
+    name: "Fomo Lab"
+  },
+  {
+    image: FutureTechLogo,
+    url: "https://wearefuturetech.com/",
+    name: "Future Tech"
+  },
+  {
+    image: FutureProofLogo,
+    url: "https://www.futurproof.io/",
+    name: "Futur Proof"
+  },
+  {
+    image: BlakMadreLogo,
+    url: "https://blackmadre.com/",
+    name: "Black Madre"
+  },
+]
+
 const items = [
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmTb3E5tfmEyuSDsqY6WZfgbd23eVT6RTx3yRAe7eGE72Q",
@@ -74,6 +102,19 @@ export default function CavendishDrop() {
           <div className="relative max-w-6xl mx-auto py-12 px-4 sm:py-28 text-center">
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-7xl">Mark Cavendish</h1>
             <p className="mt-1 text-lg sm:text-3xl font-medium sm:font-extrabold text-white">Official Tour de France NFT Series</p>
+          </div>
+        </div>
+
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="Collaborators" />
+          <div className="flex flex-wrap justify-center items-center">
+            {collaborators.map(item => (
+              <div key={item.name} className="flex justify-center items-center p-5">
+                <a href={item.url} target="_blank">
+                  <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
+                </a>
+              </div>
+            ))}
           </div>
         </div>
 
