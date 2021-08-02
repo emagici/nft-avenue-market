@@ -142,7 +142,7 @@ export default function Profile() {
       userContext.dispatch({
         type: "UPDATE_DATA",
         payload: response.data.result
-      })
+    })
     })
     .catch(function (response) {
       console.log(response);
@@ -321,7 +321,7 @@ export default function Profile() {
               ) : null}
 
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {loggedIn ? (
+                {loggedIn && userProfile ? (
                   <div className="flex flex-col sm:block space-y-3 sm:space-y-0 sm:space-x-2">
                     <button
                       onClick={() => setRatingModalOpen(true)}
@@ -336,6 +336,8 @@ export default function Profile() {
                     <RatingModal
                       modalOpen={ratingModalOpen}
                       setModalOpen={(v) => setRatingModalOpen(v)}
+                      receiverUserId={userProfile.id}
+                      giverUserId={userProfile.id}
                     />
 
                     <button
