@@ -23,6 +23,19 @@ import {
   tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
 } from "../../utilities/utils";
 
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  TelegramShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  EmailIcon,
+  FacebookIcon,
+  TelegramIcon,
+  TwitterIcon,
+  WhatsappIcon
+} from "react-share";
+
 import AppUrls from '../../AppSettings';
 
 const tabs = [
@@ -359,6 +372,22 @@ export default function ItemDetail(props) {
                   />
                 )}
               </div>
+
+              <div className="py-5 flex justify-center items-center gap-2">
+                <FacebookShareButton url="https://theavenue.market" quote="I just listed an NFT on The Avenue!" hashtag="TheAvenue" className="hover:opacity-80 transition-opacity">
+                  <FacebookIcon size={32} round={true} />
+                </FacebookShareButton>
+                <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity">
+                  <TwitterIcon size={32} round={true} />
+                </TwitterShareButton>
+                <TelegramShareButton title="Check out The Avenue Marketplace!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity">
+                  <TelegramIcon size={32} round={true} />
+                </TelegramShareButton>
+                <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity">
+                  <WhatsappIcon size={32} round={true} />
+                </WhatsappShareButton>
+              </div>
+              
             </div>
           </div>
           <div className="col-span-2">
