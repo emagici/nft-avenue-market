@@ -13,7 +13,7 @@ export default function CardDefault(props) {
         <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
       
           {props.Video ? (
-            <video muted controls autoPlay src={props.Video} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
+            <video muted playsInline autoPlay loop src={props.Video} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
           ) : (
             <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
           )}
@@ -23,7 +23,7 @@ export default function CardDefault(props) {
               to={`/item-detail?listed=${props.Listed}&tokenid=${props.TokenId}&nftaddress=${props.NftAddress}`}
               className="absolute inset-0 focus:outline-none"
             >
-              <span className="sr-only">View details for {props.title}</span>
+              <span className="sr-only">View details for {props.TokenName}</span>
             </Link>
           ) : null}
         </div>
