@@ -34,7 +34,7 @@ export default function Discover() {
     { id: 'recent', 'title': 'Recently added' },
     { id: 'popular', 'title': 'Popular' },
   ];
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const web3Context = useContext(Web3Context)
 
   useEffect(() => {
