@@ -36,6 +36,11 @@ export default function MetamaskSignIn(props) {
           type: "SET_ACCESS_TOKEN",
           payload: response.data.result.accessToken,
         });
+
+        userContext.dispatch({
+          type: "SET_USER_ID",
+          payload: response.data.result.id,
+        });
       })
       .catch(function (response) {
         console.log(response);
