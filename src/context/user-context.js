@@ -2,7 +2,7 @@ import React, { createContext, useReducer, useEffect } from 'react';
 
 //react local storage
 //reference: https://stackoverflow.com/a/64547542/4490058
-const storageKey = "fomo-local-storage";
+const storageKey = "fomo-user-session-storage";
 
 const initialState = {
   bannerPictureUrl: null,
@@ -74,11 +74,11 @@ function UserProvider(props) {
   const [state, dispatch] = useReducer(
     reducer, 
     initialState, 
-    (initial) => JSON.parse(localStorage.getItem(storageKey)) || initial
+    (initial) => JSON.parse(sessionStorage.getItem(storageKey)) || initial
   );
 
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    sessionStorage.setItem(storageKey, JSON.stringify(state));
   }, [state]);
 
   return <UserContext.Provider value={{ state, dispatch }}>{props.children}</UserContext.Provider>;
