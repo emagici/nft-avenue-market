@@ -39,7 +39,7 @@ export default function MetamaskSignIn(props) {
 
         userContext.dispatch({
           type: "SET_USER_ID",
-          payload: response.data.result.id,
+          payload: response.data.result.userId,
         });
       })
       .catch(function (response) {
