@@ -24,8 +24,8 @@ const appUrls = {
 
 export default function Discover() {
   const [web3, setWeb3] = useState();
-  const [activeTab, setActiveTab] = useState('Featured');
-  const tabs = ['Featured', 'Music', 'Games', 'Art', 'Utility'];
+  const [activeTab, setActiveTab] = useState('All');
+  const tabs = ['All', 'Featured', 'Music', 'Games', 'Art', 'Utility'];
   
   const [filterText, setFilerText] = useState('');
   const [activeDropdown, setActiveDropdown] = useState('recent');
@@ -52,7 +52,7 @@ export default function Discover() {
 
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&categoryFilter=${activeTab}&sorting=${activeDropdown}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&categoryFilter=${normalizeCategoryFilter()}&sorting=${activeDropdown}`
     })
     .then(async function (response) {
 
@@ -81,6 +81,13 @@ export default function Discover() {
     .finally(function(){
       setLoading(false);
     });
+  }
+
+  function normalizeCategoryFilter() {
+    if(activeTab == 'All')
+      return '';
+
+    return activeTab;
   }
 
   return (  
