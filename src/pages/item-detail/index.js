@@ -349,13 +349,13 @@ export default function ItemDetail(props) {
                   <video
                     autoPlay muted
                     src={nftVideoSrc}
-                    className="object-cover pointer-events-none group-hover:opacity-90"
+                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />
                 ) : (
                   <img
                     src={nftImageSrc}
                     alt="nft"
-                    className="object-cover pointer-events-none group-hover:opacity-90"
+                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />
                 )}
               </div>

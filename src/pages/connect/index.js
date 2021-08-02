@@ -38,7 +38,7 @@ export default function Connect() {
             <button
               key={wallet.name}
               onClick={() => alert(`connect to ${wallet.name}`)}
-              className="block relative rounded-lg border border-gray-50 shadow-lg bg-white px-6 py-5 shadow-sm items-center flex space-x-3 hover:opacity-90 hover:border-gray-200"
+              className="block relative rounded-lg border border-gray-50 shadow-lg bg-white px-6 py-5 shadow-sm items-center flex space-x-3 hover:opacity-90 transition-opacity hover:border-gray-200"
             >
               <div className="flex-shrink-0">
                 <img className="h-20 w-20 rounded-full" src={wallet.imageUrl} alt="" />
