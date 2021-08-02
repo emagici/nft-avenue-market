@@ -1,4 +1,8 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useReducer, useEffect } from 'react';
+
+//react local storage
+//reference: https://stackoverflow.com/a/64547542/4490058
+const storageKey = "fomo-web3-session-storage";
 
 const initialState = {
   userConnected: false,
@@ -39,7 +43,15 @@ let reducer = (state, action) => {
 const Web3Context = createContext(initialState);
 
 function Web3Provider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    reducer,
+    initialState,
+    (initial) => JSON.parse(sessionStorage.getItem(storageKey)) || initial
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem(storageKey, JSON.stringify(state));
+  }, [state]);
 
   return <Web3Context.Provider value={{ state, dispatch }}>{props.children}</Web3Context.Provider>;
 }
