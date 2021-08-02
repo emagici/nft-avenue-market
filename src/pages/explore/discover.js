@@ -34,7 +34,7 @@ export default function Discover() {
     { id: 'recent', 'title': 'Recently added' },
     { id: 'popular', 'title': 'Popular' },
   ];
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const web3Context = useContext(Web3Context);
 
   useEffect(() => {
@@ -119,15 +119,16 @@ export default function Discover() {
           </div>
         </div>
       </SectionHeader>
-      {loading ? (
+      {/* {loading ? (
           <div className="flex items-center justify-center">
             <h1 className="text-2xl font-bold text-center capitalize">Loading</h1>
             <Spinner className="h-6 w-6 ml-2" />
           </div>
         ) : (
-            <CardList items={listedItems} />
+          <CardList items={listedItems} loading={loading} />
         )
-      }
+      } */}
+      <CardList items={listedItems} loading={loading} />
     </div>
   )
 }
