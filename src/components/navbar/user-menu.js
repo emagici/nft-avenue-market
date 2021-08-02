@@ -35,7 +35,11 @@ export default function Example() {
 
   function updateUserName(){
     if(userContext.state.name){
-      setUserName(userContext.state.name);
+      if (userContext.state.name.length > 15) {
+        setUserName(`${userContext.state.name.substr(0,5)}...${userContext.state.name.substr(-4,4)}`);
+      } else {
+        setUserName(userContext.state.name)
+      }
     }
   }
 
