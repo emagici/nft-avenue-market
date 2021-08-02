@@ -6,7 +6,7 @@ import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context'
 
 const menuItems = [
-  { name: 'My Items', href: '/user' },
+  { name: 'My Profile', href: '/user' },
   { name: 'Edit Profile', href: '/settings' },
 ]
 

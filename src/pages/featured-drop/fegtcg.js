@@ -3,8 +3,24 @@ import { Link, useLocation } from "react-router-dom"
 import ReactPlayer from 'react-player'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
+import SectionTitle from '../../components/section-title'
 
 import FegBg from '../../assets/img/feg/feg-bg.png'
+import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
+import FegLogo from '../../assets/img/logos/feg-logo.png'
+
+const collaborators = [
+  {
+    image: FomoLogo,
+    url: "https://fomolab.io",
+    name: "Fomo Lab"
+  },
+  {
+    image: FegLogo,
+    url: "https://fegtoken.com/",
+    name: "FEG"
+  }
+]
 
 const items = [
   {
@@ -23,7 +39,7 @@ export default function FegTcgDrop() {
     <div className="p-6">
       <div className="max-w-screen-2xl mx-auto">
 
-        <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20">
+        <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20 sm:mb-28">
           <div className="absolute inset-0">
             <img
               className="w-full h-full object-cover"
@@ -37,19 +53,32 @@ export default function FegTcgDrop() {
           </div>
         </div>
 
-        <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-24">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-4">About The Drop</h3>
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="Collaborators" />
+          <div className="flex flex-wrap justify-center items-center">
+            {collaborators.map(item => (
+              <div key={item.name} className="flex justify-center items-center p-5">
+                <a href={item.url} target="_blank">
+                  <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="About The Drop" />
           <p className="mb-3 font-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nibh tellus molestie nunc non. Massa tincidunt dui ut ornare. Platea dictumst quisque sagittis purus. Lacus laoreet non curabitur gravida. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Tempus egestas sed sed risus pretium quam.</p>
           <p className="mb-3 font-medium">Dolor morbi non arcu risus quis varius quam. Volutpat est velit egestas dui. Enim neque volutpat ac tincidunt. Est pellentesque elit ullamcorper dignissim.</p>
         </div>
 
-        <div className="mb-20">
+        <div className="mb-20 sm:mb-28">
           <SectionHeader title="In The Collection" />
           <CardList items={items} />
         </div>
 
-        <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">
-          <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-8">Media</h3>
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="Media" />
           <div className="flex item-center justify-center mb-8">
             <ReactPlayer url="https://youtu.be/CwrHrDz8Ufg" className="max-w-95 object-contain" />
           </div>
