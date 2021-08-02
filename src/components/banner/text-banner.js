@@ -10,7 +10,7 @@ export default function TextBanner(props) {
         "rounded-2xl my-5 shadow-md"
       )}
     >
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
         <div
           className={classNames(
             props.textColor ? props.textColor : "text-gray-900",

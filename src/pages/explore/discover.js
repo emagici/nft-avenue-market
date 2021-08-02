@@ -26,6 +26,14 @@ export default function Discover() {
   const [web3, setWeb3] = useState();
   const [activeTab, setActiveTab] = useState('All');
   const tabs = ['All', 'Featured', 'Music', 'Games', 'Art', 'Utility'];
+  const tabsDropdown = [
+    { title: 'All' },
+    { title: 'Featured' },
+    { title: 'Music' },
+    { title: 'Games' },
+    { title: 'Art' },
+    { title: 'Utility' }
+  ]
   
   const [filterText, setFilerText] = useState('');
   const [activeDropdown, setActiveDropdown] = useState('recent');
@@ -94,7 +102,7 @@ export default function Discover() {
     <div className="">
       <SectionHeader title="Discover">
         <div className="grid md:grid-cols-4">
-          <div className="flex md:col-span-3 items-center justify-center md:justify-start mt-3 md:mt-0">
+          <div className="flex md:col-span-3 items-center justify-center md:justify-start mb-3 md:mb-0">
             {tabs.map((tab, index) => (
               <button
                 key={index}
@@ -102,14 +110,23 @@ export default function Discover() {
                 onClick={() => setActiveTab(tab)}
                 className={classNames(
                   activeTab === tab ? 'text-white bg-gray-900 hover:bg-gray-900' : 'text-gray-600 bg-white hover:bg-gray-100',
-                  'inline-flex items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
+                  'hidden sm:inline-flex items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none'
                 )}
               >
                 {tab}
               </button>
             ))}
+
+            <div className="sm:hidden">
+              <Dropdown
+                options={tabsDropdown}
+                active={activeTab}
+                onChange={(v) => setActiveTab(v)}
+                menuPosition='left'
+              />
+            </div>
           </div>
-          <div className="text-center md:text-right order-first md:order-last">
+          <div className="text-center md:text-right">
             <Dropdown
               options={options}
               active={activeDropdown}
@@ -128,7 +145,7 @@ export default function Discover() {
           <CardList items={listedItems} loading={loading} />
         )
       } */}
-      <CardList items={listedItems} loading={loading} />
+      <CardList items={listedItems} loading={loading} emptyMsg="Please try another category" />
     </div>
   )
 }
