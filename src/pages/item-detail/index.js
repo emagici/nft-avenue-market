@@ -7,6 +7,8 @@ import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
+import PurchasedModal from "./purchased-modal";
+
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
@@ -86,6 +88,8 @@ export default function ItemDetail(props) {
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
+
+  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
 
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -374,16 +378,16 @@ export default function ItemDetail(props) {
               </div>
 
               <div className="py-5 flex justify-center items-center gap-2">
-                <FacebookShareButton url="https://theavenue.market" quote="I just listed an NFT on The Avenue!" hashtag="TheAvenue" className="hover:opacity-80 transition-opacity">
+                <FacebookShareButton url="https://theavenue.market" quote="I just listed an NFT on The Avenue!" hashtag="TheAvenue" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <FacebookIcon size={32} round={true} />
                 </FacebookShareButton>
-                <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity">
+                <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <TwitterIcon size={32} round={true} />
                 </TwitterShareButton>
-                <TelegramShareButton title="Check out The Avenue Marketplace!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity">
+                <TelegramShareButton title="Check out The Avenue Marketplace!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <TelegramIcon size={32} round={true} />
                 </TelegramShareButton>
-                <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity">
+                <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <WhatsappIcon size={32} round={true} />
                 </WhatsappShareButton>
               </div>
@@ -936,6 +940,16 @@ export default function ItemDetail(props) {
                 </Link>
               </div>
             ) : null}
+
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowPurchasedModal(true)}
+                className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+              >
+                <span>Purchased Modal</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1055,6 +1069,11 @@ export default function ItemDetail(props) {
           </div>
         </Modal>
 
+        <PurchasedModal
+          title="Purchase Complete!"
+          modalOpen={showPurchasedModal}
+          setModalOpen={(v) => setShowPurchasedModal(v)}
+        />
 
       </div>
     </div>
