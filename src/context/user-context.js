@@ -13,7 +13,8 @@ const initialState = {
   profilePictureUrl: null,
   accessToken: null,
   sign: null,
-  ownNfts: []
+  ownNfts: [],
+  id: null
 };
 
 let reducer = (state, action) => {
@@ -28,6 +29,12 @@ let reducer = (state, action) => {
       return {
         ...state,
         accessToken: action.payload
+      };
+
+    case 'SET_USER_ID':
+      return {
+        ...state,
+        id: action.payload
       };
 
     case 'SET_SIGN':
@@ -52,7 +59,8 @@ let reducer = (state, action) => {
         profilePictureUrl: null,
         accessToken: null,
         sign: null,
-        ownNfts: []
+        ownNfts: [],
+        id: null
       };
 
     default:
