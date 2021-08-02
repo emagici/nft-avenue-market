@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from "axios";
 import { UserContext } from '../../context/user-context';
 import AppUrls  from '../../AppSettings';
+import Modal from "../../components/modal";
 
 const appUrls = {
     fomoHost: AppUrls.fomoHost,
@@ -16,6 +17,7 @@ export default function Security() {
     const [isToggled, setIsToggled] = useState(false);
     const [qrCodeSetupImageUrl, setQrCodeSetupImageUrl] = useState("");
     const [isGoogleAuthenticatorEnabled, setIsGoogleAuthenticatorEnabled] = useState(false);
+    const [areSureModal, setAreSureModal] = useState(false);
     
     useEffect(() => {
         setAccessToken(userContext.state.accessToken);
@@ -57,8 +59,19 @@ export default function Security() {
          }
     }, [isGoogleAuthenticatorEnabled]);
 
-    const handleToggle = () => {
+    const onConfirm = (e) => {
+        e.preventDefault();
+        setAreSureModal(false);
         setIsToggled(!isToggled);
+        
+    }
+
+    const handleToggle = () => {
+        if(isToggled){
+            setAreSureModal(true);
+        }else{
+            setIsToggled(!isToggled);
+        }
     }
 
     const getCurrentUserProfileForEdit = () => {
@@ -173,6 +186,7 @@ export default function Security() {
     };
 
     return (  
+        <>
         <div className="divide-y divide-gray-200 pt-8 space-y-6 sm:pt-10 sm:space-y-5">
             <div>
                 <h3 className="text-lg leading-6 font-bold text-gray-900">Security</h3>
@@ -270,7 +284,39 @@ export default function Security() {
             }
         </div>
         
-        
+        <Modal
+            title="Are you sure?"
+            open={areSureModal}
+            setOpen={(v) => setAreSureModal(v)}
+            >
+            <div>
+                <div className="mt-3 text-center sm:mt-5">
+                    <div className="mt-2">
+                        <p className="text-sm text-gray-500 mb-5">
+                        You are about to disable google two factor authentication.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+                onClick={(e) => onConfirm(e)}
+                >
+                Confirm
+                </button>
+                <button
+                type="button"
+                className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm"
+                onClick={() => setAreSureModal(false)}
+                >
+                Cancel
+                </button>
+            </div>
+        </Modal>
+
+        </>
     );
     
     
