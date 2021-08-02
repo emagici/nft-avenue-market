@@ -9,6 +9,7 @@ import UserSettings from './pages/user/settings';
 import FeaturedDrop from './pages/featured-drop';
 import SearchPage from './pages/search';
 import TransferItem from './pages/transfer-item';
+import ProfileInfo from './pages/profile-info';
 
 export default [
 	{
@@ -79,5 +80,11 @@ export default [
 		title: "FAQ",
 	  component: FaqSection,
 		exact: true,
+	},
+	{
+		path: "/profile-info",
+		title: "Profile Info",
+		component: ProfileInfo,
+		exact: true
 	},
 ];
