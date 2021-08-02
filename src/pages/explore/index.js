@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import TextBanner from '../../components/banner/text-banner'
 import VideoBanner from '../../components/banner/video-banner'
-import Sellers from './popular'
+import HottestBidsSection from './hottest-bids'
 import Discover from './discover'
 import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
@@ -49,7 +49,7 @@ export default function Explore() {
       <TopSellers/>
       {/* <FeaturedArtists/>
       <Following/> */}
-      <Sellers/>
+      <HottestBidsSection/>
     </div>
   )
 }
