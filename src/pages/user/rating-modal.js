@@ -59,7 +59,7 @@ export default function RatingModal(props) {
     axios({
       method: "POST",
       url: `${appUrls.fomoHostApi}/api/services/app/UserRates/CreateOrEdit`,
-      data: JSON.stringify({ rate: rating, giverUserId: 1, receiverUserId: 1 }),
+      data: JSON.stringify({ rate: rating, giverUserId: props.giverUserId, receiverUserId: props.receiverUserId }),
       headers: {
         'Content-Type': 'application/json',
         "Authorization": "Bearer " + userContext.state.accessToken + ""
@@ -82,7 +82,7 @@ export default function RatingModal(props) {
   const getRate = () => {
     axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/UserRates/GetAverageRateForUser?userId=${1}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/UserRates/GetAverageRateForUser?userId=${props.receiverUserId}`,
       headers: {
         'Content-Type': 'application/json',
         "Authorization": "Bearer " + userContext.state.accessToken + ""
