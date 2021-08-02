@@ -11,6 +11,11 @@ const appUrls = {
     fomoClient: AppUrls.fomoClient
 };
 
+var isQRCodeFullyLoaded = false;
+function checkIfQRCodeFullyLoaded() {
+    return isQRCodeFullyLoaded;
+}
+
 export default function Security() {
     const [accessToken, setAccessToken] = useState();
     const userContext = useContext(UserContext);
@@ -80,10 +85,7 @@ export default function Security() {
     const onQrCodeLoad = () => {
         console.log("qr code fully loaded");
         setIsQRCodeLoading(false);
-    }
-
-    const getQrCodeSetupImageUrl = () => {
-        return qrCodeSetupImageUrl;
+        isQRCodeFullyLoaded = true;
     }
 
     const getCurrentUserProfileForEdit = () => {
@@ -101,8 +103,9 @@ export default function Security() {
             if(response.data.result){
                 let userProfile = response.data.result;
                 setIsGoogleAuthenticatorEnabled(userProfile.isGoogleAuthenticatorEnabled);
-                if(!getQrCodeSetupImageUrl()){
+                if(!checkIfQRCodeFullyLoaded()){
                     setIsQRCodeLoading(true);
+                    isQRCodeFullyLoaded = false;
                 }
                 setQrCodeSetupImageUrl(userProfile.qrCodeSetupImageUrl);
             }
@@ -126,8 +129,9 @@ export default function Security() {
             console.log(response);
             if(response.data.result.qrCodeSetupImageUrl){
                 setIsGoogleAuthenticatorEnabled(true);
-                if(!getQrCodeSetupImageUrl()){
+                if(!checkIfQRCodeFullyLoaded()){
                     setIsQRCodeLoading(true);
+                    isQRCodeFullyLoaded = false;
                 }
                 setQrCodeSetupImageUrl(response.data.result.qrCodeSetupImageUrl);
             }
@@ -152,6 +156,7 @@ export default function Security() {
             if(response.data.success){
                 setQrCodeSetupImageUrl("");
                 setIsGoogleAuthenticatorEnabled(false);
+                isQRCodeFullyLoaded = false;
             }
         })
         .catch(function (response) {
