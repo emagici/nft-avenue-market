@@ -5,7 +5,9 @@ export default function CardList(props) {
   return (
     <div>
       <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
-        {props.items.map((item) => <CardDefault {...item} /> )}
+        {props.items ? (
+          props.items.map((item) => <CardDefault {...item} /> )
+        ) : null}
       </ul>
       {/* <div className="flex justify-center mt-10">
         <button
