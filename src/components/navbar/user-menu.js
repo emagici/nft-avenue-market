@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useContext } from 'react'
+import { Fragment, useContext, useState, useEffect } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { LogoutIcon } from '@heroicons/react/outline'
 import { Web3Context } from '../../context/web3-context'
@@ -15,8 +15,9 @@ function classNames(...classes) {
 }
 
 export default function Example() {
-  const web3Context = useContext(Web3Context)
-  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context);
+  const userContext = useContext(UserContext);
+  const [userName, setUserName] = useState("User");
 
   function handleSignOut() {
     console.log('signing out')
@@ -26,6 +27,16 @@ export default function Example() {
     userContext.dispatch({
       type: "RESET_ALL"
     })
+  }
+
+  useEffect(() => {
+    updateUserName();
+  }, [userContext]);
+
+  function updateUserName(){
+    if(userContext.state.name){
+      setUserName(userContext.state.name);
+    }
   }
 
 
@@ -64,7 +75,7 @@ export default function Example() {
                       src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
                       alt=""
                     />
-                    <h2 className="font-bold sm:font-extrabold text-lg sm:text-lg">CryptoChown</h2>
+                    <h2 className="font-bold sm:font-extrabold text-lg sm:text-lg">{userName}</h2>
                   </div>
                   <div className="mb-3">
                     <p className="text-sm font-bold text-gray-500">BNB Balance</p>
