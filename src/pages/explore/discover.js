@@ -35,7 +35,7 @@ export default function Discover() {
     { id: 'popular', 'title': 'Popular' },
   ];
   const [loading, setLoading] = useState(false);
-  const web3Context = useContext(Web3Context)
+  const web3Context = useContext(Web3Context);
 
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
@@ -45,14 +45,14 @@ export default function Discover() {
     if (!web3) return;
     
     GetListedNfts();
-  }, [web3, activeDropdown]);
+  }, [web3, activeDropdown, activeTab]);
 
   function GetListedNfts(){
     setLoading(true);
 
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&sorting=${activeDropdown}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&categoryFilter=${activeTab}&sorting=${activeDropdown}`
     })
     .then(async function (response) {
 
@@ -82,7 +82,7 @@ export default function Discover() {
       setLoading(false);
     });
   }
-  
+
   return (  
     <div className="">
       <SectionHeader title="Discover">
