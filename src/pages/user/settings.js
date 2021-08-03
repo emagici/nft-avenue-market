@@ -41,10 +41,10 @@ export default function UserSettings() {
     if(coverImage && coverImage.file)
       formData.append("ProfileBanner", coverImage.file, coverImage.file.name);
 
-      formData.append("Name", displayName);
-      formData.append("Description", description);
-      formData.append("FacebookUrl", facebookUrl);
-      formData.append("InstagramUrl", instagramUrl);
+      formData.append("Name", displayName ?? "");
+      formData.append("Description", description ?? "");
+      formData.append("FacebookUrl", facebookUrl ?? "");
+      formData.append("InstagramUrl", instagramUrl ?? "");
 
     axios({
       method: "post",

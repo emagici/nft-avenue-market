@@ -7,6 +7,8 @@ import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
+import PurchasedModal from "./purchased-modal";
+
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
@@ -22,6 +24,19 @@ import {
 import {
   tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
 } from "../../utilities/utils";
+
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  TelegramShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  EmailIcon,
+  FacebookIcon,
+  TelegramIcon,
+  TwitterIcon,
+  WhatsappIcon
+} from "react-share";
 
 import AppUrls from '../../AppSettings';
 
@@ -73,6 +88,8 @@ export default function ItemDetail(props) {
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
+
+  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
 
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -277,9 +294,7 @@ export default function ItemDetail(props) {
 
     if(Number(currentAllowance) < Number(amountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
-        .send({
-          from: myAdd
-        })
+        .send({ from: myAdd })
         .then( async function (result) {
             buyItemConfirm(obj);
         })
@@ -295,9 +310,13 @@ export default function ItemDetail(props) {
     const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     
-    await marketplaceContract.methods
-      .buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
-      .send({ from: myAdd });
+    await marketplaceContract.methods.buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
+      .send({ from: myAdd })
+      .then( async function (result) {
+        setShowPurchasedModal(true)
+      })
+        .catch(error => {
+      });
   };
 
   useEffect(async () => {
@@ -349,16 +368,32 @@ export default function ItemDetail(props) {
                   <video
                     autoPlay muted
                     src={nftVideoSrc}
-                    className="object-cover pointer-events-none group-hover:opacity-90"
+                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />
                 ) : (
                   <img
                     src={nftImageSrc}
                     alt="nft"
-                    className="object-cover pointer-events-none group-hover:opacity-90"
+                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />
                 )}
               </div>
+
+              <div className="py-5 flex justify-center items-center gap-2">
+                <FacebookShareButton url="https://theavenue.market" quote="I just listed an NFT on The Avenue!" hashtag="TheAvenue" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                  <FacebookIcon size={32} round={true} />
+                </FacebookShareButton>
+                <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                  <TwitterIcon size={32} round={true} />
+                </TwitterShareButton>
+                <TelegramShareButton title="Check out The Avenue Marketplace!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                  <TelegramIcon size={32} round={true} />
+                </TelegramShareButton>
+                <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                  <WhatsappIcon size={32} round={true} />
+                </WhatsappShareButton>
+              </div>
+              
             </div>
           </div>
           <div className="col-span-2">
@@ -510,9 +545,15 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                      Buy Now
-                                    </a>
+                                  {isOwner && item.owner.toLowerCase() === myAdd.toLowerCase() ? (
+                                      <a onClick={() => cancelOffer()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                       Cancel Offer
+                                     </a>
+                                   ) : (
+                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Buy Now
+                                      </a>
+                                   )}
                                   </td>
                                 </tr>
                               ))}
@@ -907,6 +948,7 @@ export default function ItemDetail(props) {
                 </Link>
               </div>
             ) : null}
+           
           </div>
         </div>
 
@@ -1026,6 +1068,11 @@ export default function ItemDetail(props) {
           </div>
         </Modal>
 
+        <PurchasedModal
+          title="Purchase Complete!"
+          modalOpen={showPurchasedModal}
+          setModalOpen={(v) => setShowPurchasedModal(v)}
+        />
 
       </div>
     </div>

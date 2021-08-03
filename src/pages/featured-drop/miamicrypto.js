@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from "react-router-dom"
-import ReactPlayer from 'react-player'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'

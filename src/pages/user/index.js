@@ -57,6 +57,7 @@ const appUrls = {
 
 export default function Profile() {
   const [web3, setWeb3] = useState();
+  const [myActivies, setMyActivities] = useState([]);
   const [ownNfts, setOwnNfts] = useState([]);
   const [onSaleNfts, setOnSaleNfts] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -149,6 +150,23 @@ export default function Profile() {
     });
   }
 
+  const loadMyActivities = (accessToken) => {
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyActivities`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      console.log(response)
+      setMyActivities(response.data.result);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
   const getOwnNfts = async (sign, myadd) => {
 
     sharedContext.dispatch({
@@ -220,7 +238,6 @@ export default function Profile() {
   }, [web3Context.state.web3Data]);
 
   useEffect(async () => {
-    console.log('bbbbb')
     if(web3 && userContext.state.accessToken){
       const accounts = await web3.eth.getAccounts();
       var myadd = accounts[0];
@@ -229,6 +246,8 @@ export default function Profile() {
         setUserProfile(userContext.state);
       else
         loadProfile(userContext.state.accessToken)
+
+      loadMyActivities(userContext.state.accessToken);
 
       getOwnNfts(userContext.state.sign, myadd)
       setLoggedIn(true);
@@ -243,6 +262,7 @@ export default function Profile() {
         //   setUserProfile(userContext.state);
         // else
           loadProfile(userContext.state.accessToken);
+          loadMyActivities(userContext.state.accessToken);
   
         // getOwnNfts(userContext.state.sign, myadd);
         setLoggedIn(true);
@@ -321,7 +341,7 @@ export default function Profile() {
               ) : null}
 
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {loggedIn && userProfile ? (
+                {loggedIn && userProfile && false? (
                   <div className="flex flex-col sm:block space-y-3 sm:space-y-0 sm:space-x-2">
                     <button
                       onClick={() => setRatingModalOpen(true)}
@@ -501,12 +521,25 @@ export default function Profile() {
               </div>
             ) : null}
 
-            {activeTab === "Activity" ? (
+            {activeTab === "Activity" && myActivies.length == 0 ? (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No activity</h1>
                 <p className="font-medium text-gray-600 mb-5">
                   Your site activity will display here
                 </p>
+              </div>
+            ) : null}
+
+            {activeTab === "Activity" && myActivies.length > 0 ? (
+              <div className="text-center">
+                   <ul className="">
+                      {myActivies.map((item, index) => (
+                        <li key={index} className="py-3 border-b">
+                          <p className="text-sm font-bold">{item.eventName}</p>
+                          <p className="text-sm font-medium">{item.txHash}</p>
+                        </li>
+                      ))}
+                   </ul>
               </div>
             ) : null}
 
