@@ -16,6 +16,7 @@ export const tokenTypes = [
 ];
 
 export const fomoTokenAddress = "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1";
+export const listingFeeToken = "0xa113385B601B932f15beec808f05EB7f79852a27";
 
 export const getPayTokenFromListing = async (
   web3,
