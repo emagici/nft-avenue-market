@@ -63,6 +63,7 @@ export default function Profile() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [accessToken, setAccessToken] = useState("");
   const [userProfile, setUserProfile] = useState();
+  const [displayName, setDisplayName] = useState(null);
   const [signInModalOpen, setSignInModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("On Sale");
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
@@ -87,6 +88,24 @@ export default function Profile() {
   useEffect(() => {
     init();
   }, []);
+
+
+  useEffect(() => {
+    if (userProfile) {
+      try {
+        if (userProfile.name.length > 15) {
+          setDisplayName(`${userProfile.name.substr(0,6)}...${userProfile.name.substr(-4,4)}`)
+        } else {
+          setDisplayName(userProfile.name)
+        }
+      } catch(e) {
+        setDisplayName(userProfile.name)
+      }
+    } else {
+      setDisplayName(null)
+    }
+  }, [userProfile])
+
 
   function init(){
     let accessToken = getUrlAccessToken();
@@ -330,7 +349,7 @@ export default function Profile() {
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
               <div className="block mt-6 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {loggedIn && userProfile ? `${userProfile.name.substr(0,6)}...${userProfile.name.substr(38,4)}` : "Sign in required"}
+                  {loggedIn && userProfile ? displayName : "Sign in required"}
                 </h1>
               </div>
 
@@ -438,56 +457,64 @@ export default function Profile() {
             </div>
 
             {activeTab === "On Sale" ? (
-              <ul
-                role="list"
-                className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-              >
-                {onSaleNfts.map((item, index) => (
-                  // console.log(item)
-                  <CardDefault key={index} {...transformOnSaleObj(item.nft)} sellItem />
-                ))}
-              </ul>
+              onSaleNfts && onSaleNfts.length ? (
+                <ul
+                  role="list"
+                  className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
+                >
+                  {onSaleNfts.map((item, index) => (
+                    <CardDefault key={index} {...transformOnSaleObj(item.nft)} sellItem />
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    View your owned items to list them for sale now
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("Owned")}
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    View Owned
+                  </button>
+                </div>
+              )
             ) : null}
 
-            {activeTab === "Owned" && ownNfts.length == 0 && (
-              <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No items owned</h1>
-                <p className="font-medium text-gray-600 mb-5">
-                  Explore our marketplace to find items now.
-                </p>
-                <Link
-                  to="/"
-                  className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+            {activeTab === "Owned" ? (
+              ownNfts && ownNfts.length ? (
+                <ul
+                  role="list"
+                  className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
                 >
-                  Explore
-                </Link>
-              </div>
-            )}
-
-            {activeTab === "Owned" && ownNfts.length > 0 && (
-              <ul
-                role="list"
-                className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-              >
-                {ownNfts.map((item, index) => (
-                  <CardDefault key={index} {...transformOwnNftObj(item)} />
-                ))}
-              </ul>
-            )}
+                  {ownNfts.map((item, index) => (
+                    <CardDefault key={index} {...transformOwnNftObj(item)} />
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No items owned</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Explore our marketplace to find items now.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
+              )
+            ) : null}
 
             {activeTab === "Created" ? (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No items created</h1>
                 <p className="font-medium text-gray-600 mb-5">
-                  You can create NFTs to sell right here on The Avenue
+                  Items that you create will appear here.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => alert("coming soon")}
-                  className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                >
-                  Create NFT
-                </button>
               </div>
             ) : null}
 
@@ -506,11 +533,11 @@ export default function Profile() {
               </div>
             ) : null}
 
-            {activeTab === "Followers" ? (
+            {activeTab === "Following" ? (
               <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No followers</h1>
+                <h1 className="font-bold text-2xl mb-2">Explore The Avenue</h1>
                 <p className="font-medium text-gray-600 mb-5">
-                  Sell and like items to increase your followers
+                  Explore The Avenue and follow users to see them appear here.
                 </p>
                 <Link
                   to="/"
@@ -521,17 +548,24 @@ export default function Profile() {
               </div>
             ) : null}
 
-            {activeTab === "Activity" && myActivies.length == 0 ? (
+            {activeTab === "Followers" ? (
               <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No activity</h1>
+                <h1 className="font-bold text-2xl mb-2">No followers</h1>
                 <p className="font-medium text-gray-600 mb-5">
-                  Your site activity will display here
+                  Sell and like items to increase your followers.
                 </p>
+                <Link
+                  to="/"
+                  className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                >
+                  Explore
+                </Link>
               </div>
             ) : null}
 
-            {activeTab === "Activity" && myActivies.length > 0 ? (
-              <div className="text-center">
+            {activeTab === "Activity" ? (
+              myActivies && myActivies.length ? (
+                <div className="text-center">
                    <ul className="">
                       {myActivies.map((item, index) => (
                         <li key={index} className="py-3 border-b">
@@ -541,7 +575,15 @@ export default function Profile() {
                         </li>
                       ))}
                    </ul>
-              </div>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No activity</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Your site activity will display here.
+                  </p>
+                </div>
+              )
             ) : null}
 
           </div>
