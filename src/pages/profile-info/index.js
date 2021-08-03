@@ -58,11 +58,11 @@ export default function ProfileInfo() {
   const tabs = [
     "On Sale",
     "Owned",
-    "Created",
-    "Liked",
-    "Following",
-    "Followers",
-    "Activity",
+    // "Created",
+    // "Liked",
+    // "Following",
+    // "Followers",
+    // "Activity",
   ];
 
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
@@ -81,12 +81,13 @@ export default function ProfileInfo() {
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
     if (params.userId) {
       loadProfile(+params.userId);
+      getUserNfts(+params.userId);
     }
   }
 
   const transformOnSaleObj = (onSaleObj) => {
     var obj = {
-      Listed: onSaleObj.id > 0 ? true : false,
+      Listed: true,
       TokenId: onSaleObj.tokenId,
       NftAddress: onSaleObj.nft,
       TokenName:  onSaleObj.tokenName,
@@ -97,7 +98,6 @@ export default function ProfileInfo() {
   }
 
   const transformOwnNftObj = (ownObj) => {
-    console.log(ownObj)
     var obj = {
       Listed: ownObj.id > 0 ? true : false,
       TokenId: ownObj.TokenId,
@@ -122,7 +122,7 @@ export default function ProfileInfo() {
     });
   }
 
-  const getOwnNfts = async (sign, myadd) => {
+  const getUserNfts = async (userId) => {
 
     sharedContext.dispatch({
       type: "START_LOADING"
@@ -130,45 +130,48 @@ export default function ProfileInfo() {
 
     var myListedNfts = await axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftsOwnedByUser?userId=${userId}`,
     })
 
-    setOnSaleNfts(myListedNfts.data.result);
+    console.log(myListedNfts.data.result.nftsListed)
+    setOnSaleNfts(myListedNfts.data.result.nftsListed);
 
-    axios({
-      method: "post",
-      url: `${appUrls.fomoNodeAPI}`,
-      data: JSON.stringify({ Signature: sign }),
-    })
-    .then(function (response) {
+    // axios({
+    //   method: "post",
+    //   url: `${appUrls.fomoNodeAPI}`,
+    //   data: JSON.stringify({ Signature: sign }),
+    // })
+    // .then(function (response) {
 
-      var items = response.data.map((item, i) => {   
-          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
+    //   var items = response.data.map((item, i) => {   
+    //       var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
         
-          var obj = {
-            id: listedItem ? listedItem.nft.id : 0,
-            TokenName: item.TokenName,
-            Image: item.Image,
-            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-            TokenId: item.TokenId,
-            NftAddress: item.TokenContractAddress
-          };
-          return obj;
-      })
-      setOwnNfts(items);
+    //       var obj = {
+    //         id: listedItem ? listedItem.nft.id : 0,
+    //         TokenName: item.TokenName,
+    //         Image: item.Image,
+    //         TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
+    //         TokenId: item.TokenId,
+    //         NftAddress: item.TokenContractAddress
+    //       };
+    //       return obj;
+    //   })
+    //   setOwnNfts(items);
 
-      userContext.dispatch({
-        type: "SET_OWN_NFTS",
-        payload: items
-      })
+    //   userContext.dispatch({
+    //     type: "SET_OWN_NFTS",
+    //     payload: items
+    //   })
 
-      sharedContext.dispatch({
-        type: "STOP_LOADING"
-      })
+     
+    // })
+    // .catch(function (response) {
+    //   console.log(response);
+    // });
+
+    sharedContext.dispatch({
+      type: "STOP_LOADING"
     })
-    .catch(function (response) {
-      console.log(response);
-    });
   }
   
   useEffect(() => {
@@ -303,7 +306,7 @@ export default function ProfileInfo() {
                 className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
               >
                 {onSaleNfts.map((item, index) => (
-                  <CardDefault key={index} {...transformOnSaleObj(item.nft)} sellItem />
+                  <CardDefault key={index} {...transformOnSaleObj(item)} sellItem />
                 ))}
               </ul>
             )}

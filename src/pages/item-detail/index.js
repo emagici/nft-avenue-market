@@ -294,9 +294,7 @@ export default function ItemDetail(props) {
 
     if(Number(currentAllowance) < Number(amountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
-        .send({
-          from: myAdd
-        })
+        .send({ from: myAdd })
         .then( async function (result) {
             buyItemConfirm(obj);
         })
@@ -312,9 +310,13 @@ export default function ItemDetail(props) {
     const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     
-    await marketplaceContract.methods
-      .buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
-      .send({ from: myAdd });
+    await marketplaceContract.methods.buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
+      .send({ from: myAdd })
+      .then( async function (result) {
+        setShowPurchasedModal(true)
+      })
+        .catch(error => {
+      });
   };
 
   useEffect(async () => {
@@ -946,16 +948,7 @@ export default function ItemDetail(props) {
                 </Link>
               </div>
             ) : null}
-
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowPurchasedModal(true)}
-                className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
-              >
-                <span>Purchased Modal</span>
-              </button>
-            </div>
+           
           </div>
         </div>
 
