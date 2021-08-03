@@ -82,14 +82,14 @@ export default function RatingModal(props) {
   const getRate = () => {
     axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/UserRates/GetAverageRateForUser?userId=${props.receiverUserId}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/UserRates/GetRateByReceiverUserIdAndGiverUserId?receiverUserId=${props.receiverUserId}&giverUserId=${props.giverUserId}`,
       headers: {
         'Content-Type': 'application/json',
         "Authorization": "Bearer " + userContext.state.accessToken + ""
       }
     })
     .then(function (response) {
-        setRating(response.data.result.averageRate);
+        setRating(response.data.result.rate);
         console.log(response);
     })
     .catch(function (response) {
