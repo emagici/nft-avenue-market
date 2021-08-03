@@ -1,7 +1,15 @@
-export const MARKETPLACE_ADDRESS = '0x6e2ef327fD5E558ad842A2f34358674e61b3aC46'
+export const MARKETPLACE_ADDRESS = '0xe4A4EC9FAd3d84CdFD9991aff92beCb7735f38C2'
 
 export const MARKETPLACE_ABI = [{
     "inputs": [{
+        "internalType": "address",
+        "name": "_listingFeeToken",
+        "type": "address"
+    }, {
+        "internalType": "uint256",
+        "name": "_listingFee",
+        "type": "uint256"
+    }, {
         "internalType": "address payable",
         "name": "_feeRecipient",
         "type": "address"
@@ -385,6 +393,26 @@ export const MARKETPLACE_ABI = [{
     "stateMutability": "nonpayable",
     "type": "function"
 }, {
+    "inputs": [],
+    "name": "listingFee",
+    "outputs": [{
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "inputs": [],
+    "name": "listingFeeToken",
+    "outputs": [{
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+}, {
     "inputs": [{
         "internalType": "address",
         "name": "",
@@ -571,6 +599,26 @@ export const MARKETPLACE_ABI = [{
         "type": "uint256"
     }],
     "name": "updateListing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "inputs": [{
+        "internalType": "uint256",
+        "name": "_listingFee",
+        "type": "uint256"
+    }],
+    "name": "updateListingFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "inputs": [{
+        "internalType": "address",
+        "name": "_listingFeeToken",
+        "type": "address"
+    }],
+    "name": "updateListingFeeToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

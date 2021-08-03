@@ -22,7 +22,7 @@ import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
 import {
-  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
+  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress, listingFeeToken
 } from "../../utilities/utils";
 
 import {
@@ -205,6 +205,26 @@ export default function ItemDetail(props) {
       return;
     }
 
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const listingFee = await marketplaceContract.methods.listingFee().call();
+
+    if(Number(currentAllowance) < Number(listingFee)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, listingFee)
+        .send({
+          from: myAdd
+        })
+        .then( async function (result) {
+          checkNftApprovalAndList();
+        })
+        .catch(error => {
+        });
+    }
+    else
+      checkNftApprovalAndList();
+  };
+
+  const checkNftApprovalAndList = async () => {
     const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
     const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
 
@@ -221,7 +241,7 @@ export default function ItemDetail(props) {
     }
     else
       listItemConfirm();
-  };
+  }
 
   const listItemConfirm = async () => {
     const timestamp = new Date().getTime();
@@ -292,8 +312,6 @@ export default function ItemDetail(props) {
   };
 
   const buyItem = async (obj) => {
-    console.log(obj)
-    console.log(obj.payToken.payTokenAddress)
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
