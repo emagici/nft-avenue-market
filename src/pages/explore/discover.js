@@ -145,7 +145,7 @@ export default function Discover() {
           <CardList items={listedItems} loading={loading} />
         )
       } */}
-      <CardList items={listedItems} loading={true} emptyMsg="Please try another category" />
+      <CardList items={listedItems} loading={loading} emptyMsg="Please try another category" />
     </div>
   )
 }
