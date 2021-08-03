@@ -99,7 +99,7 @@ export default function ProfileInfo() {
 
   const transformOwnNftObj = (ownObj) => {
     var obj = {
-      Listed: ownObj.id > 0 ? true : false,
+      Listed: ownObj.listed,
       TokenId: ownObj.TokenId,
       NftAddress: ownObj.NftAddress,
       TokenName:  ownObj.TokenName,
@@ -128,46 +128,31 @@ export default function ProfileInfo() {
       type: "START_LOADING"
     })
 
-    var myListedNfts = await axios({
+    var nftResponse = await axios({
       method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftsOwnedByUser?userId=${userId}`,
     })
 
-    console.log(myListedNfts.data.result.nftsListed)
-    setOnSaleNfts(myListedNfts.data.result.nftsListed);
+    const nftItem = nftResponse.data.result;
 
-    // axios({
-    //   method: "post",
-    //   url: `${appUrls.fomoNodeAPI}`,
-    //   data: JSON.stringify({ Signature: sign }),
-    // })
-    // .then(function (response) {
+    console.log(nftItem)
 
-    //   var items = response.data.map((item, i) => {   
-    //       var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
-        
-    //       var obj = {
-    //         id: listedItem ? listedItem.nft.id : 0,
-    //         TokenName: item.TokenName,
-    //         Image: item.Image,
-    //         TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-    //         TokenId: item.TokenId,
-    //         NftAddress: item.TokenContractAddress
-    //       };
-    //       return obj;
-    //   })
-    //   setOwnNfts(items);
+    setOnSaleNfts(nftItem.nftsListed);
 
-    //   userContext.dispatch({
-    //     type: "SET_OWN_NFTS",
-    //     payload: items
-    //   })
-
-     
-    // })
-    // .catch(function (response) {
-    //   console.log(response);
-    // });
+    var items = nftItem.nftsOwned.map((item, i) => {   
+      var listedItem = nftItem.nftsListed.find(o => o.tokenId === Number(item.tokenid) && o.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
+    
+      var obj = {
+        listed: listedItem ? true : false,
+        TokenName: item.tokenName,
+        Image: item.image,
+        TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
+        TokenId: item.tokenid,
+        NftAddress: item.tokenContractAddress
+      };
+      return obj;
+    })
+    setOwnNfts(items);
 
     sharedContext.dispatch({
       type: "STOP_LOADING"
