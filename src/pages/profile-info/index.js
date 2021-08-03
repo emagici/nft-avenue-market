@@ -175,6 +175,13 @@ export default function ProfileInfo() {
     }
   }, [userContext.state.id]);
 
+  useEffect(() => {
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+    if (params.userId) {
+      loadProfile(+params.userId);
+    }
+  }, [ratingModalOpen]);
+
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
