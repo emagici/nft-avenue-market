@@ -412,17 +412,19 @@ export default function ItemDetail(props) {
             {isItemListed ? (
               <div class="-mt-4 mb-4">
                 {lowestSellerItem ? (
+                    // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                    //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
+                    // </div>
                     <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                      <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
-                      {/* <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p> */}
+                      <p className="mt-2 block text-3xl inline font-extrabold text-green-500 pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
                     </div>
                 ) : null}
-                <div className="flex justify-center md:justify-start">
+                <div className="flex justify-center md:justify-start gap-2">
                   {lowestSellerItem ? (
                     <button
                       type="button"
                       onClick={() => buyItem(lowestSellerItem)}
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Buy Now</span>
                     </button>
@@ -430,7 +432,7 @@ export default function ItemDetail(props) {
                   {false ? (
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Place Bid</span>
                     </button>
@@ -439,7 +441,7 @@ export default function ItemDetail(props) {
                     <button
                       type="button"
                       onClick={() => setMakeOfferModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Make Offer</span>
                     </button>
@@ -484,8 +486,8 @@ export default function ItemDetail(props) {
             ) : null}
 
             {nftDescription ? (
-              <div>
-                <p className="mb-2 text-center md:text-left font-bold">Description</p>
+              <div className="pt-2">
+                <p className="mb-1 text-center md:text-left font-bold">Description</p>
                 <p className="mb-6 text-center md:text-left">{nftDescription}</p>
               </div>
             ) : null}
@@ -563,7 +565,7 @@ export default function ItemDetail(props) {
                                        Cancel Offer
                                      </a>
                                    ) : (
-                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
                                         Buy Now
                                       </a>
                                    )}
@@ -585,58 +587,71 @@ export default function ItemDetail(props) {
                   <div className="flex flex-col">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                       <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div className="overflow-hidden sm:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="">
-                              <tr>
-                              <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Token
-                                </th>
+                        {offers && offers.length ? (
+                          <div className="overflow-hidden sm:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200">
+                              <thead className="">
+                                <tr>
                                 <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Price per item
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Quantity
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  From
-                                </th>
-                                <th scope="col" className="relative px-6 py-3">
-                                  <span className="sr-only">Actions</span>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {offers.map((item) => (
-                                <tr key={item.creatorAddress}>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                   {isOwner ? (
-                                      <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                      Accept
-                                    </a>
-                                   ) : null}
-                                  </td>
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Token
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Price per item
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Quantity
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    From
+                                  </th>
+                                  <th scope="col" className="relative px-6 py-3">
+                                    <span className="sr-only">Actions</span>
+                                  </th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200">
+                                {offers.map((item) => (
+                                  <tr key={item.creatorAddress}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    {isOwner ? (
+                                        <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Accept
+                                      </a>
+                                    ) : null}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
+                            <button
+                              type="button"
+                              onClick={() => setMakeOfferModalOpen(true)}
+                              className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                            >
+                              <span>Make Offer</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -951,16 +966,22 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            {activeTab === 'Transfer' && isOwner ? (
-              <div>
-                <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
-                <Link
-                  to={`/transfer-item?tokenid=${tokenid}&nftaddress=${nftAddress}`}
-                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-                >
-                  Transfer
-                </Link>
-              </div>
+            {activeTab === 'Transfer' ? (
+              isOwner ? (
+                <div>
+                  <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
+                  <Link
+                    to={`/transfer-item?tokenid=${tokenid}&nftaddress=${nftAddress}`}
+                    className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+                  >
+                    Transfer
+                  </Link>
+                </div>
+              ) : (
+                <div>
+                  <p className="mb-3 text-center md:text-left text-sm pt-3">Only the owner of this item can transfer it.</p>
+                </div>
+              )
             ) : null}
            
           </div>

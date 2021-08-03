@@ -31,7 +31,7 @@ export default function CardDefault(props) {
         <div className="flex justify-between">
           <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.TokenName}</p>
          {props.price ? (
-           <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
+           <p className="mt-2 block text-sm py-1 px-2 uppercase inline font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
          ) : null} 
         </div>
         {/* <div className="flex justify-between items-end border-b border-gray-200 pb-3">
