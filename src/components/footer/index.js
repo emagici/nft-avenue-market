@@ -17,7 +17,7 @@ const navigation = {
     { name: 'Apply For Verification', href: '/' },
   ],
   legal: [
-    { name: 'Privacy', href: '/' },
+    { name: 'Privacy', href: '/privacy-policy' },
     { name: 'Terms', href: '/' },
   ],
   social: [
