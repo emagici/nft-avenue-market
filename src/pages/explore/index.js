@@ -42,6 +42,7 @@ export default function Explore() {
           subtitle="Create, Explore, Collect Digital Art NFTs"
           {...promoColors}
         />
+        {/* <VideoBanner   /> */}
         {/* <VideoBanner /> */}
       </div>
       <Discover/>
