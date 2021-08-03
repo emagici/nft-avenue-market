@@ -11,6 +11,7 @@ import SearchPage from './pages/search';
 import TransferItem from './pages/transfer-item';
 import ProfileInfo from './pages/profile-info';
 import PrivacyPolicy from './pages/policies/privacy-policy';
+import TermsPage from './pages/policies/terms';
 
 export default [
 	{
@@ -92,6 +93,12 @@ export default [
 		path: "/privacy-policy",
 		title: "Privacy Policy",
 		component: PrivacyPolicy,
+		exact: true
+	},
+	{
+		path: "/terms",
+		title: "Terms",
+		component: TermsPage,
 		exact: true
 	},
 ];

@@ -3,6 +3,12 @@ import {
   MARKETPLACE_ADDRESS,
 } from "../contracts/FomoMarketPlace";
 
+
+export function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
+
 export const tokenTypes = [
   { name: "Fomo", tokenAddress: "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" },
   { name: "BNB", tokenAddress: "abc" },
