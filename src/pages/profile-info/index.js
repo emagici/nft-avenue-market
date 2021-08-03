@@ -71,7 +71,9 @@ export default function ProfileInfo() {
   const web3Context = useContext(Web3Context);
   const sharedContext = useContext(SharedContext);
   const [loggedInUserId, setLoggedInUserId] = useState();
-
+  
+  const [averageRating, setAverageRating] = useState(0);
+  const ratings = [1,2,3,4,5];
 
   useEffect(() => {
     init();
@@ -116,6 +118,7 @@ export default function ProfileInfo() {
     })
     .then(function (response) {
       setUserProfile(response.data.result);
+      setAverageRating(response.data.result.userRate);
     })
     .catch(function (response) {
       console.log(response);
@@ -158,7 +161,7 @@ export default function ProfileInfo() {
       type: "STOP_LOADING"
     })
   }
-  
+
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
   }, [web3Context.state.web3Data]);
@@ -201,6 +204,21 @@ export default function ProfileInfo() {
                 <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
                   {userProfile ? `${userProfile.name.substr(0,6)}...${userProfile.name.substr(38,4)}` : "User"}
                 </h1>
+              </div>
+
+              <div className="block mt-6 min-w-0 flex-1">
+                <div className="flex justify-center items-center">
+                    {ratings.map(val => (
+                      <StarIcon
+                        className={classNames(
+                          val <= averageRating
+                            ? "text-yellow-400 hover:text-yellow-500"
+                            : "text-gray-300 hover:text-gray-400",
+                          "h-6 w-6"
+                        )}
+                      />
+                    ))}
+                  </div>
               </div>
 
               {userProfile ? (
