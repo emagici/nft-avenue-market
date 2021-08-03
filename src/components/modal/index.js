@@ -44,18 +44,20 @@ export default function Modal(props) {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full sm:max-w-lg sm:w-full sm:p-6">
-              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-                <button
-                  type="button"
-                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
-                  ref={cancelButtonRef}
-                  onClick={() => props.setOpen(false)}
-                >
-                  <span className="sr-only">Close</span>
-                  <XIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <Dialog.Title as="h3" ref={titleRef} className="text-2xl text-center leading-6 font-bold text-gray-900 mb-5">{props.title}</Dialog.Title>
+              {props.hideClose ? null : (  
+                <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+                  <button
+                    type="button"
+                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                    ref={cancelButtonRef}
+                    onClick={() => props.setOpen(false)}
+                  >
+                    <span className="sr-only">Close</span>
+                    <XIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+              {props.hideTitle ? null : <Dialog.Title as="h3" ref={titleRef} className="text-2xl text-center leading-6 font-bold text-gray-900 mb-5">{props.title}</Dialog.Title>}
               {props.children}
               {/* <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                 <button
