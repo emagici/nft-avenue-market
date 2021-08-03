@@ -66,7 +66,7 @@ export default function RatingModal(props) {
       }
     })
     .then(function (response) {
-        alert("Rating given!");
+        // alert("Rating given!");
         console.log(response);
     })
     .catch(function (response) {
