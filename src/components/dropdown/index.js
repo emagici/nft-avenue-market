@@ -11,7 +11,7 @@ export default function Dropdown(props) {
 
   useEffect(() => {
     if (!props.options || !props.active) return
-    setActive(props.options.filter(item => item.id == props.active)[0])
+    setActive(props.options.filter(item => (item.id && item.id == props.active) || (item.title && item.title == props.active))[0])
   }, [props.active, props.options])
 
   return (
@@ -53,9 +53,9 @@ export default function Dropdown(props) {
                       <a
                         href="javascript:void(0);"
                         key={index}
-                        onClick={() => props.onChange(item.id)}
+                        onClick={() => props.onChange(item.id ? item.id : item.title)}
                         className={classNames(
-                          active && active.id == item.id ? 'bg-gray-100 text-gray-800 font-bold' : 'text-gray-700 font-medium ',
+                          active && ((active.id && active.id == item.id) || (active.title && active.title == item.title)) ? 'bg-gray-100 text-gray-800 font-bold' : 'text-gray-700 font-medium ',
                           'block px-4 py-2 text-sm'
                         )}
                       >

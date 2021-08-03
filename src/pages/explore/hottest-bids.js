@@ -17,7 +17,8 @@ const appUrls = {
   fomoClient: AppUrls.fomoClient
 };
 
-export default function PopularSection() {
+export default function HottestBidsSection() {
+  const [loading, setLoading] = useState(true);
   const [web3, setWeb3] = useState();
   const [items, setItems] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState('auctions');
@@ -36,8 +37,9 @@ export default function PopularSection() {
 
   useEffect(async () => {
     if (!web3) return;
+    setLoading(true)
 
-    axios({
+    await axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetHottestBids`
     })
@@ -64,6 +66,7 @@ export default function PopularSection() {
     .catch(function (response) {
       console.log(response);
     });
+    setLoading(false)
   }, [web3]);
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function PopularSection() {
           </div> */}
         </SectionHeader>
 
-        <CardList items={items} />
+        <CardList items={items} loading={loading} />
         
       </div>
     </div>

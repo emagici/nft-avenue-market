@@ -4,7 +4,7 @@ export default function ItemCardSlider(props) {
   return (
     <div className="relative mb-8 mx-3">
       <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
-        <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90" />
+        <img src={props.source} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity" />
         {!props.nolink ? (
           <Link
             to={`/item-detail?id=${props.id}`}

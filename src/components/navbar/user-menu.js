@@ -4,6 +4,9 @@ import { Popover, Transition } from '@headlessui/react'
 import { LogoutIcon } from '@heroicons/react/outline'
 import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context'
+import {
+  fomoTokenAddress
+} from "../../utilities/utils";
 
 const menuItems = [
   { name: 'My Profile', href: '/user' },
@@ -18,6 +21,38 @@ export default function Example() {
   const web3Context = useContext(Web3Context);
   const userContext = useContext(UserContext);
   const [userName, setUserName] = useState("User");
+  const [bnbBalance, setBnbBalance] = useState("0");
+  const [fomoBalance, setFomoBalance] = useState("0");
+
+  useEffect(async() => {
+    if(web3Context.state.web3Data == null) return
+
+    const accounts = await web3Context.state.web3Data.eth.getAccounts();
+    var myadd = accounts[0];
+
+    web3Context.state.web3Data.eth.getBalance(myadd, function(err, result) {
+      if (err) {
+        console.log(err)
+      } else {
+        setBnbBalance(web3Context.state.web3Data.utils.fromWei(result, "ether"))
+      }
+    })
+
+    const minABI = [
+      {
+        constant: true,
+        inputs: [{ name: "_owner", type: "address" }],
+        name: "balanceOf",
+        outputs: [{ name: "balance", type: "uint256" }],
+        type: "function",
+      },
+    ];
+
+    const contract = new web3Context.state.web3Data.eth.Contract(minABI, fomoTokenAddress);
+    const result = await contract.methods.balanceOf(myadd).call();
+    setFomoBalance(web3Context.state.web3Data.utils.fromWei(result, "ether"))
+
+  }, [web3Context.state.web3Data]);
 
   function handleSignOut() {
     console.log('signing out');
@@ -40,7 +75,11 @@ export default function Example() {
 
   function updateUserName(){
     if(userContext.state.name){
-      setUserName(userContext.state.name);
+      if (userContext.state.name.length > 15) {
+        setUserName(`${userContext.state.name.substr(0,5)}...${userContext.state.name.substr(-4,4)}`);
+      } else {
+        setUserName(userContext.state.name)
+      }
     }
   }
 
@@ -84,11 +123,11 @@ export default function Example() {
                   </div>
                   <div className="mb-3">
                     <p className="text-sm font-bold text-gray-500">BNB Balance</p>
-                    <p className="text-lg font-bold text-gray-800">5.86 BNB</p>
+                    <p className="text-lg font-bold text-gray-800">{bnbBalance.substring(0,4)} BNB</p>
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
-                    <p className="text-lg font-bold text-gray-800">8500 FOMO</p>
+                    <p className="text-lg font-bold text-gray-800">{fomoBalance.substring(0,4)} FOMO</p>
                   </div>
                 </div>
                 <div className="p-2 pt-1">

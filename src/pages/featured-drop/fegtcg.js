@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from "react-router-dom"
-import ReactPlayer from 'react-player'
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
+import VideoBox from '../../components/video-box'
 
 import FegBg from '../../assets/img/feg/feg-bg.png'
 import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
@@ -79,9 +78,12 @@ export default function FegTcgDrop() {
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="Media" />
-          <div className="flex item-center justify-center mb-8">
-            <ReactPlayer url="https://youtu.be/CwrHrDz8Ufg" className="max-w-95 object-contain" />
-          </div>
+          <VideoBox
+            url="https://youtu.be/CwrHrDz8Ufg"
+            containerClasses="max-w-2xl"
+            playsinline={true}
+            controls={true}
+          />
         </div>
 
       </div>
