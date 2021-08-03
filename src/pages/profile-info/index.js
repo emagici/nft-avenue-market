@@ -2,10 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import CardList from "../../components/cards/card-list";
 import CardDefault from "../../components/cards/item-card-default";
-import {
-  PlusCircleIcon,
-  StarIcon
-} from "@heroicons/react/solid";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDiscord, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons'
+import { PlusCircleIcon, StarIcon } from "@heroicons/react/solid";
+
+
 import axios from "axios";
 import RatingModal from '../user/rating-modal';
 
@@ -59,8 +61,8 @@ export default function ProfileInfo() {
   function init(){
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
     if (params.userId) {
-      loadProfile(+params.userId);
-      getUserNfts(+params.userId);
+      loadProfile(params.userId);
+      getUserNfts(params.userId);
     }
   }
 
@@ -136,8 +138,6 @@ export default function ProfileInfo() {
     })
 
     const nftItem = nftResponse.data.result;
-
-    console.log(nftItem)
 
     setOnSaleNfts(nftItem.nftsListed);
 
@@ -224,9 +224,9 @@ export default function ProfileInfo() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16 sm:items-end sm:space-x-5 mb-7">
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-3">
               
-              <div className="mb-3">
+              <div className="">
                 {userProfile ? (
                   <img
                     className="h-24 w-24 shadow-lg rounded-full ring-4 bg-white ring-white sm:h-32 sm:w-32"
@@ -238,7 +238,7 @@ export default function ProfileInfo() {
                 )}
               </div>
 
-              <div className="block mb-1">
+              <div className="block">
                 <div className="flex items-center">
                   {ratings.map(val => (
                     <StarIcon
@@ -253,7 +253,7 @@ export default function ProfileInfo() {
                 </div>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1 mb-2">
+              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1">
                 {userProfile ? displayName : "User"}
               </h1>
 
@@ -262,6 +262,24 @@ export default function ProfileInfo() {
                   <p>{userProfile.description}</p>
                 </div>
               ) : null}
+
+              <div className="flex items-center justify-center gap-3 text-gray-800">
+                {userProfile && userProfile.twitterUrl ? (
+                  <a href={`https://twitter.com/${userProfile.twitterUrl}`} target="_blank" className="p-3 hover:text-blue-500 transition-all">
+                    <FontAwesomeIcon icon={faTwitter} size='2x' />
+                  </a>
+                ) : null}
+                {userProfile && userProfile.instagramUrl ? (
+                  <a href={`https://instagram.com/${userProfile.instagramUrl}`} target="_blank" className="p-3 hover:text-pink-600 transition-all">
+                    <FontAwesomeIcon icon={faInstagram} size='2x' />
+                  </a>
+                ) : null}
+                {userProfile && userProfile.discordUrl ? (
+                  <a href={userProfile.discordUrl} target="_blank" className="p-3 hover:text-purple-600 transition-all">
+                    <FontAwesomeIcon icon={faDiscord} size='2x' />
+                  </a>
+                ) : null}
+              </div>
 
             </div>
               

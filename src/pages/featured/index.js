@@ -34,7 +34,7 @@ export default function Featured() {
 
         <div className="grid md:grid-cols-2 gap-5 auto-rows-auto mb-20">
           {drops.map(item => (
-            <Link to={item.url} className="">
+            <Link key={item.title} to={item.url} className="">
               <div key={item.title} className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden aspect-w-16 aspect-h-8 hover:opacity-90 transition-opacity">
                 <div className="w-full h-full">
                   <div className="absolute inset-0">

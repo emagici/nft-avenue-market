@@ -314,12 +314,12 @@ export default function Profile() {
             src={loggedIn ? (userProfile && userProfile.bannerPictureUrl ? userProfile.bannerPictureUrl : profile.backgroundImage) : profile.backgroundImage}
             alt=""
           />
-          <div className="hidden sm:block absolute bottom-5 right-5 z-10">
+          <div className="block absolute top-3 right-3 z-10 gap-2">
             {loggedIn ? (
               <div className="">
                 <Link
                   to="/settings"
-                  className="inline-flex justify-center px-4 py-2 mr-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                  className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
                 >
                   <span>Edit Profile</span>
                   <PencilAltIcon
@@ -334,110 +334,37 @@ export default function Profile() {
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
-            <div className="flex justify-center lg:justify-start">
-              {loggedIn && userProfile ? (
-                <img
-                  className="h-24 w-24 shadow-lg rounded-full ring-4 bg-gray-200 ring-white sm:h-32 sm:w-32"
-                  src={userProfile.profilePictureUrl}
-                  alt=""
-                />
-              ) : (
-                <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-gray-200 sm:h-32 sm:w-32 bg-gray-100"></div>
-              )}
-            </div>
-            <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-              <div className="block mt-6 min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {loggedIn && userProfile ? displayName : "Sign in required"}
-                </h1>
+          <div className="-mt-12 sm:-mt-16">
+            <div className="flex flex-col items-center justify-center gap-3">
+              
+              <div>
+                {loggedIn && userProfile ? (
+                  <img
+                    className="h-24 w-24 shadow-lg rounded-full ring-4 bg-gray-200 ring-white sm:h-32 sm:w-32"
+                    src={userProfile.profilePictureUrl}
+                    alt=""
+                  />
+                ) : (
+                  <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-gray-200 sm:h-32 sm:w-32 bg-gray-100"></div>
+                )}
               </div>
 
+              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate">
+                {loggedIn && userProfile ? displayName : "Sign in required"}
+              </h1>
+
               {loggedIn && userProfile ? (
-                <div className="text-center sm:hidden pt-5">
+                <div className="text-center -mt-1">
                   <p>{userProfile.description}</p>
                 </div>
               ) : null}
 
-              <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {loggedIn && userProfile && false? (
-                  <div className="flex flex-col sm:block space-y-3 sm:space-y-0 sm:space-x-2">
-                    <button
-                      onClick={() => setRatingModalOpen(true)}
-                      className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-gray-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none"
-                    >
-                      <span>Rate User</span>
-                      <StarIcon
-                        className="-mr-1 ml-1 h-5 w-5 text-gray-900"
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <RatingModal
-                      modalOpen={ratingModalOpen}
-                      setModalOpen={(v) => setRatingModalOpen(v)}
-                      receiverUserId={userProfile.id}
-                      giverUserId={userProfile.id}
-                    />
-
-                    <button
-                      onClick={() => alert("follow")}
-                      className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Follow</span>
-                      <PlusCircleIcon
-                        className="-mr-1 ml-1 h-5 w-5 text-white"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                ) : null}
-                {loggedIn ? (
-                  <div className="sm:hidden flex flex-col justify-center">
-                    <Link
-                      to="/settings"
-                      className="inline-flex justify-center px-4 py-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
-                    >
-                      <span>Edit Profile</span>
-                      <PencilAltIcon
-                        className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => setLoggedIn(false)}
-                      className="inline-flex justify-center px-4 py-2 mb-3 shadow-lg text-sm font-medium rounded-full text-gray-700 bg-gray-50 hover:bg-gray-50 focus:outline-none"
-                    >
-                      <span>Sign Out</span>
-                      <LogoutIcon
-                        className="-mr-1 ml-2 h-5 w-5 text-gray-500"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                ) : (
-                  null
-                )}
-              </div>
             </div>
-          </div>
-          <div className="">
-            {loggedIn && userProfile && userProfile.description ? (
-              <div className="hidden sm:block lg:px-10 text-center md:text-left">
-                <h6 className="font-bold hidden md:block">Bio</h6>
-                <p>{userProfile.description}</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="hidden lg:hidden mt-6 min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {profile.name}
-            </h1>
           </div>
         </div>
 
         {loggedIn ? (
-          <div className="py-10 lg:py-20">
+          <div className="py-5 sm:py-10">
             <div className="mt-3 sm:mt-0 sm:ml-4 text-center mb-20">
               {tabs.map((tab, index) => (
                 <button

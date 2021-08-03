@@ -1,5 +1,5 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useContext, useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Popover, Transition } from '@headlessui/react'
 import { LogoutIcon } from '@heroicons/react/outline'
 import { Web3Context } from '../../context/web3-context'
@@ -17,7 +17,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function UserMenu() {
   const web3Context = useContext(Web3Context);
   const userContext = useContext(UserContext);
   const [userName, setUserName] = useState("User");
@@ -134,16 +134,16 @@ export default function Example() {
                 </div>
                 <div className="p-2 pt-1">
                   {menuItems.map((item) => (
-                    <a
+                    <Popover.Button
+                      as={Link}
                       key={item.name}
-                      href={item.href ? item.href : "javascript:void(0);"}
-                      onClick={item.onClick ? item.onClick : null}
+                      to={item.href}
                       className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
                     >
                       <div className="ml-4">
                         <p className="text-sm font-bold text-gray-900">{item.name}</p>
                       </div>
-                    </a>
+                    </Popover.Button>
                   ))}
                   <a
                     href="javascript:void(0);"

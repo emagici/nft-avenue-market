@@ -26,12 +26,10 @@ import {
 } from "../../utilities/utils";
 
 import {
-  EmailShareButton,
   FacebookShareButton,
   TelegramShareButton,
   TwitterShareButton,
   WhatsappShareButton,
-  EmailIcon,
   FacebookIcon,
   TelegramIcon,
   TwitterIcon,
