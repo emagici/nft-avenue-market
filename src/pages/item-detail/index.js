@@ -510,9 +510,15 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                      Buy Now
-                                    </a>
+                                  {isOwner && item.owner.toLowerCase() === myAdd.toLowerCase() ? (
+                                      <a onClick={() => cancelOffer()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                       Cancel Offer
+                                     </a>
+                                   ) : (
+                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Buy Now
+                                      </a>
+                                   )}
                                   </td>
                                 </tr>
                               ))}
