@@ -21,6 +21,9 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { useAsync } from 'react-async-hook';
 import useConstant from 'use-constant';
 import UserMenu from "./user-menu";
+import axios from "axios";
+import AppUrls from '../../AppSettings';
+import moment from "moment";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -66,6 +69,14 @@ function goToSearchPage(text){
 
 const useSearch = () => useDebouncedSearch(text => goToSearchPage(text));
 
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient,
+  fomoNodeAPI: AppUrls.fomoNodeAPI
+};
+
+
 export default function Navbar() {
   const userContext = useContext(UserContext);
   const web3Context = useContext(Web3Context);
@@ -79,6 +90,8 @@ export default function Navbar() {
   const [errorStr, setErrorStr] = useState(null);
   //const { inputText, setInputText, searchResults } = useSearch();
   const [inputText, setInputText] = useState(null);
+  const [accessToken, setAccessToken] = useState();
+  const [notifications, setNotifications] = useState([]);
 
   // const walletSignIn = () => {
   //   connectWallet(() => setMetamaskSignInModalOpen(true));
@@ -147,8 +160,21 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setLoggedIn(userContext.state.accessToken ? true : false)
+    setLoggedIn(userContext.state.accessToken ? true : false);
+    
+    if(userContext.state.accessToken)
+    {
+      setAccessToken(userContext.state.accessToken);
+    }
+
   }, [userContext.state.accessToken]);
+
+  useEffect(() => {
+    if(accessToken)
+    {
+      getNotifications();
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     setWalletSigned(userContext.state.sign ? true : false);
@@ -218,6 +244,28 @@ export default function Navbar() {
       goToSearchPage(e.target.value);
     }
   }
+
+  const getNotifications = () => {
+    console.log(accessToken);
+
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNotifications?take=10`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+        console.log(response);
+        if(response.data.result){
+            setNotifications(response.data.result);
+        }
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+}
+
 
   // useEffect(() => {
   //   console.log(status)
@@ -358,45 +406,24 @@ export default function Navbar() {
                             static
                             className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                           >
-                            <Menu.Item>
-                              {({ active }) => (
-                                <a
+                            {notifications.map((notification) => 
+
+                                <Menu.Item 
+                                  as="a" 
                                   href="#"
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  Notification #1
-                                </a>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <a
-                                  href="#"
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  Notification #2
-                                </a>
-                              )}
-                            </Menu.Item>
-                            <Menu.Item>
-                              {({ active }) => (
-                                <a
-                                  href="#"
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700"
-                                  )}
-                                >
-                                  Notification #3
-                                </a>
-                              )}
-                            </Menu.Item>
+                                  className="block px-4 py-2 text-sm text-gray-700 text-center">
+                                    {notification.eventName.replace(/([A-Z])/g, " $1")}
+
+                                    <Menu.Item 
+                                      as="span"
+                                      className="block text-xs text-right">
+                                      {moment(notification.dateCreated).fromNow()}
+                                    </Menu.Item>
+                                </Menu.Item>
+                                
+
+                            )}
+
                           </Menu.Items>
                         </Transition>
                       </>
