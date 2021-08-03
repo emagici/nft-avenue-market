@@ -338,12 +338,12 @@ export default function Profile() {
             <div className="flex justify-center lg:justify-start">
               {loggedIn && userProfile ? (
                 <img
-                  className="h-24 w-24 shadow-lg rounded-full ring-4 bg-white ring-white sm:h-32 sm:w-32"
+                  className="h-24 w-24 shadow-lg rounded-full ring-4 bg-gray-200 ring-white sm:h-32 sm:w-32"
                   src={userProfile.profilePictureUrl}
                   alt=""
                 />
               ) : (
-                <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-white sm:h-32 sm:w-32 bg-gray-100"></div>
+                <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-gray-200 sm:h-32 sm:w-32 bg-gray-100"></div>
               )}
             </div>
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">

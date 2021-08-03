@@ -9,8 +9,8 @@ import AppUrls from '../../AppSettings';
 import Wallet from './wallet';
 import { useHistory } from "react-router-dom";
 
-var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
-const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
+// var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
+// const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -134,7 +134,11 @@ export default function UserSettings() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <div className="flex items-center">
-                  <img src={profileImage ? profileImage.imageUrl : profileImageDefault} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100" />
+                  {profileImage ? (
+                    <img src={profileImage.imageUrl} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 shadow-lg" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 shadow-lg"></div>
+                  )}
                   <label
                     htmlFor="file-upload"
                     className="relative cursor-pointer focus-within:outline-none"
@@ -151,8 +155,12 @@ export default function UserSettings() {
                 Cover photo
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
-                <div className="max-w-lg flex justify-center h-28 bg-gray-100 rounded-xl mb-4 overflow-hidden">
-                  <img src={coverImage ? coverImage.imageUrl : coverImageDefault} className="h-full w-full object-cover" />
+                <div className="max-w-lg flex justify-center h-28 bg-gray-100 rounded-xl mb-4 overflow-hidden shadow-md">
+                  {coverImage ? (
+                    <img src={coverImage.imageUrl} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full object-cover"></div>
+                  )}
                 </div>
                 <label
                   htmlFor="coverfile-upload"
