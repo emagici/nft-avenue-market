@@ -30,6 +30,8 @@ export default function Example() {
     const accounts = await web3Context.state.web3Data.eth.getAccounts();
     var myadd = accounts[0];
 
+    if(!myadd) return
+
     web3Context.state.web3Data.eth.getBalance(myadd, function(err, result) {
       if (err) {
         console.log(err)

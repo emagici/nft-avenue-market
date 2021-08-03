@@ -22,8 +22,6 @@ export const getPayTokenFromListing = async (
     .listings(chkAddress, chkTokenId, chkOwnerAdd)
     .call();
 
-  console.log(listingDetails);
-
   return getPayTokenDetailByAddress(listingDetails.payToken);
 };
 

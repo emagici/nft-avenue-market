@@ -85,7 +85,6 @@ export default function Navbar() {
   const location = useLocation();
   // const { account, chainId, connect, error, reset, status } = useWallet()
   const [myAdd, setMyAdd] = useState(null);
-  const [connected, setConnected] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [walletSigned, setWalletSigned] = useState(false);
   const [errorStr, setErrorStr] = useState(null);
@@ -102,6 +101,63 @@ export default function Navbar() {
     userContext.dispatch(initialState);
     document.location.href = "/";
   };
+
+
+  useEffect(() => {
+    const checkConnection = async () => {
+
+        web3Context.dispatch({
+          type: "SET_USER_DISCONNECTED"
+        });
+
+        let web3;
+        if (window.ethereum) {
+
+            web3 = new Web3(window.ethereum);
+            web3Context.dispatch({
+              type: "SET_WEB3_DATA",
+              payload: web3,
+            });
+
+            web3.eth.getAccounts()
+            .then(async (addr) => {
+              if(addr.toString()){
+                setMyAdd(addr.toString());
+                web3Context.dispatch({
+                  type: "SET_USER_CONNECTED"
+                });
+              }
+            });
+        } else if (window.web3) {
+
+            web3 = new Web3(window.web3.currentProvider);
+            web3Context.dispatch({
+              type: "SET_WEB3_DATA",
+              payload: web3,
+            });
+
+            web3.eth.getAccounts()
+            .then(async (addr) => {
+              if(addr.toString()){
+                setMyAdd(addr.toString());
+                web3Context.dispatch({
+                  type: "SET_USER_CONNECTED"
+                });
+              }
+            });
+        };
+
+        if(!window.web3){
+          web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545");
+
+          web3Context.dispatch({
+            type: "SET_WEB3_DATA",
+            payload: web3,
+          });
+        }
+    };
+    checkConnection();
+  }, []);
 
   useEffect(() => {
     setLoggedIn(userContext.state.accessToken ? true : false);
@@ -129,11 +185,12 @@ export default function Navbar() {
 
     const providerOptions = {
       walletconnect: {
-        package: WalletConnectProvider, // required
+        package: WalletConnectProvider,
         options: {
           rpc: {
-            97: "https://data-seed-prebsc-1-s1.binance.org:8545",
-          }, // required
+            56: "https://bsc-dataseed.binance.org",
+          },
+          network: 'binance'
         },
       },
     };
@@ -143,12 +200,6 @@ export default function Navbar() {
     });
 
     const provider = await web3Modal.connect();
-
-    if (provider.http) {
-      provider.chainId = 97;
-      provider.http.url = "https://data-seed-prebsc-1-s1.binance.org:8545";
-      provider.rpcUrl = "https://data-seed-prebsc-1-s1.binance.org:8545";
-    }
 
     const web3 = new Web3(provider);
 
@@ -160,7 +211,10 @@ export default function Navbar() {
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyAdd(myadd);
-    setConnected(true);
+    web3Context.dispatch({
+      type: "SET_USER_CONNECTED"
+    });
+
     if (callback) callback();
 
     // Subscribe to accounts change
