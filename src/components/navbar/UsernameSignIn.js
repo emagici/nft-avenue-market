@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../context/user-context";
 import AppUrls from "../../AppSettings";
 import Modal from "../../components/modal";
+import { classNames } from '../../utilities/utils'
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -11,6 +12,9 @@ const appUrls = {
 };
 
 export default function UsernameSignIn(props) {
+  const [accept1, setAccept1] = useState(false)
+  const [accept2, setAccept2] = useState(false)
+
   function handleConfirmTwoFactorSignIn() {
     props.setUsernameModalOpen(false);
     goToTwoFactorSignInPage();
@@ -34,7 +38,7 @@ export default function UsernameSignIn(props) {
           <div className="mt-2">
             <p className="text-sm text-gray-500 mb-5">
               Please take a few minutes to read and understand the{" "}
-              <a href="#" className="text-indigo-600 font-bold">
+              <a href="/terms" target="_blank" className="text-indigo-600 font-bold">
                 Fomo Lab Terms of Service
               </a>
               . To continue, you'll need to accept the Terms of Service by
@@ -47,6 +51,7 @@ export default function UsernameSignIn(props) {
                   name="minage"
                   type="checkbox"
                   className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  onChange={(e) => setAccept1(e.target.checked)}
                 />
               </div>
               <div className="ml-3 text-sm">
@@ -62,6 +67,7 @@ export default function UsernameSignIn(props) {
                   name="terms"
                   type="checkbox"
                   className="focus:outline-none h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  onChange={(e) => setAccept2(e.target.checked)}
                 />
               </div>
               <div className="ml-3 text-sm">
@@ -76,8 +82,14 @@ export default function UsernameSignIn(props) {
       <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
         <button
           type="button"
-          className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+          className={classNames(
+            accept1 && accept2
+              ? "opacity-100"
+              : "opacity-50",
+            "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm transition-opacity"
+          )}
           onClick={() => handleConfirmTwoFactorSignIn()}
+          disabled={accept1 && accept2 ? false : true}
         >
           Confirm
         </button>

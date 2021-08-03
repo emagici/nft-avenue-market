@@ -405,26 +405,31 @@ export default function Navbar() {
                         >
                           <Menu.Items
                             static
-                            className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                           >
-                            {notifications.map((notification) => 
+                            <div className="px-4 py-3">
+                              <h1 className="font-bold mb-2">Notifications</h1>
+                              {notifications && notifications.length ? (
+                                notifications.map((notification) => (
+                                  <Menu.Item 
+                                    as="a" 
+                                    href="#"
+                                    className="block px-4 py-2 text-sm text-gray-700 text-center">
+                                      {notification.eventName.replace(/([A-Z])/g, " $1")}
 
-                                <Menu.Item 
-                                  as="a" 
-                                  href="#"
-                                  className="block px-4 py-2 text-sm text-gray-700 text-center">
-                                    {notification.eventName.replace(/([A-Z])/g, " $1")}
-
-                                    <Menu.Item 
-                                      as="span"
-                                      className="block text-xs text-right">
-                                      {moment(notification.dateCreated).fromNow()}
-                                    </Menu.Item>
-                                </Menu.Item>
-                                
-
-                            )}
-
+                                      <Menu.Item 
+                                        as="span"
+                                        className="block text-xs text-right">
+                                        {moment(notification.dateCreated).fromNow()}
+                                      </Menu.Item>
+                                  </Menu.Item>
+                                ))
+                              ) : (
+                                <div className="">
+                                  <p className="text-sm font-medium">No notifications to display.</p>
+                                </div>
+                              )}
+                            </div>
                           </Menu.Items>
                         </Transition>
                       </>

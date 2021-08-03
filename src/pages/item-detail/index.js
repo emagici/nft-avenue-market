@@ -100,8 +100,11 @@ export default function ItemDetail(props) {
   const [offers, setOffers] = useState([]);
   const [history, setHistory] = useState([]);
 
+  const [lowestSellerItem, setLowestSellerItem] = useState();
+
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
+
 
   const getTokenURI = async () => {
 
@@ -149,10 +152,15 @@ export default function ItemDetail(props) {
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
+            sellerProfilePic: item.seller.profilePictureUrl,
             payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
         )));
-          
+
+        const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
+        setLowestSellerItem(sortedlistingItems[0])
+        console.log(sortedlistingItems[0])
+
         setlistings(listingItems);
 
         const offerItems = nftListingResult[0].offers.map((item) => (
@@ -287,6 +295,7 @@ export default function ItemDetail(props) {
 
   const buyItem = async (obj) => {
     console.log(obj)
+    console.log(obj.payToken.payTokenAddress)
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
@@ -400,16 +409,19 @@ export default function ItemDetail(props) {
             <h1 className="font-bold text-3xl text-center md:text-left mb-4">{nftName}</h1>
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
-            {isItemListed && false ? (
+            {isItemListed ? (
               <div class="-mt-4 mb-4">
-                <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
-                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
-                </div>
+                {lowestSellerItem ? (
+                    <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                      <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
+                      {/* <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p> */}
+                    </div>
+                ) : null}
                 <div className="flex justify-center md:justify-start">
-                  {true ? (
+                  {lowestSellerItem ? (
                     <button
                       type="button"
+                      onClick={() => buyItem(lowestSellerItem)}
                       className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
                     >
                       <span>Buy Now</span>
@@ -423,9 +435,10 @@ export default function ItemDetail(props) {
                       <span>Place Bid</span>
                     </button>
                   ) : null}
-                  {false ? (
+                  {isItemListed ? (
                     <button
                       type="button"
+                      onClick={() => setMakeOfferModalOpen(true)}
                       className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
                     >
                       <span>Make Offer</span>
@@ -628,8 +641,9 @@ export default function ItemDetail(props) {
                     </div>
                   </div>
                 </div>
+                
                 <div className="px-2 mb-4">
-                  {true ? (
+                  {false ? (
                     <div>
                       <p className="mb-2">This item is accepting offers. To make an offer use the button below:</p>
                       <button
@@ -640,14 +654,14 @@ export default function ItemDetail(props) {
                         <span>Make Offer</span>
                       </button>
                     </div>
-                  ) : (
-                    <div>
-                      <p className="mb-4">This item is not accepting offers.</p>
-                    </div>
+                  ) : (null
+                    // <div>
+                    //   <p className="mb-4">This item is not accepting offers.</p>
+                    // </div>
                   )}
                 </div>
               </AccordionPanel>
-
+ 
               {/* <AccordionItem toggle="price-history">Price History</AccordionItem>
               <AccordionPanel id="price-history">
                 <div className="px-2">
@@ -926,7 +940,7 @@ export default function ItemDetail(props) {
 
                   {history.map((item) => (
                     // console.log(item)
-                    <ItemHistoryRow type={item.eventName} userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date={item.blockNumber} />
+                    <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
 
                   ))}
 
