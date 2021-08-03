@@ -71,7 +71,7 @@ export default function Profile() {
     "On Sale",
     "Owned",
     "Created",
-    "Liked",
+    // "Liked",
     "Following",
     "Followers",
     "Activity",
@@ -535,8 +535,9 @@ export default function Profile() {
                    <ul className="">
                       {myActivies.map((item, index) => (
                         <li key={index} className="py-3 border-b">
+                          <Link to={`/item-detail?listed=true&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="underline hover:opacity-80 transition-opacity">{item.nftDetails?.name}</Link>
                           <p className="text-sm font-bold">{item.eventName}</p>
-                          <p className="text-sm font-medium">{item.txHash}</p>
+                          <p className="text-sm font-medium">tx hash : {item.txHash}</p>
                         </li>
                       ))}
                    </ul>
