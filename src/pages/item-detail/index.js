@@ -940,7 +940,7 @@ export default function ItemDetail(props) {
 
                   {history.map((item) => (
                     // console.log(item)
-                    <ItemHistoryRow type={item.eventName} userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date={item.blockNumber} />
+                    <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
 
                   ))}
 
