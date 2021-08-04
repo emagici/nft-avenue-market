@@ -7,6 +7,8 @@ import { UserContext } from '../../context/user-context'
 import {
   fomoTokenAddress
 } from "../../utilities/utils";
+import axios from "axios";
+import AppUrls from '../../AppSettings';
 
 const menuItems = [
   { name: 'My Profile', href: '/user' },
@@ -17,12 +19,20 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient,
+  fomoNodeAPI: AppUrls.fomoNodeAPI
+};
+
 export default function UserMenu() {
   const web3Context = useContext(Web3Context);
   const userContext = useContext(UserContext);
   const [userName, setUserName] = useState("User");
   const [bnbBalance, setBnbBalance] = useState("0");
   const [fomoBalance, setFomoBalance] = useState("0");
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(async() => {
     if(web3Context.state.web3Data == null) return
@@ -64,7 +74,7 @@ export default function UserMenu() {
     userContext.dispatch({
       type: "RESET_ALL"
     });
-    goToUserPage();
+    signout();
   }
 
   function goToUserPage(){
@@ -83,6 +93,30 @@ export default function UserMenu() {
         setUserName(userContext.state.name)
       }
     }
+  }
+
+  useEffect(() => {
+      setAccessToken(userContext.state.accessToken);
+  }, [userContext.state.accessToken]);
+
+  const signout = () => {
+    console.log(accessToken);
+
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/TokenAuth/LogOut`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+        console.log("signout result", response);
+        goToUserPage();
+    })
+    .catch(function (response) {
+      console.log(response);
+      alert("Unable to process request!");
+    });
   }
 
 

@@ -440,7 +440,7 @@ export default function Profile() {
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No items created</h1>
                 <p className="font-medium text-gray-600 mb-5">
-                  Items that you create will appear here.
+                  Apply for verification for your chance to create and sell NFTs right here on the The Avenue
                 </p>
               </div>
             ) : null}
