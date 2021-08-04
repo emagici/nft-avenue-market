@@ -114,6 +114,7 @@ export default function Profile() {
       clearUrlAccessToken();
       setLoggedIn(true);
       loadProfile(accessToken);
+      loadMyRegisteredWalletAddress(accessToken);
       //alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
 
@@ -149,6 +150,26 @@ export default function Profile() {
     return obj;
   }
 
+  const loadMyRegisteredWalletAddress = (accessToken) => {
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyWalletAddress`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      console.log(response)
+      userContext.dispatch({
+        type: "SET_REGISTERED_ADDRESS",
+        payload: response.data.result
+       })
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
   const loadProfile = (accessToken) => {
     axios({
       method: "GET",
@@ -162,7 +183,7 @@ export default function Profile() {
       userContext.dispatch({
         type: "UPDATE_DATA",
         payload: response.data.result
-    })
+       })
     })
     .catch(function (response) {
       console.log(response);
@@ -199,45 +220,48 @@ export default function Profile() {
 
     setOnSaleNfts(myListedNfts.data.result);
 
-    axios({
-      method: "post",
-      url: `${appUrls.fomoNodeAPI}`,
-      data: JSON.stringify({ Signature: sign }),
-    })
-    .then(function (response) {
-
-      var items = response.data.map((item, i) => {   
-          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
-        
-          var obj = {
-            id: listedItem ? listedItem.nft.id : 0,
-            TokenName: item.TokenName,
-            Image: item.Image,
-            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-            TokenId: item.TokenId,
-            NftAddress: item.TokenContractAddress
-          };
-          return obj;
+    if(sign){
+      axios({
+        method: "post",
+        url: `${appUrls.fomoNodeAPI}`,
+        data: JSON.stringify({ Signature: sign }),
       })
-      setOwnNfts(items);
-
-      // userContext.dispatch({
-      //   type: "SET_SIGN",
-      //   payload: sign
-      // })
-
-      userContext.dispatch({
-        type: "SET_OWN_NFTS",
-        payload: items
+      .then(function (response) {
+  
+        var items = response.data.map((item, i) => {   
+            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
+          
+            var obj = {
+              id: listedItem ? listedItem.nft.id : 0,
+              TokenName: item.TokenName,
+              Image: item.Image,
+              TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
+              TokenId: item.TokenId,
+              NftAddress: item.TokenContractAddress,
+              OwnedNftQuantity: item.Count
+            };
+            return obj;
+        })
+        setOwnNfts(items);
+  
+        userContext.dispatch({
+          type: "SET_OWN_NFTS",
+          payload: items
+        })
+  
+        sharedContext.dispatch({
+          type: "STOP_LOADING"
+        })
       })
-
+      .catch(function (response) {
+        console.log(response);
+      });
+      
+    } else {
       sharedContext.dispatch({
         type: "STOP_LOADING"
       })
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
+    }
   }
   
   // const signAndGetUserData = async () => {
@@ -257,6 +281,8 @@ export default function Profile() {
   }, [web3Context.state.web3Data]);
 
   useEffect(async () => {
+    console.log(web3)
+    console.log(userContext.state.accessToken)
     if(web3 && userContext.state.accessToken){
       const accounts = await web3.eth.getAccounts();
       var myadd = accounts[0];
@@ -267,6 +293,7 @@ export default function Profile() {
         loadProfile(userContext.state.accessToken)
 
       loadMyActivities(userContext.state.accessToken);
+
 
       getOwnNfts(userContext.state.sign, myadd)
       setLoggedIn(true);

@@ -100,8 +100,6 @@ export default function UserMenu() {
   }, [userContext.state.accessToken]);
 
   const signout = () => {
-    console.log(accessToken);
-
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/TokenAuth/LogOut`,
