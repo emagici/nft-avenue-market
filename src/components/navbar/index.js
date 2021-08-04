@@ -468,43 +468,78 @@ export default function Navbar() {
                     />
                   </Fragment>
 
-                  <button
-                    type="button"
-                    onClick={() => connectWallet()}
-                    className={classNames(
-                      myAdd
-                        ? "bg-green-500 hover:bg-green-600"
-                        : "bg-indigo-600 hover:bg-indigo-700",
-                      "relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
-                    )}
-                  >
-                    <span>
-                      {myAdd ? myAdd.substr(0, 6) + "..." : "Connect Wallet"}
-                    </span>
-                  </button>
+                  {myAdd ? (
+                    <Menu as="div" className="inline-flex relative">
+                      {({ open }) => (
+                        <>
+                          <div>
+                            <Menu.Button className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
+                              <span className="sr-only">Wallet</span>
+                              {myAdd.substr(0,6) + "..."}
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            show={open}
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items
+                              static
+                              className="origin-top-right absolute right-0 mt-12 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            >
+                              <a
+                                href="javascript:void(0);"
+                                onClick={() => alert('disconnect')}
+                                className="py-2 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
+                              >
+                                <div className="ml-4">
+                                  <p className="text-sm font-bold text-red-500">Disconnect</p>
+                                </div>
+                              </a>
+                            </Menu.Items>
+                          </Transition>
+                        </>
+                      )}
+                    </Menu>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => connectWallet()}
+                      className="bg-indigo-600 hover:bg-indigo-700 relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
+                    >
+                      <span>Connect Wallet</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
           <Disclosure.Panel className="md:hidden">
-            <div className="">
+            <div className="border-t">
               {Routes.filter((item) => item.nav).map((item, index) => (
-                <Link
+                <Disclosure.Button
+                  as={Link}
                   key={index}
-                  onClick={() => (open = false)}
+                  // onClick={() => close}
                   to={item.path}
                   className={classNames(
                     item.path == location.pathname
-                      ? "bg-indigo-50 border-indigo-500 text-indigo-700 border-l-4"
+                      ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                       : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
-                    "text-center block pl-3 pr-4 py-3 border-l-4 text-base font-medium sm:pl-5 sm:pr-6"
+                    "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6"
                   )}
                 >
                   {item.title}
-                </Link>
+                </Disclosure.Button>
               ))}
             </div>
+
           </Disclosure.Panel>
         </>
       )}

@@ -22,6 +22,14 @@ export default function Register(props) {
 
   const registerNewUser = (e) => {
     e.preventDefault();
+
+    if(!registerItem.Username || !registerItem.Password || !registerItem.Email)
+    {
+      alert("Please fill all details.")
+      return;
+    }
+
+    setLoading(true);
     axios({
       method: "POST",
       url: `${appUrls.fomoHostApi}/api/services/app/Account/Register`,
@@ -31,6 +39,7 @@ export default function Register(props) {
       }
     })
     .then(function (response) {
+        setLoading(false);
         props.setRegisterModalOpen(false);
         alert('success');
         console.log(response);
@@ -39,7 +48,7 @@ export default function Register(props) {
         setSeedWordsModalOpen(true);
     })
     .catch(function (response) {
-        console.log(response);
+      setLoading(false);
     });
   }
 
@@ -156,9 +165,17 @@ export default function Register(props) {
           </div>
 
           <div>
-            <button onClick={(e) => registerNewUser(e)} class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Submit
-            </button>
+
+          {loading ? (
+              <div className="flex items-center justify-center">
+                <h1 className="text-2xl font-bold text-center capitalize">Processing</h1>
+                <Spinner className="h-6 w-6 ml-2" />
+              </div>
+          ) : (
+              <button onClick={(e) => registerNewUser(e)} class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Submit
+              </button>
+          ) }
           </div>
         </form>
 

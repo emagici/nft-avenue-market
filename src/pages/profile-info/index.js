@@ -2,10 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import CardList from "../../components/cards/card-list";
 import CardDefault from "../../components/cards/item-card-default";
-import {
-  PlusCircleIcon,
-  StarIcon
-} from "@heroicons/react/solid";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faDiscord, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons'
+import { PlusCircleIcon, StarIcon } from "@heroicons/react/solid";
+
+
 import axios from "axios";
 import RatingModal from '../user/rating-modal';
 
@@ -59,8 +61,8 @@ export default function ProfileInfo() {
   function init(){
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
     if (params.userId) {
-      loadProfile(+params.userId);
-      getUserNfts(+params.userId);
+      loadProfile(params.userId);
+      getUserNfts(params.userId);
     }
   }
 
@@ -137,8 +139,6 @@ export default function ProfileInfo() {
 
     const nftItem = nftResponse.data.result;
 
-    console.log(nftItem)
-
     setOnSaleNfts(nftItem.nftsListed);
 
     var items = nftItem.nftsOwned.map((item, i) => {   
@@ -195,99 +195,106 @@ export default function ProfileInfo() {
           ) : (
             <div className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"></div>
           )}
-          <div className="hidden sm:block absolute bottom-5 right-5 z-10">
-            
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5 mb-7">
-            <div className="flex justify-center lg:justify-start">
-              {userProfile ? (
-                <img
-                  className="h-24 w-24 shadow-lg rounded-full ring-4 bg-white ring-white sm:h-32 sm:w-32"
-                  src={userProfile.profilePictureUrl}
-                  alt=""
+          <div className="absolute top-3 left-3 right-3 z-10">
+            {loggedIn && userProfile ? (
+              <div className="flex justify-between sm:justify-end flex-row space-x-2">
+                <button
+                  onClick={() => setRatingModalOpen(true)}
+                  className="inline-flex justify-center px-4 py-2 shadow-lg w-auto sm:w-32 text-sm font-medium rounded-full text-gray-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none"
+                >
+                  <span>Rate User</span>
+                  <StarIcon
+                    className="-mr-1 ml-1 h-5 w-5 text-gray-900"
+                    aria-hidden="true"
+                  />
+                </button>
+                <RatingModal
+                  modalOpen={ratingModalOpen}
+                  setModalOpen={(v) => setRatingModalOpen(v)}
+                  receiverUserId={userProfile.id}
+                  giverUserId={loggedInUserId}
                 />
-              ) : (
-                <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-white sm:h-32 sm:w-32 bg-gray-100"></div>
-              )}
-            </div>
-            <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-              <div className="block mt-6 min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {/* {userProfile ? `${userProfile.name.substr(0,6)}...${userProfile.name.substr(38,4)}` : "User"} */}
-                  {userProfile ? displayName : "User"}
-                </h1>
-              </div>
 
-              <div className="block mt-6 min-w-0 flex-1">
-                <div className="flex justify-center items-center">
-                    {ratings.map(val => (
-                      <StarIcon
-                        className={classNames(
-                          val <= averageRating
-                            ? "text-yellow-400"
-                            : "text-gray-300",
-                          "h-6 w-6"
-                        )}
-                      />
-                    ))}
-                  </div>
-              </div>
-
-              {userProfile ? (
-                <div className="text-center sm:hidden pt-5">
-                  <p>{userProfile.description}</p>
-                </div>
-              ) : null}
-
-              <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                {loggedIn && userProfile ? (
-                  <div className="flex flex-col sm:block space-y-3 sm:space-y-0 sm:space-x-2">
-                    <button
-                      onClick={() => setRatingModalOpen(true)}
-                      className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-gray-900 bg-yellow-400 hover:bg-yellow-500 focus:outline-none"
-                    >
-                      <span>Rate User</span>
-                      <StarIcon
-                        className="-mr-1 ml-1 h-5 w-5 text-gray-900"
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <RatingModal
-                      modalOpen={ratingModalOpen}
-                      setModalOpen={(v) => setRatingModalOpen(v)}
-                      receiverUserId={userProfile.id}
-                      giverUserId={loggedInUserId}
-                    />
-
-                    <button
-                      onClick={() => alert("follow")}
-                      className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Follow</span>
-                      <PlusCircleIcon
-                        className="-mr-1 ml-1 h-5 w-5 text-white"
-                        aria-hidden="true"
-                      />
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-          <div className="">
-            {userProfile && userProfile.description ? (
-              <div className="hidden sm:block lg:px-10 text-center md:text-left">
-                <h6 className="font-bold hidden md:block">Bio</h6>
-                <p>{userProfile.description}</p>
+                <button
+                  onClick={() => alert("follow")}
+                  className="inline-flex justify-center px-4 py-2 shadow-lg w-auto sm:w-32 text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                >
+                  <span>Follow</span>
+                  <PlusCircleIcon
+                    className="-mr-1 ml-1 h-5 w-5 text-white"
+                    aria-hidden="true"
+                  />
+                </button>
               </div>
             ) : null}
           </div>
         </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="-mt-12 sm:-mt-16 sm:items-end sm:space-x-5 mb-7">
+            <div className="flex flex-col items-center justify-center gap-3">
+              
+              <div className="">
+                {userProfile ? (
+                  <img
+                    className="h-24 w-24 shadow-lg rounded-full ring-4 bg-white ring-white sm:h-32 sm:w-32"
+                    src={userProfile.profilePictureUrl}
+                    alt=""
+                  />
+                ) : (
+                  <div className="h-24 w-24 shadow-lg rounded-full ring-4 ring-white bg-white sm:h-32 sm:w-32 bg-gray-100"></div>
+                )}
+              </div>
+
+              <div className="block">
+                <div className="flex items-center">
+                  {ratings.map(val => (
+                    <StarIcon
+                      className={classNames(
+                        val <= averageRating
+                          ? "text-yellow-400"
+                          : "text-gray-300",
+                        "h-5 w-5"
+                      )}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1">
+                {userProfile ? displayName : "User"}
+              </h1>
+
+              {userProfile ? (
+                <div className="text-center">
+                  <p>{userProfile.description}</p>
+                </div>
+              ) : null}
+
+              <div className="flex items-center justify-center gap-3 text-gray-800">
+                {userProfile && userProfile.twitterUrl ? (
+                  <a href={`https://twitter.com/${userProfile.twitterUrl}`} target="_blank" className="p-3 hover:text-blue-500 transition-all">
+                    <FontAwesomeIcon icon={faTwitter} size='2x' />
+                  </a>
+                ) : null}
+                {userProfile && userProfile.instagramUrl ? (
+                  <a href={`https://instagram.com/${userProfile.instagramUrl}`} target="_blank" className="p-3 hover:text-pink-600 transition-all">
+                    <FontAwesomeIcon icon={faInstagram} size='2x' />
+                  </a>
+                ) : null}
+                {userProfile && userProfile.discordUrl ? (
+                  <a href={userProfile.discordUrl} target="_blank" className="p-3 hover:text-purple-600 transition-all">
+                    <FontAwesomeIcon icon={faDiscord} size='2x' />
+                  </a>
+                ) : null}
+              </div>
+
+            </div>
+              
+          </div>
+        </div>
 
         {true ? (
-          <div className="py-10 lg:py-20">
+          <div className="py-2 lg:py-8">
             <div className="mt-3 sm:mt-0 sm:ml-4 text-center mb-20">
               {tabs.map((tab, index) => (
                 <button
