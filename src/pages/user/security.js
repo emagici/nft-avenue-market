@@ -89,8 +89,6 @@ export default function Security() {
     }
 
     const getCurrentUserProfileForEdit = () => {
-        console.log(accessToken);
-
         axios({
           method: "GET",
           url: `${appUrls.fomoHostApi}/api/services/app/Profile/GetCurrentUserProfileForEdit`,
@@ -116,8 +114,6 @@ export default function Security() {
     }
 
     const updateQrCodeSetupImageUrl = () => {
-        console.log(accessToken);
-
         axios({
           method: "POST",
           url: `${appUrls.fomoHostApi}/api/services/app/Profile/UpdateGoogleAuthenticatorKey`,
@@ -142,8 +138,6 @@ export default function Security() {
     }
 
     const disableGoogleAuthenticator = () => {
-        console.log(accessToken);
-
         axios({
           method: "POST",
           url: `${appUrls.fomoHostApi}/api/services/app/Profile/DisableGoogleAuthenticator`,

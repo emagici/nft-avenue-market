@@ -106,10 +106,10 @@ export default function ItemDetail(props) {
 
   const getTokenURI = async () => {
 
-    const ownCurrentNft = userContext.state.ownNfts.filter(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
+    const ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
 
-    if(ownCurrentNft && ownCurrentNft.length > 0){
-      setNftQuantityOwned(ownCurrentNft.length)
+    if(ownCurrentNft){
+      setNftQuantityOwned(ownCurrentNft.OwnedNftQuantity)
       setIsOwner(true);
     }
 
@@ -147,6 +147,7 @@ export default function ItemDetail(props) {
             NftAddress: item.nft.nft,
             TokenName:  item.nft.tokenName,
             owner: item.nft.owner,
+            ownerUserId: item.nft.ownerId,
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
@@ -198,7 +199,7 @@ export default function ItemDetail(props) {
   };
 
   const listItem = async () => {
-    if (!web3) return;
+    if (!web3 || !web3Context.state.userConnected) return;
 
     if(ListPrice <= 0 || ListQuantity <= 0){
       alert("Please enter price and quantity more than 0");
@@ -260,19 +261,24 @@ export default function ItemDetail(props) {
   };
 
   const cancelListing = async () => {
+    if (!web3 || !web3Context.state.userConnected) return;
+
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
-    console.log(offerOwnerAdd)
+    if (!web3 || !web3Context.state.userConnected) return;
+
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd });
   };
 
   const createOffer = async () => {
+    if (!web3 || !web3Context.state.userConnected) return;
+
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalAmount = offerQuantity * offerPricePerItem;
@@ -306,12 +312,16 @@ export default function ItemDetail(props) {
   };
 
   const cancelOffer = async () => {
+    if (!web3 || !web3Context.state.userConnected) return;
+
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
       .send({ from: myAdd });
   };
 
   const buyItem = async (obj) => {
+    if (!web3 || !web3Context.state.userConnected) return;
+
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
@@ -574,11 +584,12 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.sellerName}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
+                                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                   {isOwner && item.owner.toLowerCase() === myAdd.toLowerCase() ? (
-                                      <a onClick={() => cancelOffer()} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                       Cancel Offer
+                                      <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                       Cancel Listing
                                      </a>
                                    ) : (
                                       <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
