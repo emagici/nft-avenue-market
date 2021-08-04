@@ -381,102 +381,62 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
-                  {/* Profile dropdown */}
-                  {loggedIn && notifications.length > 0 && (
-                  <Menu as="div" className="ml-3 relative">
-                    {({ open }) => (
-                      <>
-                        <div>
-                          <Menu.Button className="bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                          </Menu.Button>
-                        </div>
-                        <Transition
-                          show={open}
-                          as={Fragment}
-                          enter="transition ease-out duration-200"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items
-                            static
-                            className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                          >
-                            {notifications.map((notification) => 
-
-                                <Menu.Item 
-                                  as="a" 
-                                  href="#"
-                                  className="block px-4 py-2 text-sm text-gray-700 text-center">
-                                    {notification.eventName.replace(/([A-Z])/g, " $1")}
-
-                                    <Menu.Item 
-                                      as="span"
-                                      className="block text-xs text-right">
-                                      {moment(notification.dateCreated).fromNow()}
-                                    </Menu.Item>
-                                </Menu.Item>
-                                
-
-                            )}
-
-                          </Menu.Items>
-                        </Transition>
-                      </>
-                    )}
-                  </Menu>
-                  )}
-
-                  {loggedIn && notifications.length == 0 && (
+                {loggedIn ? (
+                  <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
+                    {/* Profile dropdown */}
                     <Menu as="div" className="ml-3 relative">
-                    {({ open }) => (
-                      <>
-                        <div>
-                          <Menu.Button className="bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                          </Menu.Button>
-                        </div>
-                        <Transition
-                          show={open}
-                          as={Fragment}
-                          enter="transition ease-out duration-200"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items
+                      {({ open }) => (
+                        <>
+                          <div>
+                            <Menu.Button className="bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
+                              <span className="sr-only">View notifications</span>
+                              <BellIcon className="h-6 w-6" aria-hidden="true" />
+                            </Menu.Button>
+                          </div>
+                          <Transition
+                            show={open}
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items
                               static
-                              className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                              className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                             >
-                              <Menu.Item>
-                                {({ active }) => (
-                                  <a
-                                    href="#"
-                                    className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "block px-4 py-2 text-sm text-gray-700"
-                                    )}  
-                                  >
-                                    No notifications
-                                  </a>
+                              <div className="px-4 py-3">
+                                <h1 className="font-bold mb-2">Notifications</h1>
+                                {notifications && notifications.length ? (
+                                  notifications.map((notification) => (
+                                    <Menu.Item 
+                                      as="a" 
+                                      href="#"
+                                      className="block px-4 py-2 text-sm text-gray-700 text-center">
+                                        {notification.eventName.replace(/([A-Z])/g, " $1")}
+
+                                        <Menu.Item 
+                                          as="span"
+                                          className="block text-xs text-right">
+                                          {moment(notification.dateCreated).fromNow()}
+                                        </Menu.Item>
+                                    </Menu.Item>
+                                  ))
+                                ) : (
+                                  <div className="">
+                                    <p className="text-sm font-medium">No notifications to display.</p>
+                                  </div>
                                 )}
-                              </Menu.Item>
-                            </Menu.Items> 
-                        </Transition>
-                      </>
-                    )}
-                  </Menu>
-                   
-                  )} 
-                </div>
+                              </div>
+                            </Menu.Items>
+                          </Transition>
+                        </>
+                      )}
+                    </Menu>
+                  </div>
+                ) : null}
 
                 {false && myAdd ? (
                   <div className="flex-shrink-0 hidden md:block">

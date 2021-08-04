@@ -3,13 +3,20 @@ import {
   MARKETPLACE_ADDRESS,
 } from "../contracts/FomoMarketPlace";
 
+
+export function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
+
 export const tokenTypes = [
   { name: "Fomo", tokenAddress: "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1" },
-  { name: "BNB", tokenAddress: "abc" },
-  { name: "BUSD", tokenAddress: "123" },
+  { name: "BNB", tokenAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" },
+  { name: "BUSD", tokenAddress: "0x8301f2213c0eed49a7e28ae4c3e91722919b8b47" },
 ];
 
 export const fomoTokenAddress = "0xbbb9bda313708f7505347ae3b60232ed4a41e0b1";
+export const listingFeeToken = "0xa113385B601B932f15beec808f05EB7f79852a27";
 
 export const getPayTokenFromListing = async (
   web3,

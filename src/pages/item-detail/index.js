@@ -22,7 +22,7 @@ import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
 import {
-  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress
+  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress, listingFeeToken
 } from "../../utilities/utils";
 
 import {
@@ -100,8 +100,11 @@ export default function ItemDetail(props) {
   const [offers, setOffers] = useState([]);
   const [history, setHistory] = useState([]);
 
+  const [lowestSellerItem, setLowestSellerItem] = useState();
+
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
+
 
   const getTokenURI = async () => {
 
@@ -149,10 +152,15 @@ export default function ItemDetail(props) {
             pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
             quantity: item.nft.quantity,
             sellerName: item.seller.name,
+            sellerProfilePic: item.seller.profilePictureUrl,
             payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
           }
         )));
-          
+
+        const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
+        setLowestSellerItem(sortedlistingItems[0])
+        console.log(sortedlistingItems[0])
+
         setlistings(listingItems);
 
         const offerItems = nftListingResult[0].offers.map((item) => (
@@ -199,6 +207,26 @@ export default function ItemDetail(props) {
       return;
     }
 
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const listingFee = await marketplaceContract.methods.listingFee().call();
+
+    if(Number(currentAllowance) < Number(listingFee)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, listingFee)
+        .send({
+          from: myAdd
+        })
+        .then( async function (result) {
+          checkNftApprovalAndList();
+        })
+        .catch(error => {
+        });
+    }
+    else
+      checkNftApprovalAndList();
+  };
+
+  const checkNftApprovalAndList = async () => {
     const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
     const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
 
@@ -215,7 +243,7 @@ export default function ItemDetail(props) {
     }
     else
       listItemConfirm();
-  };
+  }
 
   const listItemConfirm = async () => {
     const timestamp = new Date().getTime();
@@ -286,7 +314,6 @@ export default function ItemDetail(props) {
   };
 
   const buyItem = async (obj) => {
-    console.log(obj)
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
@@ -400,17 +427,22 @@ export default function ItemDetail(props) {
             <h1 className="font-bold text-3xl text-center md:text-left mb-4">{nftName}</h1>
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
-            {isItemListed && false ? (
+            {isItemListed ? (
               <div class="-mt-4 mb-4">
-                <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">2.45 BNB</p>
-                  <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-gray-500 font-bold text-gray-500 truncate pointer-events-none">$744.20</p>
-                </div>
-                <div className="flex justify-center md:justify-start">
-                  {true ? (
+                {lowestSellerItem ? (
+                    // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                    //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
+                    // </div>
+                    <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                      <p className="mt-2 block text-3xl inline font-extrabold text-green-500 pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
+                    </div>
+                ) : null}
+                <div className="flex justify-center md:justify-start gap-2">
+                  {lowestSellerItem ? (
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                      onClick={() => buyItem(lowestSellerItem)}
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Buy Now</span>
                     </button>
@@ -418,15 +450,16 @@ export default function ItemDetail(props) {
                   {false ? (
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Place Bid</span>
                     </button>
                   ) : null}
-                  {false ? (
+                  {isItemListed ? (
                     <button
                       type="button"
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                      onClick={() => setMakeOfferModalOpen(true)}
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                     >
                       <span>Make Offer</span>
                     </button>
@@ -471,8 +504,8 @@ export default function ItemDetail(props) {
             ) : null}
 
             {nftDescription ? (
-              <div>
-                <p className="mb-2 text-center md:text-left font-bold">Description</p>
+              <div className="pt-2">
+                <p className="mb-1 text-center md:text-left font-bold">Description</p>
                 <p className="mb-6 text-center md:text-left">{nftDescription}</p>
               </div>
             ) : null}
@@ -550,7 +583,7 @@ export default function ItemDetail(props) {
                                        Cancel Offer
                                      </a>
                                    ) : (
-                                      <a onClick={() => buyItem(item)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                      <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
                                         Buy Now
                                       </a>
                                    )}
@@ -572,64 +605,78 @@ export default function ItemDetail(props) {
                   <div className="flex flex-col">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                       <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div className="overflow-hidden sm:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="">
-                              <tr>
-                              <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Token
-                                </th>
+                        {offers && offers.length ? (
+                          <div className="overflow-hidden sm:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200">
+                              <thead className="">
+                                <tr>
                                 <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Price per item
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Quantity
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  From
-                                </th>
-                                <th scope="col" className="relative px-6 py-3">
-                                  <span className="sr-only">Actions</span>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {offers.map((item) => (
-                                <tr key={item.creatorAddress}>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                   {isOwner ? (
-                                      <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                      Accept
-                                    </a>
-                                   ) : null}
-                                  </td>
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Token
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Price per item
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Quantity
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    From
+                                  </th>
+                                  <th scope="col" className="relative px-6 py-3">
+                                    <span className="sr-only">Actions</span>
+                                  </th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200">
+                                {offers.map((item) => (
+                                  <tr key={item.creatorAddress}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    {isOwner ? (
+                                        <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Accept
+                                      </a>
+                                    ) : null}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
+                            <button
+                              type="button"
+                              onClick={() => setMakeOfferModalOpen(true)}
+                              className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                            >
+                              <span>Make Offer</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
+                
                 <div className="px-2 mb-4">
-                  {true ? (
+                  {false ? (
                     <div>
                       <p className="mb-2">This item is accepting offers. To make an offer use the button below:</p>
                       <button
@@ -640,14 +687,14 @@ export default function ItemDetail(props) {
                         <span>Make Offer</span>
                       </button>
                     </div>
-                  ) : (
-                    <div>
-                      <p className="mb-4">This item is not accepting offers.</p>
-                    </div>
+                  ) : (null
+                    // <div>
+                    //   <p className="mb-4">This item is not accepting offers.</p>
+                    // </div>
                   )}
                 </div>
               </AccordionPanel>
-
+ 
               {/* <AccordionItem toggle="price-history">Price History</AccordionItem>
               <AccordionPanel id="price-history">
                 <div className="px-2">
@@ -926,7 +973,7 @@ export default function ItemDetail(props) {
 
                   {history.map((item) => (
                     // console.log(item)
-                    <ItemHistoryRow type={item.eventName} userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date={item.blockNumber} />
+                    <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
 
                   ))}
 
@@ -937,16 +984,22 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            {activeTab === 'Transfer' && isOwner ? (
-              <div>
-                <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
-                <Link
-                  to={`/transfer-item?tokenid=${tokenid}&nftaddress=${nftAddress}`}
-                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
-                >
-                  Transfer
-                </Link>
-              </div>
+            {activeTab === 'Transfer' ? (
+              isOwner ? (
+                <div>
+                  <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
+                  <Link
+                    to={`/transfer-item?tokenid=${tokenid}&nftaddress=${nftAddress}`}
+                    className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
+                  >
+                    Transfer
+                  </Link>
+                </div>
+              ) : (
+                <div>
+                  <p className="mb-3 text-center md:text-left text-sm pt-3">Only the owner of this item can transfer it.</p>
+                </div>
+              )
             ) : null}
            
           </div>

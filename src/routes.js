@@ -10,6 +10,8 @@ import FeaturedDrop from './pages/featured-drop';
 import SearchPage from './pages/search';
 import TransferItem from './pages/transfer-item';
 import ProfileInfo from './pages/profile-info';
+import PrivacyPolicy from './pages/policies/privacy-policy';
+import TermsPage from './pages/policies/terms';
 
 export default [
 	{
@@ -85,6 +87,18 @@ export default [
 		path: "/profile-info",
 		title: "Profile Info",
 		component: ProfileInfo,
+		exact: true
+	},
+	{
+		path: "/privacy-policy",
+		title: "Privacy Policy",
+		component: PrivacyPolicy,
+		exact: true
+	},
+	{
+		path: "/terms",
+		title: "Terms",
+		component: TermsPage,
 		exact: true
 	},
 ];

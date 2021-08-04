@@ -9,8 +9,8 @@ import AppUrls from '../../AppSettings';
 import Wallet from './wallet';
 import { useHistory } from "react-router-dom";
 
-var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
-const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
+// var profileImageDefault = 'https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80';
+// const coverImageDefault = 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -28,6 +28,8 @@ export default function UserSettings() {
   const [displayName, setDisplayName] = useState("");
   const [description, setDescription] = useState("");
   const [facebookUrl, setFacebookUrl] = useState("");
+  const [twitterUrl, setTwitterUrl] = useState("");
+  const [discordUrl, setDiscordUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
 
   function handleSubmit(e) {
@@ -45,6 +47,8 @@ export default function UserSettings() {
       formData.append("Description", description ?? "");
       formData.append("FacebookUrl", facebookUrl ?? "");
       formData.append("InstagramUrl", instagramUrl ?? "");
+      formData.append("TwitterUrl", twitterUrl ?? "");
+      formData.append("DiscordUrl", discordUrl ?? "");
 
     axios({
       method: "post",
@@ -56,6 +60,7 @@ export default function UserSettings() {
       },
     })
       .then(function (response) {
+        console.log(response)
         userContext.dispatch({
           type: "UPDATE_DATA",
           payload: response.data.result
@@ -85,12 +90,15 @@ export default function UserSettings() {
   };
 
   useEffect(async () => {
+    console.log(userContext.state)
     if(userContext.state){
       if(userContext.state.profilePictureUrl) setProfileImage({imageUrl: userContext.state.profilePictureUrl});
       if(userContext.state.bannerPictureUrl) setCoverImage({imageUrl: userContext.state.bannerPictureUrl});
       setDisplayName(userContext.state.name);
       setDescription(userContext.state.description);
       setFacebookUrl(userContext.state.facebookUrl);
+      setTwitterUrl(userContext.state.twitterUrl);
+      setDiscordUrl(userContext.state.discordUrl);
       setInstagramUrl(userContext.state.instagramUrl);
     }
   }, []);
@@ -134,7 +142,11 @@ export default function UserSettings() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <div className="flex items-center">
-                  <img src={profileImage ? profileImage.imageUrl : profileImageDefault} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100" />
+                  {profileImage ? (
+                    <img src={profileImage.imageUrl} className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 shadow-lg" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 shadow-lg"></div>
+                  )}
                   <label
                     htmlFor="file-upload"
                     className="relative cursor-pointer focus-within:outline-none"
@@ -151,8 +163,12 @@ export default function UserSettings() {
                 Cover photo
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
-                <div className="max-w-lg flex justify-center h-28 bg-gray-100 rounded-xl mb-4 overflow-hidden">
-                  <img src={coverImage ? coverImage.imageUrl : coverImageDefault} className="h-full w-full object-cover" />
+                <div className="max-w-lg flex justify-center h-28 bg-gray-100 rounded-xl mb-4 overflow-hidden shadow-md">
+                  {coverImage ? (
+                    <img src={coverImage.imageUrl} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full object-cover"></div>
+                  )}
                 </div>
                 <label
                   htmlFor="coverfile-upload"
@@ -200,7 +216,7 @@ export default function UserSettings() {
                 </div>
             ) : null}
 
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+              {/* <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
                   Facebook Url
                 </label>
@@ -209,6 +225,34 @@ export default function UserSettings() {
                     type="text"
                     value={facebookUrl}
                     onChange={(e) => setFacebookUrl(e.target.value)}
+                    className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div> */}
+
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
+                  Twitter Url
+                </label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    type="text"
+                    value={twitterUrl}
+                    onChange={(e) => setTwitterUrl(e.target.value)}
+                    className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
+                  Discord Id
+                </label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    type="text"
+                    value={discordUrl}
+                    onChange={(e) => setDiscordUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
                 </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
+import CardList from "../../components/cards/card-list";
 import CardDefault from "../../components/cards/item-card-default";
 import {
   PlusCircleIcon,
@@ -15,27 +16,6 @@ import { SharedContext } from '../../context/shared-context';
 import AppUrls from '../../AppSettings';
 import qs from 'qs';
 
-const profile = {
-  name: "CryptoChown",
-  email: "ricardo.cooper@example.com",
-  bio:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
-  avatar:
-    "https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-  backgroundImage:
-    "https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-  fields: [
-    ["Phone", "(555) 123-4567"],
-    ["Email", "ricardocooper@example.com"],
-    ["Title", "Senior Front-End Developer"],
-    ["Team", "Product Development"],
-    ["Location", "San Francisco"],
-    ["Sits", "Oasis, 4th floor"],
-    ["Salary", "$145,000"],
-    ["Birthday", "June 8, 1990"],
-  ],
-};
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -50,19 +30,16 @@ const appUrls = {
 export default function ProfileInfo() {
   const location = useLocation();
   const [web3, setWeb3] = useState();
+  const [loading, setLoading] = useState(false);
   const [ownNfts, setOwnNfts] = useState([]);
   const [onSaleNfts, setOnSaleNfts] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState();
+  const [displayName, setDisplayName] = useState(null);
   const [activeTab, setActiveTab] = useState("On Sale");
   const tabs = [
     "On Sale",
     "Owned",
-    // "Created",
-    // "Liked",
-    // "Following",
-    // "Followers",
-    // "Activity",
   ];
 
   const [ratingModalOpen, setRatingModalOpen] = useState(false);
@@ -86,6 +63,26 @@ export default function ProfileInfo() {
       getUserNfts(+params.userId);
     }
   }
+
+
+
+  useEffect(() => {
+    if (userProfile) {
+      try {
+        if (userProfile.name.length > 15) {
+          setDisplayName(`${userProfile.name.substr(0,6)}...${userProfile.name.substr(-4,4)}`)
+        } else {
+          setDisplayName(userProfile.name)
+        }
+      } catch(e) {
+        setDisplayName(userProfile.name)
+      }
+    } else {
+      setDisplayName(null)
+    }
+  }, [userProfile])
+
+
 
   const transformOnSaleObj = (onSaleObj) => {
     var obj = {
@@ -126,10 +123,12 @@ export default function ProfileInfo() {
   }
 
   const getUserNfts = async (userId) => {
-
-    sharedContext.dispatch({
-      type: "START_LOADING"
-    })
+    if (loading) return
+    setLoading(true)
+    
+    // sharedContext.dispatch({
+    //   type: "START_LOADING"
+    // })
 
     var nftResponse = await axios({
       method: "get",
@@ -155,11 +154,14 @@ export default function ProfileInfo() {
       };
       return obj;
     })
-    setOwnNfts(items);
 
-    sharedContext.dispatch({
-      type: "STOP_LOADING"
-    })
+    setOwnNfts(items);
+    setLoading(false)
+
+    // sharedContext.dispatch({
+    //   type: "STOP_LOADING"
+    // })
+
   }
 
   useEffect(() => {
@@ -184,11 +186,15 @@ export default function ProfileInfo() {
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
-          <img
-            className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"
-            src={userProfile && userProfile.bannerPictureUrl ? userProfile.bannerPictureUrl : profile.backgroundImage}
-            alt=""
-          />
+          {userProfile && userProfile.bannerPictureUrl ? (
+            <img
+              className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"
+              src={userProfile.bannerPictureUrl}
+              alt=""
+            />
+          ) : (
+            <div className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"></div>
+          )}
           <div className="hidden sm:block absolute bottom-5 right-5 z-10">
             
           </div>
@@ -209,7 +215,8 @@ export default function ProfileInfo() {
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
               <div className="block mt-6 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 truncate">
-                  {userProfile ? `${userProfile.name.substr(0,6)}...${userProfile.name.substr(38,4)}` : "User"}
+                  {/* {userProfile ? `${userProfile.name.substr(0,6)}...${userProfile.name.substr(38,4)}` : "User"} */}
+                  {userProfile ? displayName : "User"}
                 </h1>
               </div>
 
@@ -219,8 +226,8 @@ export default function ProfileInfo() {
                       <StarIcon
                         className={classNames(
                           val <= averageRating
-                            ? "text-yellow-400 hover:text-yellow-500"
-                            : "text-gray-300 hover:text-gray-400",
+                            ? "text-yellow-400"
+                            : "text-gray-300",
                           "h-6 w-6"
                         )}
                       />
@@ -277,11 +284,6 @@ export default function ProfileInfo() {
               </div>
             ) : null}
           </div>
-          <div className="hidden lg:hidden mt-6 min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {profile.name}
-            </h1>
-          </div>
         </div>
 
         {true ? (
@@ -304,39 +306,47 @@ export default function ProfileInfo() {
               ))}
             </div>
 
-            {activeTab === "On Sale" && onSaleNfts.length == 0 && (
-              <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No items on sale from this user</h1>
-              </div>
-            )}
+            {activeTab === "On Sale" ? (
+              loading ? (
+                <CardList loading={true} />
+              ) : (
+                onSaleNfts && onSaleNfts.length ? (
+                  <ul
+                    role="list"
+                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
+                  >
+                    {onSaleNfts.map((item, index) => (
+                      <CardDefault key={index} {...transformOnSaleObj(item)} sellItem />
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center">
+                    <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
+                  </div>
+                )
+              )
+            ) : null}
 
-            {activeTab === "On Sale" && onSaleNfts.length > 0 && (
-              <ul
-                role="list"
-                className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-              >
-                {onSaleNfts.map((item, index) => (
-                  <CardDefault key={index} {...transformOnSaleObj(item)} sellItem />
-                ))}
-              </ul>
-            )}
-
-            {activeTab === "Owned" && ownNfts.length == 0 && (
-              <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No items owned by this user</h1>
-              </div>
-            )}
-
-            {activeTab === "Owned" && ownNfts.length > 0 && (
-              <ul
-                role="list"
-                className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-              >
-                {ownNfts.map((item, index) => (
-                  <CardDefault key={index} {...transformOwnNftObj(item)} />
-                ))}
-              </ul>
-            )}
+            {activeTab === "Owned" ? (
+              loading ? (
+                <CardList loading={true} />
+              ) : (
+                ownNfts && ownNfts.length ? (
+                  <ul
+                    role="list"
+                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
+                  >
+                    {ownNfts.map((item, index) => (
+                      <CardDefault key={index} {...transformOwnNftObj(item)} />
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="text-center">
+                    <h1 className="font-bold text-2xl mb-2">No owned items</h1>
+                  </div>
+                )
+              )
+            ) : null}
 
             {activeTab === "Created" ? (
               <div className="text-center">
