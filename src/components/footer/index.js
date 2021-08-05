@@ -24,7 +24,7 @@ const navigation = {
   contactus: [
     { name: 'Email Us', href: 'mailto:contactus@fomolab.io' },
     // { name: 'Get Support', href: '/' },
-    { name: 'Apply For Verification', href: '/' },
+    { name: 'Apply For Verification', href: 'https://forms.gle/F9RCkjFmY3JxW5Pn8' },
   ],
   legal: [
     { name: 'Privacy', href: '/privacy-policy' },
