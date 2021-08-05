@@ -55,6 +55,8 @@ const appUrls = {
     fomoNodeAPI: AppUrls.fomoNodeAPI
 };
 
+var loading = false;
+
 export default function Profile() {
   const [web3, setWeb3] = useState();
   const [myActivies, setMyActivities] = useState([]);
@@ -68,6 +70,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("On Sale");
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [seedWords, setSeedWords] = useState("");
+  const [followers, setFollowers] = useState([]);
+  const [followees, setFollowees] = useState([]);
   const tabs = [
     "On Sale",
     "Owned",
@@ -171,6 +175,8 @@ export default function Profile() {
   }
 
   const loadProfile = (accessToken) => {
+    isLoading(true);
+
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile`,
@@ -180,6 +186,15 @@ export default function Profile() {
     })
     .then(function (response) {
       setUserProfile(response.data.result);
+      
+      setFollowers(response.data.result.followers
+        .map((x) => toAvatarObject(x))
+      );
+
+      setFollowees(response.data.result.followees
+        .map((x) => toAvatarObject(x))
+      );
+
       userContext.dispatch({
         type: "UPDATE_DATA",
         payload: response.data.result
@@ -187,7 +202,19 @@ export default function Profile() {
     })
     .catch(function (response) {
       console.log(response);
+    })
+    .finally(function(){
+      isLoading(false);
     });
+  }
+
+  function toAvatarObject(x){
+    return {
+      sellerProfilePicUrl: x.profilePictureUrl,
+      username: x.name,
+      name: x.name,
+      sellerId: x.id
+    };
   }
 
   const loadMyActivities = (accessToken) => {
@@ -330,6 +357,20 @@ export default function Profile() {
       "object or string", 
       "Title", 
       "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+  }
+
+  function isLoading(state){
+    loading = state;
+    if(state){
+      sharedContext.dispatch({
+        type: "START_LOADING"
+      })
+    }
+    else{
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
+    }
   }
 
   return (
@@ -488,6 +529,9 @@ export default function Profile() {
             ) : null}
 
             {activeTab === "Following" ? (
+              followees.length > 0 ? (
+                <AvatarList items={followees} loading={loading} />
+              ) : (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">Explore The Avenue</h1>
                 <p className="font-medium text-gray-600 mb-5">
@@ -499,10 +543,13 @@ export default function Profile() {
                 >
                   Explore
                 </Link>
-              </div>
+              </div>)
             ) : null}
 
             {activeTab === "Followers" ? (
+              followers.length > 0 ? (
+                <AvatarList items={followers} loading={loading} />
+              ) : (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No followers</h1>
                 <p className="font-medium text-gray-600 mb-5">
@@ -514,7 +561,7 @@ export default function Profile() {
                 >
                   Explore
                 </Link>
-              </div>
+              </div>)
             ) : null}
 
             {activeTab === "Activity" ? (

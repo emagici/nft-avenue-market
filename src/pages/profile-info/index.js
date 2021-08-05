@@ -5,7 +5,7 @@ import CardDefault from "../../components/cards/item-card-default";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons'
-import { PlusCircleIcon, StarIcon } from "@heroicons/react/solid";
+import { PlusCircleIcon, StarIcon, MinusCircleIcon } from "@heroicons/react/solid";
 
 
 import axios from "axios";
@@ -51,6 +51,9 @@ export default function ProfileInfo() {
   const sharedContext = useContext(SharedContext);
   const [loggedInUserId, setLoggedInUserId] = useState();
   
+  const [hasBeenFollowing, setHasBeenFollowing] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
+
   const [averageRating, setAverageRating] = useState(0);
   const ratings = [1,2,3,4,5];
 
@@ -59,10 +62,10 @@ export default function ProfileInfo() {
   }, []);
 
   function init(){
-    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
-    if (params.userId) {
-      loadProfile(params.userId);
-      getUserNfts(params.userId);
+    let userId = getUrlUserId();
+    if (userId) {
+      loadProfile(userId);
+      getUserNfts(userId);
     }
   }
 
@@ -110,17 +113,28 @@ export default function ProfileInfo() {
     return obj;
   }
 
-  const loadProfile = (userId) => {
+  const loadProfile = (userId, viewerUserId) => {
+
+    let url = `${appUrls.fomoHostApi}/api/services/app/User/GetProfileForView?userId=${userId}`;
+
+    if (viewerUserId){
+      url += `&viewerUserId=${viewerUserId}`;
+    }
+
     axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfileForView?userId=${userId}`
+      url: url
     })
     .then(function (response) {
       setUserProfile(response.data.result);
       setAverageRating(response.data.result.userRate);
+      if(response.data.result.hasBeenFollowing){
+        setHasBeenFollowing(response.data.result.hasBeenFollowing);
+      }
     })
     .catch(function (response) {
       console.log(response);
+      alert("Unable to process request!");
     });
   }
 
@@ -164,6 +178,98 @@ export default function ProfileInfo() {
 
   }
 
+  const follow = (userId) => {
+    isLoading(true);
+
+    axios({
+      method: "POST",
+      url: `${appUrls.fomoHostApi}/api/services/app/UserFollowers/Follow?followeeUserId=${userId}`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      setHasBeenFollowing(true);
+      alert("You are now following this user");
+    })
+    .catch(function (response) {
+      console.log(response);
+      alert("Unable to process request!");
+    })
+    .finally(function(){
+      isLoading(false);
+    });
+  }
+
+  const unFollow = (userId) => {
+    isLoading(true);
+
+    axios({
+      method: "POST",
+      url: `${appUrls.fomoHostApi}/api/services/app/UserFollowers/UnFollow?followeeUserId=${userId}`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      setHasBeenFollowing(false);
+      alert("You have unfollowed this user");
+    })
+    .catch(function (response) {
+      console.log(response);
+      alert("Unable to process request!");
+    })
+    .finally(function(){
+      isLoading(false);
+    });
+  }
+
+  function onFollow(e){
+    e.preventDefault();
+
+    if(!accessToken)
+    {
+      return;
+    }
+
+    let userId = getUrlUserId();
+    if(userId){
+      follow(userId);
+    }
+  }
+
+  function onUnFollow(e){
+    e.preventDefault();
+
+    if(!accessToken)
+    {
+      return;
+    }
+    
+    let userId = getUrlUserId();
+    if(userId){
+      unFollow(userId);
+    }
+  }
+
+  function getUrlUserId(){
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+    return +params.userId;
+  }
+
+  function isLoading(state){
+    if(state){
+      sharedContext.dispatch({
+        type: "START_LOADING"
+      })
+    }
+    else{
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
+    }
+  }
+
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
   }, [web3Context.state.web3Data]);
@@ -172,13 +278,23 @@ export default function ProfileInfo() {
     if(userContext.state.id > 0){
         setLoggedInUserId(userContext.state.id);
         setLoggedIn(true);
+
+        let userId = getUrlUserId();
+        let viewerUserId = userContext.state.id;
+        if(userId){
+          loadProfile(userId, viewerUserId);
+        }
     }
   }, [userContext.state.id]);
 
   useEffect(() => {
-    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
-    if (params.userId) {
-      loadProfile(+params.userId);
+    setAccessToken(userContext.state.accessToken);
+  }, [userContext.state.accessToken]);
+
+  useEffect(() => {
+    let userId = getUrlUserId();
+    if (userId) {
+      loadProfile(userId);
     }
   }, [ratingModalOpen]);
 
@@ -215,16 +331,31 @@ export default function ProfileInfo() {
                   giverUserId={loggedInUserId}
                 />
 
-                <button
-                  onClick={() => alert("follow")}
-                  className="inline-flex justify-center px-4 py-2 shadow-lg w-auto sm:w-32 text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-                >
-                  <span>Follow</span>
-                  <PlusCircleIcon
-                    className="-mr-1 ml-1 h-5 w-5 text-white"
-                    aria-hidden="true"
-                  />
-                </button>
+                {hasBeenFollowing ? (
+                        <button
+                          onClick={(e) => onUnFollow(e)}
+                          className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                        >
+                          <span>Unfollow</span>
+                          <MinusCircleIcon
+                            className="-mr-1 ml-1 h-5 w-5 text-white"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => onFollow(e)}
+                          className="inline-flex justify-center px-4 py-2 shadow-lg text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                        >
+                          <span>Follow</span>
+                          <PlusCircleIcon
+                            className="-mr-1 ml-1 h-5 w-5 text-white"
+                            aria-hidden="true"
+                          />
+                        </button>
+                      )
+                  }
+
               </div>
             ) : null}
           </div>
