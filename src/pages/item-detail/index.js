@@ -212,7 +212,10 @@ export default function ItemDetail(props) {
   }
 
   const listItem = async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+      alert("Please connect wallet and sign in")
+      return;
+    } 
 
     if(ListPrice <= 0 || ListQuantity <= 0){
       alert("Please enter price and quantity more than 0");
@@ -274,7 +277,10 @@ export default function ItemDetail(props) {
   };
 
   const cancelListing = async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+      alert("Please connect wallet and sign in")
+      return;
+    } 
 
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
@@ -282,7 +288,10 @@ export default function ItemDetail(props) {
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+      alert("Please connect wallet and sign in")
+      return;
+    } 
 
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
@@ -290,7 +299,10 @@ export default function ItemDetail(props) {
   };
 
   const createOffer = async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+      alert("Please connect wallet and sign in")
+      return;
+    } 
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
@@ -333,7 +345,10 @@ export default function ItemDetail(props) {
   };
 
   const buyItem = async (obj) => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+      alert("Please connect wallet and sign in")
+      return;
+    } 
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
@@ -414,7 +429,7 @@ export default function ItemDetail(props) {
 
                 {nftVideoSrc ? (
                   <video
-                    autoPlay muted
+                    autoPlay
                     src={nftVideoSrc}
                     className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />

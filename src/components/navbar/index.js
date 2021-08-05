@@ -93,9 +93,24 @@ export default function Navbar() {
   const [accessToken, setAccessToken] = useState();
   const [notifications, setNotifications] = useState([]);
 
-  // const walletSignIn = () => {
-  //   connectWallet(() => setMetamaskSignInModalOpen(true));
-  // };
+  const [provider, setProvider] = useState();
+
+  const disconnect =  async () => {
+    console.log(provider)
+    if(!provider) return
+
+    if(provider.close) {
+      await provider.close();
+  
+      // // If the cached provider is not cleared,
+      // // WalletConnect will default to the existing session
+      // // and does not allow to re-scan the QR code with a new wallet.
+      // // Depending on your use case you may want or want not his behavir.
+      // await web3Modal.clearCachedProvider();
+      provider = null;
+    }
+  
+  };
 
   const signMetamask = async () => {
     web3Context.state.web3Data.eth.personal
@@ -262,6 +277,8 @@ export default function Navbar() {
     web3Context.dispatch({
       type: "SET_USER_CONNECTED"
     });
+
+    setProvider(provider)
 
     if (callback) callback();
 
@@ -541,7 +558,7 @@ export default function Navbar() {
                             >
                               <a
                                 href="javascript:void(0);"
-                                onClick={() => alert('disconnect')}
+                                onClick={() => disconnect()}
                                 className="py-2 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
                               >
                                 <div className="ml-4">
