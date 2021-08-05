@@ -157,11 +157,11 @@ export default function UserMenu() {
                   </div>
                   <div className="mb-3">
                     <p className="text-sm font-bold text-gray-500">BNB Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{bnbBalance.substring(0,4)} BNB</p>
+                    <p className="text-lg font-bold text-gray-800">{bnbBalance.split('.')[0]} BNB</p>
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{fomoBalance.substring(0,4)} FOMO</p>
+                    <p className="text-lg font-bold text-gray-800">{fomoBalance.split('.')[0]} FOMO</p>
                   </div>
                 </div>
                 <div className="p-2 pt-1">
