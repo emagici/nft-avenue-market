@@ -27,6 +27,7 @@ export default function TransferItem(props) {
   const [nftName, setNftName] = useState("");
   const [nftVideoSrc, setVideoNftSrc] = useState("");
   const [nftImageSrc, setImageNftSrc] = useState("");
+  const [nftType, setNftType] = useState("");
   const [web3, setWeb3] = useState();
   const [myAdd, setMyadd] = useState();
 
@@ -36,16 +37,32 @@ export default function TransferItem(props) {
   const [toAddress, setToAddress] = useState("");
 
   const transfer = async () => {
-    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
+    if (!web3 || !web3Context.state.userConnected) return;
 
-    await genericNftContract.methods
-      .safeTransferFrom(myAdd, toAddress, tokenid, qty, "0x00")
-      .send({ from: myAdd })
-       .then( async function (result) {
-          history.push('/user')
-        })
-        .catch(error => {
-        });
+    if(nftType === "1155"){
+      const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
+
+      await genericNftContract.methods
+        .safeTransferFrom(myAdd, toAddress, tokenid, qty, "0x00")
+        .send({ from: myAdd })
+         .then( async function (result) {
+            history.push('/user')
+          })
+          .catch(error => {
+          });
+    }
+    else{
+      const genericNftContract = new web3.eth.Contract(GENERICNFT721_ABI, nftAddress);
+
+      await genericNftContract.methods
+        .safeTransferFrom(myAdd, toAddress, tokenid)
+        .send({ from: myAdd })
+         .then( async function (result) {
+            history.push('/user')
+          })
+          .catch(error => {
+          });
+    }
   }
 
   const getData = () => {
@@ -55,7 +72,9 @@ export default function TransferItem(props) {
     })
       .then(function (response) {
         console.log(response)
+        setVideoNftSrc(response.data.result.videoUrl)
         setImageNftSrc(response.data.result.imageUrl)
+        setNftType(response.data.result.nftStandard)
       })
       .catch(function (response) {
         console.log(response);
@@ -63,7 +82,7 @@ export default function TransferItem(props) {
   }
 
   useEffect(async () => {
-    if (!web3) return;
+    if (!web3 || !web3Context.state.userConnected) return;
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyadd(myadd);
