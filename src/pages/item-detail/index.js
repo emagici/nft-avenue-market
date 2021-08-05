@@ -103,6 +103,18 @@ export default function ItemDetail(props) {
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
+  const getEvent = () =>{
+      axios({
+        method: "get",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
+      })
+      .then(async function (response) {
+        setHistory(response.data.result)
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  }
 
   const getTokenURI = async () => {
 
@@ -114,89 +126,90 @@ export default function ItemDetail(props) {
     }
 
     if(isItemListed){
-      axios({
-        method: "get",
-        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
-      })
-      .then(async function (response) {
-        console.log(response)
-        setHistory(response.data.result)
-      })
-      .catch(function (response) {
-        console.log(response);
-      });
-
-      axios({
-        method: "get",
-        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`,
-      })
-      .then(async function (nftListingResponse) {
-        console.log(nftListingResponse)
-
-        const nftListingResult = nftListingResponse.data.result;
-
-        setNftDescription(nftListingResult[0].nft.description);
-        setNftName(nftListingResult[0].nft.tokenName)
-        setImageNftSrc(nftListingResult[0].nft.imageUrl)
-        setVideoNftSrc(nftListingResult[0].nft.videoUrl)
-
-        const listingItems = await Promise.all(nftListingResult.map( async (item) => (
-          {
-            id: item.nft.id,
-            TokenId: item.nft.tokenId,
-            NftAddress: item.nft.nft,
-            TokenName:  item.nft.tokenName,
-            owner: item.nft.owner,
-            ownerUserId: item.nft.ownerId,
-            pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
-            quantity: item.nft.quantity,
-            sellerName: item.seller.name,
-            sellerProfilePic: item.seller.profilePictureUrl,
-            payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
-          }
-        )));
-
-        const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
-        setLowestSellerItem(sortedlistingItems[0])
-        console.log(sortedlistingItems[0])
-
-        setlistings(listingItems);
-
-        const offerItems = nftListingResult[0].offers.map((item) => (
-          {
-            TokenId: item.tokenId,
-            NftAddress: item.nftAddress,
-            creatorAddress: item.creatorAddress,
-            pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
-            quantity: item.quantity,
-            creatorUsername: item.creatorUsername,
-            deadline: item.deadline,
-            offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
-          }
-        ))
-
-        setOffers(offerItems);
-      })
-      .catch(function (response) {
-        console.log(response);
-      });
+      getListedNftInfo()
     }
     else{
-      axios({
-        method: "get",
-        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
-      })
-        .then(function (response) {
-          const nftDetails = response.data.result;
-          setVideoNftSrc(nftDetails.imageUrl)
-          setNftDescription(nftDetails.description)
-          setNftName(nftDetails.tokenName)
-        })
-        .catch(function (response) {
-          console.log(response);
-        });
+      getExternalNftInfo()
     }
   };
+
+  const getListedNftInfo = () => {
+    getEvent();
+
+    axios({
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`,
+    })
+    .then(async function (nftListingResponse) {
+      console.log(nftListingResponse)
+
+      const nftListingResult = nftListingResponse.data.result;
+
+      setNftDescription(nftListingResult[0].nft.description);
+      setNftName(nftListingResult[0].nft.tokenName)
+      setImageNftSrc(nftListingResult[0].nft.imageUrl)
+      setVideoNftSrc(nftListingResult[0].nft.videoUrl)
+
+      const listingItems = await Promise.all(nftListingResult.map( async (item) => (
+        {
+          id: item.nft.id,
+          TokenId: item.nft.tokenId,
+          NftAddress: item.nft.nft,
+          TokenName:  item.nft.tokenName,
+          owner: item.nft.owner,
+          ownerUserId: item.nft.ownerId,
+          pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toString(), "ether"),
+          quantity: item.nft.quantity,
+          sellerName: item.seller.name,
+          sellerProfilePic: item.seller.profilePictureUrl,
+          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
+        }
+      )));
+
+      const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
+      setLowestSellerItem(sortedlistingItems[0])
+
+      setlistings(listingItems);
+
+      const offerItems = nftListingResult[0].offers.map((item) => (
+        {
+          TokenId: item.tokenId,
+          NftAddress: item.nftAddress,
+          creatorAddress: item.creatorAddress,
+          pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toString(), "ether"),
+          quantity: item.quantity,
+          creatorUsername: item.creatorUsername,
+          deadline: item.deadline,
+          offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+        }
+      ))
+
+      setOffers(offerItems);
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
+  const getExternalNftInfo = () => {
+    axios({
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
+    })
+      .then(function (response) {
+        const nftDetails = response.data.result;
+        setVideoNftSrc(nftDetails.imageUrl)
+        setNftDescription(nftDetails.description)
+        setNftName(nftDetails.tokenName)
+        if(nftDetails.hasAnyListing){
+          setIsItemListed(true);
+          getListedNftInfo();
+        }
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  }
 
   const listItem = async () => {
     if (!web3 || !web3Context.state.userConnected) return;
@@ -670,13 +683,13 @@ export default function ItemDetail(props) {
                         ) : (
                           <div>
                             <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
-                            <button
+                            {/* <button
                               type="button"
                               onClick={() => setMakeOfferModalOpen(true)}
                               className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                             >
                               <span>Make Offer</span>
-                            </button>
+                            </button> */}
                           </div>
                         )}
                       </div>
