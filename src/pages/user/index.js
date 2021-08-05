@@ -55,6 +55,8 @@ const appUrls = {
     fomoNodeAPI: AppUrls.fomoNodeAPI
 };
 
+var loading = false;
+
 export default function Profile() {
   const [web3, setWeb3] = useState();
   const [myActivies, setMyActivities] = useState([]);
@@ -68,6 +70,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("On Sale");
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [seedWords, setSeedWords] = useState("");
+  const [followers, setFollowers] = useState([]);
+  const [followees, setFollowees] = useState([]);
   const tabs = [
     "On Sale",
     "Owned",
@@ -114,6 +118,7 @@ export default function Profile() {
       clearUrlAccessToken();
       setLoggedIn(true);
       loadProfile(accessToken);
+      loadMyRegisteredWalletAddress(accessToken);
       //alert("you have successfully logged in!, get your accessToken in console log");
       console.warn("access token: ", accessToken);
 
@@ -149,7 +154,29 @@ export default function Profile() {
     return obj;
   }
 
+  const loadMyRegisteredWalletAddress = (accessToken) => {
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyWalletAddress`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      console.log(response)
+      userContext.dispatch({
+        type: "SET_REGISTERED_ADDRESS",
+        payload: response.data.result
+       })
+    })
+    .catch(function (response) {
+      console.log(response);
+    });
+  }
+
   const loadProfile = (accessToken) => {
+    isLoading(true);
+
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile`,
@@ -159,14 +186,35 @@ export default function Profile() {
     })
     .then(function (response) {
       setUserProfile(response.data.result);
+      
+      setFollowers(response.data.result.followers
+        .map((x) => toAvatarObject(x))
+      );
+
+      setFollowees(response.data.result.followees
+        .map((x) => toAvatarObject(x))
+      );
+
       userContext.dispatch({
         type: "UPDATE_DATA",
         payload: response.data.result
-    })
+       })
     })
     .catch(function (response) {
       console.log(response);
+    })
+    .finally(function(){
+      isLoading(false);
     });
+  }
+
+  function toAvatarObject(x){
+    return {
+      sellerProfilePicUrl: x.profilePictureUrl,
+      username: x.name,
+      name: x.name,
+      sellerId: x.id
+    };
   }
 
   const loadMyActivities = (accessToken) => {
@@ -199,45 +247,48 @@ export default function Profile() {
 
     setOnSaleNfts(myListedNfts.data.result);
 
-    axios({
-      method: "post",
-      url: `${appUrls.fomoNodeAPI}`,
-      data: JSON.stringify({ Signature: sign }),
-    })
-    .then(function (response) {
-
-      var items = response.data.map((item, i) => {   
-          var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
-        
-          var obj = {
-            id: listedItem ? listedItem.nft.id : 0,
-            TokenName: item.TokenName,
-            Image: item.Image,
-            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-            TokenId: item.TokenId,
-            NftAddress: item.TokenContractAddress
-          };
-          return obj;
+    if(sign){
+      axios({
+        method: "post",
+        url: `${appUrls.fomoNodeAPI}`,
+        data: JSON.stringify({ Signature: sign }),
       })
-      setOwnNfts(items);
-
-      // userContext.dispatch({
-      //   type: "SET_SIGN",
-      //   payload: sign
-      // })
-
-      userContext.dispatch({
-        type: "SET_OWN_NFTS",
-        payload: items
+      .then(function (response) {
+  
+        var items = response.data.map((item, i) => {   
+            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
+          
+            var obj = {
+              id: listedItem ? listedItem.nft.id : 0,
+              TokenName: item.TokenName,
+              Image: item.Image,
+              TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
+              TokenId: item.TokenId,
+              NftAddress: item.TokenContractAddress,
+              OwnedNftQuantity: item.Count
+            };
+            return obj;
+        })
+        setOwnNfts(items);
+  
+        userContext.dispatch({
+          type: "SET_OWN_NFTS",
+          payload: items
+        })
+  
+        sharedContext.dispatch({
+          type: "STOP_LOADING"
+        })
       })
-
+      .catch(function (response) {
+        console.log(response);
+      });
+      
+    } else {
       sharedContext.dispatch({
         type: "STOP_LOADING"
       })
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
+    }
   }
   
   // const signAndGetUserData = async () => {
@@ -257,6 +308,8 @@ export default function Profile() {
   }, [web3Context.state.web3Data]);
 
   useEffect(async () => {
+    console.log(web3)
+    console.log(userContext.state.accessToken)
     if(web3 && userContext.state.accessToken){
       const accounts = await web3.eth.getAccounts();
       var myadd = accounts[0];
@@ -267,6 +320,7 @@ export default function Profile() {
         loadProfile(userContext.state.accessToken)
 
       loadMyActivities(userContext.state.accessToken);
+
 
       getOwnNfts(userContext.state.sign, myadd)
       setLoggedIn(true);
@@ -303,6 +357,20 @@ export default function Profile() {
       "object or string", 
       "Title", 
       "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+  }
+
+  function isLoading(state){
+    loading = state;
+    if(state){
+      sharedContext.dispatch({
+        type: "START_LOADING"
+      })
+    }
+    else{
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
+    }
   }
 
   return (
@@ -461,6 +529,9 @@ export default function Profile() {
             ) : null}
 
             {activeTab === "Following" ? (
+              followees.length > 0 ? (
+                <AvatarList items={followees} loading={loading} />
+              ) : (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">Explore The Avenue</h1>
                 <p className="font-medium text-gray-600 mb-5">
@@ -472,10 +543,13 @@ export default function Profile() {
                 >
                   Explore
                 </Link>
-              </div>
+              </div>)
             ) : null}
 
             {activeTab === "Followers" ? (
+              followers.length > 0 ? (
+                <AvatarList items={followers} loading={loading} />
+              ) : (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No followers</h1>
                 <p className="font-medium text-gray-600 mb-5">
@@ -487,7 +561,7 @@ export default function Profile() {
                 >
                   Explore
                 </Link>
-              </div>
+              </div>)
             ) : null}
 
             {activeTab === "Activity" ? (

@@ -97,11 +97,47 @@ export default function Navbar() {
   //   connectWallet(() => setMetamaskSignInModalOpen(true));
   // };
 
-  const signOut = () => {
-    userContext.dispatch(initialState);
-    document.location.href = "/";
+  const signMetamask = async () => {
+    web3Context.state.web3Data.eth.personal
+      .sign(web3Context.state.web3Data.utils.utf8ToHex("TheAvenue"), myAdd)
+      .then(async function (sign) {
+        userContext.dispatch({
+          type: "SET_SIGN",
+          payload: sign,
+        });
+      });
   };
 
+  function handleSignOut() {
+    console.log('signing out');
+    web3Context.dispatch({
+      type: "RESET_ALL"
+    });
+    userContext.dispatch({
+      type: "RESET_ALL"
+    });
+    signout();
+  }
+
+  const signout = () => {
+
+    if(!userContext.state.accessToken) return
+
+    axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/TokenAuth/LogOut`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+      document.location.href = `/`;
+    })
+    .catch(function (response) {
+      console.log(response);
+      alert("Unable to process request!");
+    });
+  }
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -180,6 +216,18 @@ export default function Navbar() {
     setWalletSigned(userContext.state.sign ? true : false);
   }, [userContext.state.sign]);
 
+
+  useEffect(() => {
+    if(userContext.state.registeredWalletAddress && myAdd){
+      if(userContext.state.registeredWalletAddress.toLowerCase() != myAdd.toLowerCase()){
+        alert("Please use the wallet sent to email during registration.")
+        handleSignOut();
+      }else if(!userContext.state.sign){
+        signMetamask();
+      }
+    }
+  }, [userContext.state.registeredWalletAddress, myAdd]);
+
   async function connectWallet(callback) {
     // if (connected) return;
 
@@ -246,7 +294,6 @@ export default function Navbar() {
   }
 
   const getNotifications = () => {
-    console.log(accessToken);
 
     axios({
       method: "GET",
