@@ -200,39 +200,9 @@ export default function UserSettings() {
           
             <div className="space-y-6 sm:space-y-5">
 
-            {false ? (
-               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start pt-5">
-                  <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                    Custom URL
-                  </label>
-                  <div className="mt-1 sm:mt-0 sm:col-span-2">
-                    <input
-                      type="text"
-                      name="custom_url"
-                      id="custom_url"
-                      className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-            ) : null}
-
-              {/* <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 pt-5">
                 <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Facebook Url
-                </label>
-                <div className="mt-1 sm:mt-0 sm:col-span-2">
-                  <input
-                    type="text"
-                    value={facebookUrl}
-                    onChange={(e) => setFacebookUrl(e.target.value)}
-                    className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-              </div> */}
-
-              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Twitter Url
+                  Twitter Username
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
@@ -241,12 +211,13 @@ export default function UserSettings() {
                     onChange={(e) => setTwitterUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
+                  <p className="mt-2 text-sm text-gray-500">E.g. fomo_lab</p>
                 </div>
               </div>
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label htmlFor="first_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Discord Id
+                  Discord Invite URL
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
@@ -255,12 +226,13 @@ export default function UserSettings() {
                     onChange={(e) => setDiscordUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
+                  <p className="mt-2 text-sm text-gray-500">E.g. https://discord.gg/kb9djm</p>
                 </div>
               </div>
 
               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                 <label htmlFor="last_name" className="block text-sm font-bold text-gray-700 sm:mt-px sm:pt-2">
-                  Instagram Url
+                  Instagram Username
                 </label>
                 <div className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
@@ -269,6 +241,7 @@ export default function UserSettings() {
                     onChange={(e) => setInstagramUrl(e.target.value)}
                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                   />
+                  <p className="mt-2 text-sm text-gray-500">E.g. fomo_lab</p>
                 </div>
               </div>
 

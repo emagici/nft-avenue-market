@@ -10,6 +10,14 @@ import CTLogo from '../../assets/img/logos/cointelegraph.png'
 import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
 import PvlaceLogo from '../../assets/img/logos/pvlace-logo.jpeg'
 import GunboiLogo from '../../assets/img/logos/gunboi-logo.png'
+import ThisIs50 from '../../assets/img/logos/thisis50.png'
+import CryptoDaily from '../../assets/img/logos/cryptodaily-logo.jpeg'
+import CryptoPys from '../../assets/img/logos/cryptosys-logo.jpeg'
+import UsaNewsLab from '../../assets/img/logos/usanewslab-logo.png'
+import ALPLogo from '../../assets/img/logos/alp-logo.png'
+import NewsbreakLogo from '../../assets/img/logos/newsbreak-logo.png'
+import DiscogsLogo from '../../assets/img/logos/discogs-logo.jpeg'
+import GeniusLogo from '../../assets/img/logos/genius-logo.jpeg'
 
 const collaborators = [
   {
@@ -26,6 +34,52 @@ const collaborators = [
     image: GunboiLogo,
     url: "https://www.instagram.com/gunboi/?hl=en",
     name: "Gunboi"
+  },
+]
+
+const newsArticles = [
+  {
+    image: ThisIs50,
+    url: "https://thisis50.com/2021/06/07/interview-808-mafias-pvlace-gunboi-talks-for-the-culture-collection-on-fomo-labs-own-nft-platform/",
+    name: "This Is 50"
+  },
+  {
+    image: CryptoDaily,
+    url: "https://cryptodaily.co.uk/2021/05/Fomo-Lab-Partners-with-PVLACE-of-808-MAFIA-and-Gunboi-to-drop",
+    name: "Crypto Daily"
+  },
+  {
+    image: CryptoPys,
+    url: "https://cryptopys.com/2021/05/17/fomo-lab-partners-with-pvlace-of-808-mafia-and-gunboi-to-drop-their-for-the-culture-collection/",
+    name: "Cryptopys"
+  },
+  {
+    image: UsaNewsLab,
+    url: "https://usanewslab.com/crypto-news/fomo-lab-partners-with-pvlace-of-808-mafia-and-gunboi-to-drop-for-the-culture-collection/",
+    name: "USA News Lab"
+  },
+  {
+    image: ALPLogo,
+    url: "https://www.alp.com/news/fomo-lab-and-pvlace-are-going-to-drop-an-nft-collection",
+    name: "ALP"
+  },
+  {
+    image: NewsbreakLogo,
+    url: "https://www.newsbreak.com/news/2252535617048/fomo-lab-partners-with-pvlace-of-808-mafia-and-gunboi-to-drop-for-the-culture-collection",
+    name: "Newsbreak"
+  }, 
+]
+
+const mediaLinks = [
+  {
+    image: GeniusLogo,
+    url: "https://genius.com/artists/Pvlace",
+    name: "Genius"
+  },
+  {
+    image: DiscogsLogo,
+    url: "https://www.discogs.com/artist/6145473-PVLACE",
+    name: "Discogs"
   },
 ]
 
@@ -169,6 +223,32 @@ export default function PvlaceDrop() {
         <div className="mb-20 sm:mb-28">
           <SectionHeader title="In The Collection" titleClasses="text-center" />
           <CardList items={items} />
+        </div>
+
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="In The News" />
+          <div className="flex flex-wrap justify-center items-center">
+            {newsArticles.map(item => (
+              <div key={item.name} className="flex justify-center items-center p-5">
+                <a href={item.url} target="_blank">
+                  <img className="h-24 w-24 sm:h-36 sm:w-36 object-contain" src={item.image} alt={item.name} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
+          <SectionTitle title="Media" />
+          <div className="flex flex-wrap justify-center items-center">
+            {mediaLinks.map(item => (
+              <div key={item.name} className="flex justify-center items-center p-5">
+                <a href={item.url} target="_blank">
+                  <img className="h-32 w-32 sm:h-44 sm:w-44 object-contain" src={item.image} alt={item.name} />
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>

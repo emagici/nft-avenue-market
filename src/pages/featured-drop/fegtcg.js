@@ -67,8 +67,8 @@ export default function FegTcgDrop() {
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="About The Drop" />
-          <p className="mb-3 font-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nibh tellus molestie nunc non. Massa tincidunt dui ut ornare. Platea dictumst quisque sagittis purus. Lacus laoreet non curabitur gravida. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Tempus egestas sed sed risus pretium quam.</p>
-          <p className="mb-3 font-medium">Dolor morbi non arcu risus quis varius quam. Volutpat est velit egestas dui. Enim neque volutpat ac tincidunt. Est pellentesque elit ullamcorper dignissim.</p>
+          <p className="mb-3 font-medium">The FEG NFT Based trading card game is the first ever Play-to-earn game that uses NFTs to build a completely unique game experience.</p>
+          <p className="mb-3 font-medium">The FEG NFT Game is set in a land far, far away… After the collapse of the FIAT currency system the humans started to disappear and the civilization of the Apes, Gorillas and monkeys that were smart enough to HODL their assets in FEG tokens now run the new world. Gorillas, monkeys and the royal factions that control each of the four lands (North, South, East & West) are now locked  in a never ending war for resources (Feg Bananas) territory (Land parcels) & Weapons to protect themselves from attack from other play controlled warring factions in the FEG Metaverse.</p>
         </div>
 
         <div className="mb-20 sm:mb-28">

@@ -16,7 +16,8 @@ const initialState = {
   accessToken: null,
   sign: null,
   ownNfts: [],
-  id: null
+  id: null,
+  registeredWalletAddress: null
 };
 
 let reducer = (state, action) => {
@@ -31,6 +32,12 @@ let reducer = (state, action) => {
       return {
         ...state,
         accessToken: action.payload
+      };
+
+    case 'SET_REGISTERED_ADDRESS':
+      return {
+        ...state,
+        registeredWalletAddress: action.payload
       };
 
     case 'SET_USER_ID':
@@ -64,7 +71,8 @@ let reducer = (state, action) => {
         accessToken: null,
         sign: null,
         ownNfts: [],
-        id: null
+        id: null,
+        registeredWalletAddress: null
       };
 
     default:
