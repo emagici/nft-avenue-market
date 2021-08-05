@@ -145,7 +145,9 @@ export default function Profile() {
       NftAddress: ownObj.NftAddress,
       TokenName:  ownObj.TokenName,
       Image: ownObj.Image,
-      Video: ownObj.TokenIPFSVideoPreview
+      Video: ownObj.TokenIPFSVideoPreview,
+      Audio:  ownObj.TokenIPFSAudioPreview,
+      Quantity: ownObj.OwnedNftQuantity
     };
     return obj;
   }
@@ -238,7 +240,8 @@ export default function Profile() {
               TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
               TokenId: item.TokenId,
               NftAddress: item.TokenContractAddress,
-              OwnedNftQuantity: item.Count
+              OwnedNftQuantity: item.Count,
+              TokenIPFSAudioPreview: item.WavAudioFile
             };
             return obj;
         })

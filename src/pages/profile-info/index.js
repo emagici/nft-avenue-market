@@ -105,7 +105,8 @@ export default function ProfileInfo() {
       NftAddress: ownObj.NftAddress,
       TokenName:  ownObj.TokenName,
       Image: ownObj.Image,
-      Video: ownObj.TokenIPFSVideoPreview
+      Video: ownObj.TokenIPFSVideoPreview,
+      Quantity: ownObj.OwnedNftQuantity
     };
     return obj;
   }
@@ -150,7 +151,8 @@ export default function ProfileInfo() {
         Image: item.image,
         TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
         TokenId: item.tokenId,
-        NftAddress: item.tokenContractAddress
+        NftAddress: item.tokenContractAddress,
+        OwnedNftQuantity: item.count,
       };
       return obj;
     })
@@ -161,7 +163,6 @@ export default function ProfileInfo() {
     // sharedContext.dispatch({
     //   type: "STOP_LOADING"
     // })
-
   }
 
   useEffect(() => {
