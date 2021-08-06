@@ -198,7 +198,8 @@ export default function ItemDetail(props) {
     })
       .then(function (response) {
         const nftDetails = response.data.result;
-        setVideoNftSrc(nftDetails.imageUrl)
+        setVideoNftSrc(nftDetails.videoUrl)
+        setImageNftSrc(nftDetails.imageUrl)
         setNftDescription(nftDetails.description)
         setNftName(nftDetails.tokenName)
         if(nftDetails.hasAnyListing){
