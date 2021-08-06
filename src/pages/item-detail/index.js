@@ -198,7 +198,8 @@ export default function ItemDetail(props) {
     })
       .then(function (response) {
         const nftDetails = response.data.result;
-        setVideoNftSrc(nftDetails.imageUrl)
+        setVideoNftSrc(nftDetails.videoUrl)
+        setImageNftSrc(nftDetails.imageUrl)
         setNftDescription(nftDetails.description)
         setNftName(nftDetails.tokenName)
         if(nftDetails.hasAnyListing){
@@ -430,22 +431,22 @@ export default function ItemDetail(props) {
                 {nftVideoSrc ? (
                   <video
                     autoPlay
+                    muted
+                    controls
+                    loop
                     src={nftVideoSrc}
-                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
+                    className="object-cover group-hover:opacity-90 transition-opacity"
                   />
                 ) : (
                   <img
                     src={nftImageSrc}
                     alt="nft"
-                    className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
+                    className="object-cover group-hover:opacity-90 transition-opacity"
                   />
                 )}
               </div>
 
-              <div className="py-5 flex justify-center items-center gap-2">
-                <FacebookShareButton url="https://theavenue.market" quote="I just listed an NFT on The Avenue!" hashtag="TheAvenue" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                  <FacebookIcon size={32} round={true} />
-                </FacebookShareButton>
+              {/* <div className="py-5 flex justify-center items-center gap-2">
                 <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <TwitterIcon size={32} round={true} />
                 </TwitterShareButton>
@@ -455,7 +456,7 @@ export default function ItemDetail(props) {
                 <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                   <WhatsappIcon size={32} round={true} />
                 </WhatsappShareButton>
-              </div>
+              </div> */}
               
             </div>
           </div>
