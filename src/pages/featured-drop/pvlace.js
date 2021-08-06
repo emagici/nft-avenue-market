@@ -94,7 +94,7 @@ const items = [
     sold: true
   },
   {
-    Image: "https://pvlacenftcollection.art/ipfs/QmVLeB2EttdHTstNe8MSKCRBQzimrVAtU6ftns6VF8PMCB",
+    Video: "https://pvlacenftcollection.art/ipfs/QmVLeB2EttdHTstNe8MSKCRBQzimrVAtU6ftns6VF8PMCB",
     NftAddress: "QmbBES8sUjV78FVobpaXU8jCWZmpiTh1NiVvjKBLkjHrDw",
     TokenName: "Jay Z",
     price: "3 BNB",
@@ -103,7 +103,7 @@ const items = [
     sold: true
   },
   {
-    Image: "https://pvlacenftcollection.art/ipfs/QmWqgJADysfjVnbsjER4sy4tRKMYVJbNn8RcksnzeNehj8",
+    Video: "https://pvlacenftcollection.art/ipfs/QmWqgJADysfjVnbsjER4sy4tRKMYVJbNn8RcksnzeNehj8",
     NftAddress: "QmXyxkjcyqyCk7qvrdWXuRe7AXequCyWoNRrCQBLY97U6e",
     TokenName: "Kanye West",
     price: "3 BNB",
