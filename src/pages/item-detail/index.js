@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Dropdown from "../../components/dropdown";
 import qs from "qs";
 import { Accordion, AccordionItem, AccordionPanel } from '../../components/accordion'
@@ -8,6 +8,8 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
+
+import { ThumbUpIcon } from '@heroicons/react/solid'
 
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
@@ -22,7 +24,12 @@ import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
 import {
-  tokenTypes, fomoTokenAddress, getPayTokenFromListing, getPayTokenDetailByAddress, listingFeeToken
+  tokenTypes,
+  fomoTokenAddress,
+  getPayTokenFromListing,
+  getPayTokenDetailByAddress,
+  listingFeeToken,
+  shortenLink,
 } from "../../utilities/utils";
 
 import {
@@ -35,6 +42,7 @@ import {
   TwitterIcon,
   WhatsappIcon
 } from "react-share";
+
 
 import AppUrls from '../../AppSettings';
 
@@ -66,6 +74,7 @@ const appUrls = {
 
 
 export default function ItemDetail(props) {
+  const location = useLocation();
 
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
@@ -86,6 +95,7 @@ export default function ItemDetail(props) {
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
+  const [shareUrl, setShareUrl] = useState(null);
 
   const [showPurchasedModal, setShowPurchasedModal] = useState(false)
 
@@ -420,10 +430,26 @@ export default function ItemDetail(props) {
 
     }, []);
 
+  
+  // generate shortened share link
+  useEffect(async () => {
+    const url = `https://staging.theavenue.market${location.search}`;
+    const shortUrl = await shortenLink(url)
+    if (shortUrl) {
+      setShareUrl(shortUrl)
+    } else {
+      setShareUrl(null)
+    }
+  }, [])
+
+  function handleLikeItem() {
+    alert('like item func')
+  }
+
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
-        <div className="mt-10 md:grid md:grid-cols-3 gap-x-6">
+        <div className="mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
             <div className="flex-1 max-w-sm">
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
@@ -446,17 +472,29 @@ export default function ItemDetail(props) {
                 )}
               </div>
 
-              {/* <div className="py-5 flex justify-center items-center gap-2">
-                <TwitterShareButton url="I just listed an NFT on The Avenue! https://theavenue.market" hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                  <TwitterIcon size={32} round={true} />
-                </TwitterShareButton>
-                <TelegramShareButton title="Check out The Avenue Marketplace!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                  <TelegramIcon size={32} round={true} />
-                </TelegramShareButton>
-                <WhatsappShareButton title="Check out *The Avenue* Marketplace to buy and sell NFTs now!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                  <WhatsappIcon size={32} round={true} />
-                </WhatsappShareButton>
-              </div> */}
+              <div className="px-1 py-4 flex justify-between items-center">
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleLikeItem()}
+                    className="relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                  >
+                    <span>Like</span>
+                    <ThumbUpIcon className="h-5 w-5 ml-1 relative bottom-0.5" />
+                  </button>
+                </div>
+                <div className="flex justify-center items-center gap-2">
+                  <TwitterShareButton url={`Check out this item on The Avenue! ${shareUrl}`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <TwitterIcon size={32} round={true} />
+                  </TwitterShareButton>
+                  <TelegramShareButton title="Check out this item on The Avenue!" url={shareUrl} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <TelegramIcon size={32} round={true} />
+                  </TelegramShareButton>
+                  <WhatsappShareButton title="Check out this item on The Avenue!" url={shareUrl} separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <WhatsappIcon size={32} round={true} />
+                  </WhatsappShareButton>
+                </div>
+              </div>
               
             </div>
           </div>
