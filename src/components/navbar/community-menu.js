@@ -14,8 +14,10 @@ import { faCommentDots, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 const menuItems = [
   { name: 'Discussion', href: '/' },
-  { name: 'Suggest Feature', href: '/' },
   { name: 'Subscribe', href: '/' },
+  { name: 'Suggest Feature', href: '/' },
+  { name: 'Voting (Coming Soon)', href: '#' },
+  { name: 'FAQ', href: '/faq' },
 ]
 
 const socials = [

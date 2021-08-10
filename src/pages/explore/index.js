@@ -7,6 +7,7 @@ import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
 import TopSellers from './top-sellers'
 import Following from './following'
+import GettingStartedSection from './getting-started'
 
 
 export default function Explore() {
@@ -51,6 +52,7 @@ export default function Explore() {
       {/* <FeaturedArtists/>
       <Following/> */}
       <HottestBidsSection/>
+      <GettingStartedSection/>
     </div>
   )
 }
