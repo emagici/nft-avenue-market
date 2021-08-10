@@ -8,6 +8,7 @@ import FeaturedArtists from './featured-artists'
 import TopSellers from './top-sellers'
 import Following from './following'
 import GettingStartedSection from './getting-started'
+import VerifiedArtistsSection from './verified-artists'
 
 
 export default function Explore() {
@@ -49,6 +50,7 @@ export default function Explore() {
       <Discover/>
       {/* <DiscoverSlider/> */}
       <TopSellers/>
+      <VerifiedArtistsSection/>
       {/* <FeaturedArtists/>
       <Following/> */}
       <HottestBidsSection/>
