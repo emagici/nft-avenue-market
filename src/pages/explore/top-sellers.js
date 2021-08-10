@@ -40,7 +40,7 @@ export default function TopSellers() {
     <div className="py-20">
       <div className="max-w-screen-2xl mx-auto">
         <SectionHeader title="Top Sellers" />
-        <AvatarList items={items} loading={loading} />
+        <AvatarList items={items} rank={true} loading={loading} />
       </div>
     </div>
   )
