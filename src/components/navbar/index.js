@@ -25,6 +25,7 @@ import axios from "axios";
 import AppUrls from '../../AppSettings';
 import moment from "moment";
 import CommunityMenu from "./community-menu";
+import ChainMenu from "./chain-menu";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -584,6 +585,7 @@ export default function Navbar() {
                     </button>
                   )}
                 </div>
+                <ChainMenu/>
               </div>
             </div>
           </div>
