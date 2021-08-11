@@ -78,6 +78,7 @@ export default function Discover() {
           Video: item.videoUrl,
           highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken).payTokenName : "",
           price: Web3.utils.fromWei(item.price.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress)).payTokenName,
+          likes: item.numberOfLikes
         }
       )))
 

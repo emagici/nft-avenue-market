@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Link } from "react-router-dom"
 import Modal from '../modal'
-import { TagIcon, ClockIcon, CurrencyDollarIcon } from '@heroicons/react/solid'
+import { TagIcon, ClockIcon, CurrencyDollarIcon, ThumbUpIcon } from '@heroicons/react/solid'
 import VideoBox from '../video-box'
 
 export default function CardDefault(props) {
@@ -81,6 +81,18 @@ export default function CardDefault(props) {
 
            {props.Quantity ? (
             <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Quantity </span>{props.Quantity}</p>
+          ) : null}
+
+          {props.likes? (
+            <p className="inline-flex mt-2 text-sm font-medium text-gray-900 truncate pointer-events-none">
+              <span className="font-light">
+              <ThumbUpIcon
+                  className="h-4 w-4 text-gray-400"
+                  aria-hidden="true"
+                />
+              </span>
+              {props.likes} 
+            </p>
           ) : null}
         </div>
       </li>
