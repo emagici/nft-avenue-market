@@ -55,8 +55,8 @@ export default function HottestBidsSection() {
          TokenName:  item.tokenName,
          Image: item.imageUrl,
          Video: item.videoUrl,
-         highestbid: item.highestBid ? Web3.utils.fromWei(item.highestBid.toString(), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress).payTokenName : "",
-         price: item.buyNowPrice ? Web3.utils.fromWei(item.buyNowPrice.toString(), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress)).payTokenName : "",
+         highestbid: item.highestBid ? Web3.utils.fromWei(item.highestBid.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress).payTokenName : "",
+         price: item.buyNowPrice ? Web3.utils.fromWei(item.buyNowPrice.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress)).payTokenName : "",
        }
      )))
 

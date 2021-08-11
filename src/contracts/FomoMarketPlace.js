@@ -1,4 +1,4 @@
-export const MARKETPLACE_ADDRESS = '0xe4A4EC9FAd3d84CdFD9991aff92beCb7735f38C2'
+export const MARKETPLACE_ADDRESS = '0xe3fFAcafDCa644Fdc930C8BFe158464EeB3d05Ba'
 
 export const MARKETPLACE_ABI = [{
     "inputs": [{
@@ -240,6 +240,16 @@ export const MARKETPLACE_ABI = [{
     }],
     "name": "UpdatePlatformFeeRecipient",
     "type": "event"
+}, {
+    "inputs": [],
+    "name": "MAX_ROYALTY_FEE",
+    "outputs": [{
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+    }],
+    "stateMutability": "view",
+    "type": "function"
 }, {
     "inputs": [{
         "internalType": "address",

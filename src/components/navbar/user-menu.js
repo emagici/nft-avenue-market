@@ -46,7 +46,13 @@ export default function UserMenu() {
       if (err) {
         console.log(err)
       } else {
-        setBnbBalance(web3Context.state.web3Data.utils.fromWei(result, "ether"))
+        try {
+          const balArr = web3Context.state.web3Data.utils.fromWei(result, "ether").split('.')
+          let balStr = balArr[0]
+          setBnbBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,3)}`)
+        } catch(e) {
+          setBnbBalance(0)
+        }
       }
     })
 
@@ -62,7 +68,14 @@ export default function UserMenu() {
 
     const contract = new web3Context.state.web3Data.eth.Contract(minABI, fomoTokenAddress);
     const result = await contract.methods.balanceOf(myadd).call();
-    setFomoBalance(web3Context.state.web3Data.utils.fromWei(result, "ether"))
+
+    try {
+      const balArr = web3Context.state.web3Data.utils.fromWei(result, "ether").split('.')
+      let balStr = balArr[0]
+      setFomoBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,1)}`)
+    } catch(e) {
+      setFomoBalance(0)
+    }
 
   }, [web3Context.state.web3Data]);
 
@@ -157,11 +170,11 @@ export default function UserMenu() {
                   </div>
                   <div className="mb-3">
                     <p className="text-sm font-bold text-gray-500">BNB Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{bnbBalance.substring(0,4)} BNB</p>
+                    <p className="text-lg font-bold text-gray-800">{bnbBalance} BNB</p>
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{fomoBalance.substring(0,4)} FOMO</p>
+                    <p className="text-lg font-bold text-gray-800">{fomoBalance} FOMO</p>
                   </div>
                 </div>
                 <div className="p-2 pt-1">

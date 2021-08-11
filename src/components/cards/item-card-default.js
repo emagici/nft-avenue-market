@@ -34,34 +34,40 @@ export default function CardDefault(props) {
            <p className="mt-2 block text-sm py-1 px-2 uppercase inline font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
          ) : null} 
         </div>
-        {/* <div className="flex justify-between items-end border-b border-gray-200 pb-3">
-          {props.nolink ? (
-            <div className="flex items-center">
-              <img
-                className="inline-block h-6 w-6 rounded-full"
-                src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-                alt=""
-              />
-              <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p>
+
+        {props.Audio ? (
+            <div className="flex justify-between items-end border-b border-gray-200 pb-3">
+              <audio controls src={props.Audio}></audio>
+
+              {/* {props.nolink ? (
+                <div className="flex items-center">
+                  <img
+                    className="inline-block h-6 w-6 rounded-full"
+                    src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                    alt=""
+                  />
+                  <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p>
+                </div>
+              ) : (
+                <Link to="/user">
+                  <div className="flex items-center">
+                    <img
+                      className="inline-block h-6 w-6 rounded-full"
+                      src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+                      alt=""
+                    />
+                    <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p>
+                  </div>
+                </Link>
+              )}
+              <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p> */}
             </div>
-          ) : (
-            <Link to="/user">
-              <div className="flex items-center">
-                <img
-                  className="inline-block h-6 w-6 rounded-full"
-                  src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-                  alt=""
-                />
-                <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p>
-              </div>
-            </Link>
-          )}
-          <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p>
-        </div> */}
+         ) : null} 
         <div className="flex justify-between">
           {props.highestbid ? (
             <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
           ) : null}
+
           {props.sellItem && false ? (
             // <p className="mt-2 block text-sm text-gray-900 truncate pointer-events-none font-light">New Bid</p>
             <button
@@ -70,6 +76,11 @@ export default function CardDefault(props) {
             >
               <span>Sell Item</span>
             </button>
+          ) : null}
+
+
+           {props.Quantity ? (
+            <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Quantity </span>{props.Quantity}</p>
           ) : null}
         </div>
       </li>
