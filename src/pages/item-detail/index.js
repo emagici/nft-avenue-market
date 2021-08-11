@@ -36,6 +36,9 @@ import {
   WhatsappIcon
 } from "react-share";
 
+import { ThumbUpIcon } from "@heroicons/react/solid";
+import { SharedContext } from '../../context/shared-context';
+
 import AppUrls from '../../AppSettings';
 
 const tabs = [
@@ -100,6 +103,9 @@ export default function ItemDetail(props) {
 
   const [lowestSellerItem, setLowestSellerItem] = useState();
 
+  const [hasLiked, setHasLiked] = useState(false);
+  
+  const sharedContext = useContext(SharedContext);
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
@@ -136,15 +142,22 @@ export default function ItemDetail(props) {
   const getListedNftInfo = () => {
     getEvent();
 
+    let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`;
+
+    if(userContext.state.id){
+      url += `&loggedInUserId=${userContext.state.id}`
+    }
+
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`,
+      url: url,
     })
     .then(async function (nftListingResponse) {
       console.log(nftListingResponse)
 
       const nftListingResult = nftListingResponse.data.result;
 
+      setHasLiked(nftListingResult[0].nft.hasLiked);
       setNftDescription(nftListingResult[0].nft.description);
       setNftName(nftListingResult[0].nft.tokenName)
       setImageNftSrc(nftListingResult[0].nft.imageUrl)
@@ -420,6 +433,87 @@ export default function ItemDetail(props) {
 
     }, []);
 
+    const like = () => {
+      isLoading(true);
+  
+      axios({
+        method: "POST",
+        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0`,
+        headers: {
+          "Authorization": "Bearer " + userContext.state.accessToken + ""
+        }
+      })
+      .then(function (response) {
+        setHasLiked(true);
+        alert("You have liked this item!");
+      })
+      .catch(function (response) {
+        console.log(response);
+        alert("Unable to process request!");
+      })
+      .finally(function(){
+        isLoading(false);
+      });
+    }
+  
+    const unLike = () => {
+      isLoading(true);
+  
+      axios({
+        method: "POST",
+        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0`,
+        headers: {
+          "Authorization": "Bearer " + userContext.state.accessToken + ""
+        }
+      })
+      .then(function (response) {
+        setHasLiked(false);
+        alert("You have unliked this item!");
+      })
+      .catch(function (response) {
+        console.log(response);
+        alert("Unable to process request!");
+      })
+      .finally(function(){
+        isLoading(false);
+      });
+    }
+  
+    function onLike(e){
+      e.preventDefault();
+  
+      if(!userContext.state.accessToken)
+      {
+        return;
+      }
+
+      like();
+    }
+  
+    function onUnLike(e){
+      e.preventDefault();
+  
+      if(!userContext.state.accessToken)
+      {
+        return;
+      }
+      
+      unLike();
+    }
+
+    function isLoading(state){
+      if(state){
+        sharedContext.dispatch({
+          type: "START_LOADING"
+        })
+      }
+      else{
+        sharedContext.dispatch({
+          type: "STOP_LOADING"
+        })
+      }
+    }
+
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
@@ -493,13 +587,39 @@ export default function ItemDetail(props) {
                     </button>
                   ) : null}
                   {isItemListed ? (
-                    <button
-                      type="button"
-                      onClick={() => setMakeOfferModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                    >
-                      <span>Make Offer</span>
-                    </button>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setMakeOfferModalOpen(true)}
+                        className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
+                      >
+                        <span>Make Offer</span>
+                      </button>
+                      {userContext.state.accessToken && hasLiked ? (
+                          <button
+                            onClick={(e) => onUnLike(e)}
+                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 shadow-sm focus:outline-none sm:-right-2"
+                          >
+                            <span>Unlike</span>
+                            <ThumbUpIcon
+                              className="-mr-1 ml-1 h-5 w-5 text-white"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => onLike(e)}
+                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none sm:-right-2"
+                          >
+                            <span>Like</span>
+                            <ThumbUpIcon
+                              className="-mr-1 ml-1 h-5 w-5 text-white"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        )
+                      }
+                  </div>
                   ) : null}
                 </div>
               </div>
