@@ -56,11 +56,12 @@ export default function Profile() {
   const [seedWords, setSeedWords] = useState("");
   const [followers, setFollowers] = useState([]);
   const [followees, setFollowees] = useState([]);
+  const [likedItems, setLikedItems] = useState([]);
   const tabs = [
     "On Sale",
     "Owned",
     // "Created",
-    // "Liked",
+    "Liked",
     "Following",
     "Followers",
     "Activity",
@@ -182,6 +183,10 @@ export default function Profile() {
         .map((x) => toAvatarObject(x))
       );
 
+      setLikedItems(response.data.result.likedItems
+        .map((x) => toLikedItemObject(x))
+      );
+
       userContext.dispatch({
         type: "UPDATE_DATA",
         payload: response.data.result
@@ -204,6 +209,18 @@ export default function Profile() {
       name: x.name,
       sellerId: x.id
     };
+  }
+
+  const toLikedItemObject = (x) => {
+    var obj = {
+      Listed: true,
+      TokenId: x.tokenId,
+      NftAddress: x.nft,
+      TokenName:  x.tokenName,
+      Image: x.imageUrl,
+      Video: x.videoUrl
+    };
+    return obj;
   }
 
   const loadMyActivities = async (accessToken) => {
@@ -514,6 +531,10 @@ export default function Profile() {
             ) : null}
 
             {activeTab === "Liked" ? (
+
+              likedItems.length > 0 ? (
+                <CardList items={likedItems} loading={loadingData.profile} emptyMsg="No items" />
+              ) : (
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No liked items</h1>
                 <p className="font-medium text-gray-600 mb-5">
@@ -526,6 +547,7 @@ export default function Profile() {
                   Explore
                 </Link>
               </div>
+              )
             ) : null}
 
             {activeTab === "Following" ? (
