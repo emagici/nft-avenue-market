@@ -695,7 +695,7 @@ export default function ItemDetail(props) {
                       {shortUrl ? (
                           <button
                             onClick={(e) => onCopyLink(e)}
-                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:-right-2"
+                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:left-4"
                           >
                             <span>Copy link</span>
                             <ClipboardCopyIcon
