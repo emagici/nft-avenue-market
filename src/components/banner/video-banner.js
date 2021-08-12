@@ -1,4 +1,4 @@
-import ReactPlayer from 'react-player'
+// import ReactPlayer from 'react-player'
 import IntroVideo from '../../assets/video/avenue-intro-glitch.mp4'
 import VideoBox from '../video-box'
 

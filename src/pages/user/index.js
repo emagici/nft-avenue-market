@@ -8,7 +8,8 @@ import {
   LogoutIcon,
   PencilAltIcon,
   PlusCircleIcon,
-  StarIcon
+  StarIcon,
+  ExternalLinkIcon
 } from "@heroicons/react/solid";
 import { CheckIcon } from "@heroicons/react/outline";
 import { classNames } from '../../utilities/utils'
@@ -603,13 +604,37 @@ export default function Profile() {
                 </div>
               ) : (
                 myActivies && myActivies.length ? (
-                  <div className="text-center">
-                     <ul className="">
+                  <div className="-mt-10 md:-mt-5">
+                     <ul className="max-w-xl mx-auto">
                         {myActivies.map((item, index) => (
-                          <li key={index} className="py-3 border-b">
-                            <Link to={`/item-detail?listed=true&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="underline hover:opacity-80 transition-opacity">{item.nftDetails?.name}</Link>
-                            <p className="text-sm font-bold">{item.eventName}</p>
-                            <p className="text-sm font-medium">tx hash : {item.txHash}</p>
+                          <li key={index} className="border-b border-gray-200">
+                            <div className="flex items-center py-5">
+                              <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                                <Link to={`/item-detail?listed=true&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
+                                  {item.nftDetails.imageUrl ? (
+                                    <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover" />
+                                  ) : null}
+                                  {item.nftDetails.videoUrl ? (
+                                    <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+                                  ) : null}
+                                </Link>
+                              </div>
+                              <div className="max-w-lg">
+                                <p className="text-lg font-bold">{item.eventName}</p>
+                                <Link to={`/item-detail?listed=true&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="text-sm hover:opacity-90 font-medium transition-opacity">
+                                  <span>{item.nftDetails?.name}</span>
+                                </Link>
+                                {item.txHash ? (
+                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" className="block text-sm underline mt-0.5">
+                                    <span>tx: {`${item.txHash.substr(0,4)}...${item.txHash.substr(-6,6)}`}</span>
+                                    <ExternalLinkIcon
+                                      className="inline ml-1 h-4 w-4 opacity-80"
+                                      aria-hidden="true"
+                                    />
+                                  </a>
+                                ) : null}
+                              </div>
+                            </div>
                           </li>
                         ))}
                      </ul>

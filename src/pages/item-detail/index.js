@@ -9,8 +9,9 @@ import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
 
-import { ThumbUpIcon } from '@heroicons/react/solid'
+import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
 
+import { SharedContext } from '../../context/shared-context';
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
@@ -29,22 +30,16 @@ import {
   getPayTokenFromListing,
   getPayTokenDetailByAddress,
   listingFeeToken,
-  shortenLink,
 } from "../../utilities/utils";
 
 import {
-  FacebookShareButton,
   TelegramShareButton,
   TwitterShareButton,
   WhatsappShareButton,
-  FacebookIcon,
   TelegramIcon,
   TwitterIcon,
   WhatsappIcon
 } from "react-share";
-
-import { ClipboardCopyIcon } from "@heroicons/react/solid";
-import { SharedContext } from '../../context/shared-context';
 
 import AppUrls from '../../AppSettings';
 
@@ -113,7 +108,6 @@ export default function ItemDetail(props) {
   const [lowestSellerItem, setLowestSellerItem] = useState();
 
   const [hasLiked, setHasLiked] = useState(false);
-  const [shortUrl, setShortUrl] = useState("");
   
   const sharedContext = useContext(SharedContext);
   const userContext = useContext(UserContext)
@@ -409,7 +403,7 @@ export default function ItemDetail(props) {
   useEffect(async () => {
     if (!web3) return;
     getTokenURI();
-  }, [myAdd]);
+  }, [myAdd, web3]);
 
   useEffect(async () => {
     if (!web3) return;
@@ -428,7 +422,7 @@ export default function ItemDetail(props) {
   useEffect(async () => {
     setWeb3(web3Context.state.web3Data);
 
-    const params = qs.parse(props.location.search, { ignoreQueryPrefix: true });
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
 
     if(params.listed === "true")
       setIsItemListed(true)
@@ -440,9 +434,7 @@ export default function ItemDetail(props) {
 
     if(params.nftaddress)
       setNftAddress(params.nftaddress);
-      
-    if(params.tokenid)
-      generateShortUrl();
+  
     }, []);
 
     const like = () => {
@@ -457,7 +449,7 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(true);
-        alert("You have liked this item!");
+        // alert("You have liked this item!");
       })
       .catch(function (response) {
         console.log(response);
@@ -480,7 +472,7 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(false);
-        alert("You have unliked this item!");
+        // alert("You have unliked this item!");
       })
       .catch(function (response) {
         console.log(response);
@@ -526,31 +518,29 @@ export default function ItemDetail(props) {
       }
     }
 
-    const generateShortUrl = () => {
-      isLoading(true);
-      
-      let longUrl = window.location.href;
+    const generateShortUrl = async (url) => {
+      console.log('getting short url')
 
-      axios({
+      const resp = await axios({
         method: "GET",
-        url: `${appUrls.fomoHostApi}/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
+        url: `${appUrls.fomoHostApi}/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(url)}`
       })
       .then(function (response) {
-        setShortUrl(response.data.result);
+        return response.data.result
       })
       .catch(function (response) {
+        console.log('short URL resp');
         console.log(response);
-        alert("Unable to process request!");
+        return null
       })
-      .finally(function(){
-        isLoading(false);
-      });
+
+      return resp
     }
     
     function onCopyLink(e){
       e.preventDefault();
       
-      copyToClipboard(shortUrl);
+      copyToClipboard(shareUrl);
     }
 
     function copyToClipboard(text) {
@@ -559,18 +549,18 @@ export default function ItemDetail(props) {
   
   // generate shortened share link
   useEffect(async () => {
-    const url = `https://staging.theavenue.market${location.search}`;
-    const shortUrl = await shortenLink(url)
-    if (shortUrl) {
-      setShareUrl(shortUrl)
-    } else {
-      setShareUrl(null)
-    }
-  }, [])
+    if (!web3) return
 
-  function handleLikeItem() {
-    alert('like item func')
-  }
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+    if (!params.tokenid) return
+
+    const url = `https://staging.theavenue.market${location.search}`;
+    const urlTmp = await generateShortUrl(url)
+    
+    setShareUrl(urlTmp ? urlTmp : null)
+
+  }, [web3])
+
 
   return (
     <div className="">
@@ -600,26 +590,34 @@ export default function ItemDetail(props) {
 
               <div className="px-1 py-4 flex justify-between items-center">
                 <div>
-                  <button
-                    type="button"
-                    onClick={() => handleLikeItem()}
-                    className="relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
-                  >
-                    <span>Like</span>
-                    <ThumbUpIcon className="h-5 w-5 ml-1 relative bottom-0.5" />
-                  </button>
+                  {userContext.state.accessToken ? (
+                    <button
+                      type="button"
+                      onClick={(e) => hasLiked ? onUnLike(e) : onLike(e)}
+                      className={classNames(
+                        hasLiked
+                         ? "bg-green-500 hover:bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-900",
+                         "relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none"
+                      )}
+                    >
+                      <span>{hasLiked ? "Unlike" : "Like"}</span>
+                      <ThumbUpIcon className="h-5 w-5 ml-1 relative bottom-0.5" />
+                    </button>
+                  ) : null }
                 </div>
-                <div className="flex justify-center items-center gap-2">
-                  <TwitterShareButton url={`Check out this item on The Avenue! ${shareUrl}`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                    <TwitterIcon size={32} round={true} />
-                  </TwitterShareButton>
-                  <TelegramShareButton title="Check out this item on The Avenue!" url={shareUrl} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                    <TelegramIcon size={32} round={true} />
-                  </TelegramShareButton>
-                  <WhatsappShareButton title="Check out this item on The Avenue!" url={shareUrl} separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
-                    <WhatsappIcon size={32} round={true} />
-                  </WhatsappShareButton>
-                </div>
+                {shareUrl ? (
+                  <div className="flex justify-center items-center gap-2">
+                    <TwitterShareButton url={`Check out this item on The Avenue! ${shareUrl}`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                      <TwitterIcon size={32} round={true} />
+                    </TwitterShareButton>
+                    <TelegramShareButton title="Check out this item on The Avenue!" url={shareUrl} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                      <TelegramIcon size={32} round={true} />
+                    </TelegramShareButton>
+                    <WhatsappShareButton title="Check out this item on The Avenue!" url={shareUrl} separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                      <WhatsappIcon size={32} round={true} />
+                    </WhatsappShareButton>
+                  </div>
+                ) : null}
               </div>
               
             </div>
@@ -629,7 +627,7 @@ export default function ItemDetail(props) {
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
             {isItemListed ? (
-              <div class="-mt-4 mb-4">
+              <div className="-mt-4 mb-4">
                 {lowestSellerItem ? (
                     // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
                     //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
@@ -665,34 +663,8 @@ export default function ItemDetail(props) {
                       >
                         <span>Make Offer</span>
                       </button>
-                      {userContext.state.accessToken ?
-                      
-                        hasLiked ? (
-                          <button
-                            onClick={(e) => onUnLike(e)}
-                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 shadow-sm focus:outline-none sm:-right-2"
-                          >
-                            <span>Unlike</span>
-                            <ThumbUpIcon
-                              className="-mr-1 ml-1 h-5 w-5 text-white"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(e) => onLike(e)}
-                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none sm:-right-2"
-                          >
-                            <span>Like</span>
-                            <ThumbUpIcon
-                              className="-mr-1 ml-1 h-5 w-5 text-white"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        ) : null
-                      } 
 
-                      {shortUrl ? (
+                      {shareUrl ? (
                           <button
                             onClick={(e) => onCopyLink(e)}
                             className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:left-4"
@@ -822,7 +794,7 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
                                   {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  {isOwner && item.owner.toLowerCase() === myAdd.toLowerCase() ? (
+                                  {isOwner && item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
                                       <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
                                        Cancel Listing
                                      </a>

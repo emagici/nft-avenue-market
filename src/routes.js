@@ -12,6 +12,7 @@ import TransferItem from './pages/transfer-item';
 import ProfileInfo from './pages/profile-info';
 import PrivacyPolicy from './pages/policies/privacy-policy';
 import TermsPage from './pages/policies/terms';
+import AGuideToNFTs from './pages/getting-started/a-guide-to-nfts';
 
 export default [
 	{
@@ -99,6 +100,14 @@ export default [
 		path: "/terms",
 		title: "Terms",
 		component: TermsPage,
+		exact: true
+	},
+
+	// GETTING STARTED GUIDES
+	{
+		path: "/getting-started/a-guide-to-nfts",
+		title: "A Guide To NFTs",
+		component: AGuideToNFTs,
 		exact: true
 	},
 ];
