@@ -64,8 +64,6 @@ export default function Discover() {
     })
     .then(async function (response) {
 
-      console.log(response.data.result)
-
       const allItems = response.data.result;
 
       var items = await Promise.all(allItems.map(async (item) => (
@@ -81,6 +79,8 @@ export default function Discover() {
           likes: item.numberOfLikes
         }
       )))
+
+      items = items.sort(function(a, b) {return b.likes - a.likes;});
 
       setListedItems(items);
     })

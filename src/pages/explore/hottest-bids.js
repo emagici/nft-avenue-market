@@ -44,7 +44,6 @@ export default function HottestBidsSection() {
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetHottestBids`
     })
     .then(async function (response) {
-      console.log(response.data.result)
       var allItems = response.data.result;
 
       var items = await Promise.all(allItems.map(async (item) => (
@@ -55,12 +54,14 @@ export default function HottestBidsSection() {
          TokenName:  item.tokenName,
          Image: item.imageUrl,
          Video: item.videoUrl,
+         highestbidValue: item.highestBid,
          highestbid: item.highestBid ? Web3.utils.fromWei(item.highestBid.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress).payTokenName : "",
          price: item.buyNowPrice ? Web3.utils.fromWei(item.buyNowPrice.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress)).payTokenName : "",
        }
      )))
 
-     console.log(items)
+     items = items.sort(function(a, b) {return b.highestbidValue - a.highestbidValue;});
+
      setItems(items)
     })
     .catch(function (response) {

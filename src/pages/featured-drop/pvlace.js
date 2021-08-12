@@ -86,91 +86,91 @@ const mediaLinks = [
 const items = [
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmVsR6hEmS6WSUqepvoH9bJQy1UuRA6ZNzhBUWrid3yavC",
-    NftAddress: "QmQxhFQuBnRvoyBWy9AjqhRE5jfmou4nxPydYmegVyqXRj",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Drake",
     price: "3 BNB",
-    TokenId: 1,
+    TokenId: 472,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmVLeB2EttdHTstNe8MSKCRBQzimrVAtU6ftns6VF8PMCB",
-    NftAddress: "QmbBES8sUjV78FVobpaXU8jCWZmpiTh1NiVvjKBLkjHrDw",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Jay Z",
     price: "3 BNB",
-    TokenId: 2,
+    TokenId: 473,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmWqgJADysfjVnbsjER4sy4tRKMYVJbNn8RcksnzeNehj8",
-    NftAddress: "QmXyxkjcyqyCk7qvrdWXuRe7AXequCyWoNRrCQBLY97U6e",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Kanye West",
     price: "3 BNB",
-    TokenId: 3,
+    TokenId: 474,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmeFVDUav3smNQV5ReDovxRUCX795sy4pes3STfYkEug8o",
-    NftAddress: "QmaVhjbmAhwCv9AzwAG4rW8gAqeXJwTZv5pV3qsJNkK1Fv",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Kendrick Lamar",
     price: "3 BNB",
-    TokenId: 4,
+    TokenId: 457,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmNeRSeSf8mbRgDXTChMkLgqMLcvUUwEXdpc1sn2cWRQcv",
-    NftAddress: "QmPM6gAL1NhiSrBek87ckhAACE4GCC9tDMfnyAKdhyMqUX",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Lauryn Hill",
     price: "3 BNB",
-    TokenId: 5,
+    TokenId: 70,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmdGa3QU4dZqWWfXiTrJQrMMrSqno3DZce3HrkXDgisJV2",
-    NftAddress: "QmcVeXBSV9pEaE1kBiVaD2owzywE3A5Batf31oZQZGD8t2",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "21 Savage",
     price: "3 BNB",
-    TokenId: 6,
+    TokenId: 71,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmdWQxqbhjz5bxcnchefJyogujMD2eQrv9qP85qmhG4tWh",
-    NftAddress: "QmYQXS4hGR9sg3BGgzvjbmSmxUhLThrJkd9PaEYRiSrqLX",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "ASAP Rocky",
     price: "3 BNB",
-    TokenId: 7,
+    TokenId: 72,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmSFPabdmdnzRCSopLAErb3dQzWWHLXjjVvfSQWXVpS2Vu",
-    NftAddress: "QmcgeCXsNeeHUMHzatQa47Ek4H91Y23jrU3cmrcqbQvZ7B",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Cardi B",
     price: "3 BNB",
-    TokenId: 8,
+    TokenId: 458,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmQUEsJedoPTHXxzCesZWGJrrx1Dir2k1Di4fw69KJ9iQU",
-    NftAddress: "QmNtngbQKP5jgrUoCHyhxQmi3w6tordc2TaEDrK2DB6fUM",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Chief Keef",
     price: "3 BNB",
-    TokenId: 9,
+    TokenId: 470,
     Listed: false,
     sold: true
   },
   {
     Video: "https://pvlacenftcollection.art/ipfs/QmcLRTyTdkYMvHckPAD4uL6qojS18ZXKxdLLSEJBk5m3S9",
-    NftAddress: "QmRfvHtEdZTkCAjCovi8uQD49cAnVi9XV5Xk2VaUSvVok5",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Chris Brown",
     price: "3 BNB",
-    TokenId: 10,
+    TokenId: 73,
     Listed: false,
     sold: true
   },

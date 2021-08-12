@@ -24,10 +24,10 @@ const collaborators = [
 const items = [
   {
     Video: "https://pvlacenftcollection.art/ipfs/Qmc2bDxHWUS24PKHEABbjNWovUQ1mWfRGQ6ovZQvt5qnbQ",
-    NftAddress: "Qmc2bDxHWUS24PKHEABbjNWovUQ1mWfRGQ6ovZQvt5qnbQ",
+    NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "FEG NFP",
     price: "75 FOMO",
-    TokenId: 1,
+    TokenId: 1000,
     Listed: false,
     sold: true
   },
