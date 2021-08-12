@@ -9,8 +9,9 @@ import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
 
-import { ThumbUpIcon } from '@heroicons/react/solid'
+import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
 
+import { SharedContext } from '../../context/shared-context';
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
@@ -33,21 +34,13 @@ import {
 } from "../../utilities/utils";
 
 import {
-  FacebookShareButton,
   TelegramShareButton,
   TwitterShareButton,
   WhatsappShareButton,
-  FacebookIcon,
   TelegramIcon,
   TwitterIcon,
   WhatsappIcon
 } from "react-share";
-
-<<<<<<< .merge_file_FvsVOc
-import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
-import { SharedContext } from '../../context/shared-context';
-=======
->>>>>>> .merge_file_WLxiNh
 
 import AppUrls from '../../AppSettings';
 
