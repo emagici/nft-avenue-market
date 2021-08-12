@@ -1,16 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import SectionHeader from '../../components/section-header'
 import { MailIcon, PhoneIcon } from '@heroicons/react/solid'
+import { Link } from "react-router-dom";
+
+import BG1 from '../../assets/img/bg/bg-pattern-1.jpeg'
 
 const items = [
   {
-    title: "Staying safe when buying NFTs on The Avenue Marketplace",
-  },
-  {
-    title: "The beginner's guide to creating and selling digital art NFTs",
-  },
-  {
-    title: "5 reasons to sell NFTs on The Avenue",
+    title: "A Guide To NFTs",
+    url: "/getting-started/a-guide-to-nfts",
+    image: BG1
   },
 ]
 
@@ -23,12 +22,16 @@ export default function GettingStartedSection() {
         <ul className="grid grid-cols-1 gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <li key={item.title} className="col-span-1">
-              <div className="w-full h-72 flex items-center justify-between p-6 space-x-6 bg-gray-100 rounded-xl rounded-lg shadow-lg mb-5">
-                
-              </div>
-              <div>
-                <p className="text-xl font-bold">{item.title}</p>
-              </div>
+              <Link to={item.url}>
+                <div className="w-full h-72 flex items-center justify-between bg-gray-100 rounded-xl shadow-lg mb-5">
+                  {item.image ? (
+                    <img src={item.image} className="w-full h-full object-cover rounded-xl" />
+                  ) : null}
+                </div>
+                <div>
+                  <p className="text-xl font-bold">{item.title}</p>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
