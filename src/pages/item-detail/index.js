@@ -524,7 +524,7 @@ export default function ItemDetail(props) {
 
       axios({
         method: "GET",
-        url: `${appUrls.fomoHostApi}/api/services/app/ShareUrls/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
+        url: `${appUrls.fomoHostApi}/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
       })
       .then(function (response) {
         setShortUrl(response.data.result);
