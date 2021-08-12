@@ -14,3 +14,7 @@
   pointer-events: none;
   cursor: default;
 }
+
+.react-toast-notifications__container {
+  margin-top: 65px;
+}

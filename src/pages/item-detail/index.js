@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Dropdown from "../../components/dropdown";
+import { useToasts } from 'react-toast-notifications'
 import qs from "qs";
 import { Accordion, AccordionItem, AccordionPanel } from '../../components/accordion'
 import Web3 from "web3";
@@ -8,8 +8,11 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
 import { SharedContext } from '../../context/shared-context';
 import { UserContext } from '../../context/user-context'
@@ -38,7 +41,7 @@ import {
   WhatsappShareButton,
   TelegramIcon,
   TwitterIcon,
-  WhatsappIcon
+  WhatsappIcon,
 } from "react-share";
 
 import AppUrls from '../../AppSettings';
@@ -72,6 +75,7 @@ const appUrls = {
 
 export default function ItemDetail(props) {
   const location = useLocation();
+  const { addToast } = useToasts()
 
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
@@ -537,14 +541,11 @@ export default function ItemDetail(props) {
       return resp
     }
     
-    function onCopyLink(e){
-      e.preventDefault();
-      
-      copyToClipboard(shareUrl);
-    }
-
-    function copyToClipboard(text) {
-      window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+    function handleCopyNotification() {
+      addToast("Link copied to clipboard!", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     }
   
   // generate shortened share link
@@ -607,6 +608,13 @@ export default function ItemDetail(props) {
                 </div>
                 {shareUrl ? (
                   <div className="flex justify-center items-center gap-2">
+                    {shareUrl ? (
+                      <CopyToClipboard text={shareUrl} onCopy={() => handleCopyNotification()}>
+                        <div className="bg-gray-200 rounded-full shadow-lg flex items-center justify-center h-8 w-8 ring-1 ring-white hover:opacity-80 transition-opacity cursor-pointer">
+                          <FontAwesomeIcon icon={faCopy} size='md' className="text-gray-700" />
+                        </div>
+                      </CopyToClipboard>
+                    ) : null}
                     <TwitterShareButton url={`Check out this item on The Avenue! ${shareUrl}`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
                       <TwitterIcon size={32} round={true} />
                     </TwitterShareButton>
@@ -663,20 +671,6 @@ export default function ItemDetail(props) {
                       >
                         <span>Make Offer</span>
                       </button>
-
-                      {shareUrl ? (
-                          <button
-                            onClick={(e) => onCopyLink(e)}
-                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:left-4"
-                          >
-                            <span>Copy link</span>
-                            <ClipboardCopyIcon
-                              className="-mr-1 ml-1 h-5 w-5 text-white"
-                              aria-hidden="true"
-                            />
-                          </button>
-                        ) : null
-                      }
                   </div>
                   ) : null}
                 </div>
