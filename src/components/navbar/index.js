@@ -24,6 +24,8 @@ import UserMenu from "./user-menu";
 import axios from "axios";
 import AppUrls from '../../AppSettings';
 import moment from "moment";
+import CommunityMenu from "./community-menu";
+import ChainMenu from "./chain-menu";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -419,7 +421,7 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
-              <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 hidden lg:flex">
+              <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 hidden xl:flex">
                 <div className="max-w-lg w-full lg:max-w-xs">
                   <label htmlFor="search" className="sr-only">
                     Search
@@ -445,10 +447,11 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="flex items-center">
+
                 {loggedIn ? (
                   <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
                     {/* Profile dropdown */}
-                    <Menu as="div" className="ml-3 relative">
+                    <Menu as="div" className="relative">
                       {({ open }) => (
                         <>
                           <div>
@@ -501,6 +504,8 @@ export default function Navbar() {
                     </Menu>
                   </div>
                 ) : null}
+
+                <CommunityMenu/>
 
                 {false && myAdd ? (
                   <div className="flex-shrink-0 hidden md:block">
@@ -580,6 +585,7 @@ export default function Navbar() {
                     </button>
                   )}
                 </div>
+                <ChainMenu/>
               </div>
             </div>
           </div>

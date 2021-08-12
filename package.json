@@ -20,6 +20,7 @@
     "autoprefixer": "^9.8.6",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.21.1",
+    "bitly": "^7.1.2",
     "moment": "^2.29.1",
     "postcss": "^7.0.36",
     "qs": "^6.10.1",
