@@ -4,12 +4,9 @@ import CardDefault from "../../components/cards/item-card-default";
 import SectionHeader from "../../components/section-header";
 import AvatarList from "../../components/avatar/avatar-list";
 import {
-  LoginIcon,
-  LogoutIcon,
   PencilAltIcon,
-  PlusCircleIcon,
-  StarIcon,
-  ExternalLinkIcon
+  ExternalLinkIcon,
+  QuestionMarkCircleIcon
 } from "@heroicons/react/solid";
 import { CheckIcon } from "@heroicons/react/outline";
 import { classNames } from '../../utilities/utils'
@@ -611,11 +608,16 @@ export default function Profile() {
                             <div className="flex items-center py-5">
                               <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
                                 <Link to={`/item-detail?listed=true&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
-                                  {item.nftDetails.imageUrl ? (
+                                  {item.nftDetails && item.nftDetails.imageUrl ? (
                                     <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover" />
                                   ) : null}
-                                  {item.nftDetails.videoUrl ? (
+                                  {item.nftDetails && item.nftDetails.videoUrl ? (
                                     <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+                                  ) : null}
+                                  {!item.nftDetails ? (
+                                    <div className="h-full w-full flex items-center justify-center">
+                                      <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                    </div>
                                   ) : null}
                                 </Link>
                               </div>
