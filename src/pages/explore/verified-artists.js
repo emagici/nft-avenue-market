@@ -11,7 +11,7 @@ const appUrls = {
   fomoClient: AppUrls.fomoClient
 };
 
-export default function TopSellers() {
+export default function VerifiedArtistsSection() {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   
@@ -39,8 +39,8 @@ export default function TopSellers() {
   return (
     <div className="py-20">
       <div className="max-w-screen-2xl mx-auto">
-        <SectionHeader title="Top Sellers" />
-        <AvatarList items={items} rank={true} loading={loading} />
+        <SectionHeader title="Verified Artists" />
+        <AvatarList items={items} loading={loading} />
       </div>
     </div>
   )

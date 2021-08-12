@@ -7,6 +7,8 @@ import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
 import TopSellers from './top-sellers'
 import Following from './following'
+import GettingStartedSection from './getting-started'
+import VerifiedArtistsSection from './verified-artists'
 
 
 export default function Explore() {
@@ -37,20 +39,21 @@ export default function Explore() {
   return (
     <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
       <div className="mb-20">
-        <TextBanner
+        {/* <TextBanner
           title="The New Creative Economy"
           subtitle="Create, Explore, Collect Digital Art NFTs"
           {...promoColors}
-        />
-        {/* <VideoBanner   /> */}
-        {/* <VideoBanner /> */}
+        /> */}
+        <VideoBanner />
       </div>
       <Discover/>
       {/* <DiscoverSlider/> */}
       <TopSellers/>
+      <VerifiedArtistsSection/>
       {/* <FeaturedArtists/>
       <Following/> */}
       <HottestBidsSection/>
+      <GettingStartedSection/>
     </div>
   )
 }

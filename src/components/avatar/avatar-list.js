@@ -17,7 +17,7 @@ export default function AvatarList(props) {
               props.items && props.items.length ? (
                 props.items.map((item, index) => (
                   <li key={item.name}>
-                    <Avatar index={index} {...item} />
+                    <Avatar index={index} rank={props.rank} {...item} />
                   </li>
                 ))
               ) : (

@@ -1,7 +1,30 @@
 import {
   MARKETPLACE_ABI,
   MARKETPLACE_ADDRESS,
-} from "../contracts/FomoMarketPlace";
+} from "../contracts/FomoMarketPlace"
+
+import { BitlyClient } from 'bitly'
+
+
+export async function shortenLink(url) {
+  const bitly = new BitlyClient('f2364f5c80a64f3f8500d1a2f4ba9d91b2111425', {})
+  if (!url) return
+  
+  let result
+  try {
+    result = await bitly.shorten(url)
+  } catch (e) {
+    // console.log(e)
+  }
+
+  // console.log(result)
+
+  if (result && result.link) {
+    return result.link
+  } else {
+    return
+  }
+}
 
 
 export function classNames(...classes) {
