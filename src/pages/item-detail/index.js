@@ -36,7 +36,7 @@ import {
   WhatsappIcon
 } from "react-share";
 
-import { ThumbUpIcon } from "@heroicons/react/solid";
+import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
 import { SharedContext } from '../../context/shared-context';
 
 import AppUrls from '../../AppSettings';
@@ -104,6 +104,7 @@ export default function ItemDetail(props) {
   const [lowestSellerItem, setLowestSellerItem] = useState();
 
   const [hasLiked, setHasLiked] = useState(false);
+  const [shortUrl, setShortUrl] = useState("");
   
   const sharedContext = useContext(SharedContext);
   const userContext = useContext(UserContext)
@@ -430,7 +431,9 @@ export default function ItemDetail(props) {
 
     if(params.nftaddress)
       setNftAddress(params.nftaddress);
-
+      
+    if(params.tokenid)
+      generateShortUrl();
     }, []);
 
     const like = () => {
@@ -514,6 +517,37 @@ export default function ItemDetail(props) {
       }
     }
 
+    const generateShortUrl = () => {
+      isLoading(true);
+      
+      let longUrl = window.location.href;
+
+      axios({
+        method: "GET",
+        url: `${appUrls.fomoHostApi}/api/services/app/ShareUrls/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
+      })
+      .then(function (response) {
+        setShortUrl(response.data.result);
+      })
+      .catch(function (response) {
+        console.log(response);
+        alert("Unable to process request!");
+      })
+      .finally(function(){
+        isLoading(false);
+      });
+    }
+    
+    function onCopyLink(e){
+      e.preventDefault();
+      
+      copyToClipboard(shortUrl);
+    }
+
+    function copyToClipboard(text) {
+      window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+    }
+
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
@@ -595,7 +629,9 @@ export default function ItemDetail(props) {
                       >
                         <span>Make Offer</span>
                       </button>
-                      {userContext.state.accessToken && hasLiked ? (
+                      {userContext.state.accessToken ?
+                      
+                        hasLiked ? (
                           <button
                             onClick={(e) => onUnLike(e)}
                             className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-600 hover:bg-green-700 shadow-sm focus:outline-none sm:-right-2"
@@ -617,7 +653,21 @@ export default function ItemDetail(props) {
                               aria-hidden="true"
                             />
                           </button>
-                        )
+                        ) : null
+                      } 
+
+                      {shortUrl ? (
+                          <button
+                            onClick={(e) => onCopyLink(e)}
+                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:-right-2"
+                          >
+                            <span>Copy link</span>
+                            <ClipboardCopyIcon
+                              className="-mr-1 ml-1 h-5 w-5 text-white"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        ) : null
                       }
                   </div>
                   ) : null}
