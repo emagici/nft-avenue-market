@@ -1225,20 +1225,19 @@ export default function ItemDetail(props) {
               <div className="mt-2">
                 <p className="text-sm text-gray-500 mb-5">
                 </p>
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
+
+
+                <div className="grid gap-3 mb-10">
+
+                  <div className="text-left">
+                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                       Token
                     </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <select
+                    <div className="mt-1">
+                      <select
                         value={offerToken}
                         onChange={(e) => setOfferToken(e.target.value)}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       >
                         {tokenTypes.map((item) => (
                           <option key={item.tokenAddress} value={item.tokenAddress}>
@@ -1246,23 +1245,18 @@ export default function ItemDetail(props) {
                           </option>
                         ))}
                       </select>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
+                  <div className="text-left">
+                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                       Offer Duration
                     </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <select
+                    <div className="mt-1">
+                      <select
                         value={offerLength}
                         onChange={(e) => setOfferLength(e.target.value)}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       >
                         {listingLengths.map((item) => (
                           <option key={item} value={item}>
@@ -1270,43 +1264,37 @@ export default function ItemDetail(props) {
                           </option>
                         ))}
                       </select>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
+                  <div className="text-left">
+                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                       Quantity
                     </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
+                    <div className="mt-1">
+                      <input
+                        type="text"
                         value={offerQuantity}
                         onChange={(e) => setOfferQuantity(e.target.value)}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
+                    </div>
                   </div>
-                </div>
-              
-                <div className="flex items-center justify-center px-5 mb-3">
-                  <div className="h-5 flex items-center">
-                  <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
+
+                  <div className="text-left">
+                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                       Price Per Item
                     </label>
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <input
+                    <div className="mt-1">
+                      <input
+                        type="text"
                         value={offerPricePerItem}
                         onChange={(e) => setOfferPricePerItem(e.target.value)}
-                        className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       />
+                    </div>
                   </div>
+
                 </div>
 
               </div>
