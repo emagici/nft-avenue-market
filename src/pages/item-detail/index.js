@@ -45,6 +45,7 @@ import {
 } from "react-share";
 
 import AppUrls from '../../AppSettings';
+import { Fragment } from "react";
 
 const tabs = [
   { name: 'Info', href: '#', current: true },
@@ -905,222 +906,217 @@ export default function ItemDetail(props) {
                 </div>
               </AccordionPanel>
  
-              {/* <AccordionItem toggle="price-history">Price History</AccordionItem>
-              <AccordionPanel id="price-history">
-                <div className="px-2">
-                  <p className="mb-4">Price history content here.</p>
-                </div>
-              </AccordionPanel> */}
+              {isOwner ? (
+                <Fragment>
+                  <AccordionItem toggle="list-item">List Item</AccordionItem>
+                  <AccordionPanel id="list-item">
+                    <div className="py-4">
+                      <div className="space-y-6 sm:space-y-5">
+                        <div>
+                          <h3 className="text-lg leading-6 font-medium text-gray-900">
+                            List Item
+                          </h3>
+                          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            Select from the options below to list your item
+                          </p>
+                        </div>
+                        <div className="space-y-6 sm:space-y-5 border-b border-gray-200 pb-5">
 
-            </Accordion>
+                          {false ? (
+                                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                  <label
+                                    htmlFor="country"
+                                    className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                                  >
+                                    Listing Type
+                                  </label>
+                                  <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                    <select
+                                      id="listing-type"
+                                      name="listing-type"
+                                      value={listingType}
+                                      onChange={(e) => setListingType(e.target.value)}
+                                      className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                    >
+                                      {listingTypes.map((item) => (
+                                        <option key={item} value={item}>
+                                          {item}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                          ) : null}
 
-            {isOwner ? (
-              <div className="py-5">
-                {/* <div className="mb-4">
-                  <p className="text-sm font-medium mb-2">Listing type</p>
-                  <Dropdown title="Fixed price" />
-                </div> */}
-
-                <div className="space-y-6 sm:space-y-5">
-                  <div>
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">
-                      List Item
-                    </h3>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                      Select from the options below to list your item
-                    </p>
-                  </div>
-                  <div className="space-y-6 sm:space-y-5 border-b border-gray-200 pb-5">
-
-                    {false ? (
                           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                             <label
                               htmlFor="country"
                               className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                             >
-                              Listing Type
+                              Token
                             </label>
                             <div className="mt-1 sm:mt-0 sm:col-span-2">
                               <select
-                                id="listing-type"
-                                name="listing-type"
-                                value={listingType}
-                                onChange={(e) => setListingType(e.target.value)}
+                                value={ListingToken}
+                                onChange={(e) => setListingToken(e.target.value)}
                                 className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                               >
-                                {listingTypes.map((item) => (
-                                  <option key={item} value={item}>
-                                    {item}
+                                {tokenTypes.map((item) => (
+                                  <option key={item.tokenAddress} value={item.tokenAddress}>
+                                    {item.name}
                                   </option>
                                 ))}
                               </select>
                             </div>
                           </div>
-                    ) : null}
 
-                    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                      <label
-                        htmlFor="country"
-                        className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                      >
-                        Token
-                      </label>
-                      <div className="mt-1 sm:mt-0 sm:col-span-2">
-                        <select
-                          value={ListingToken}
-                          onChange={(e) => setListingToken(e.target.value)}
-                          className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                          {["Fixed Price"].includes(listingType) ? (
+                            
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="price"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Price per item
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <input
+                                  type="text"
+                                  name="listprice"
+                                  id="listprice"
+                                  value={ListPrice}
+                                  onChange={(e) => setListPrice(e.target.value)}
+                                  className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {["Fixed Price"].includes(listingType) ? (
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="price"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Quantity (Available : {nftQuantityOwned})
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <input
+                                  type="number"
+                                  name="listquantity"
+                                  id="listquantity"
+                                  value={ListQuantity}
+                                  onChange={(e) => setListQuantity(e.target.value)}
+                                  className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {["Timed Auction"].includes(listingType) ? (
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="price"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Starting Price (BNB)
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <input
+                                  type="text"
+                                  name="start-price"
+                                  id="start-price"
+                                  className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {["Open For Offers"].includes(listingType) ? (
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="price"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Minimum Offer (BNB)
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <input
+                                  type="text"
+                                  name="min-price"
+                                  id="min-price"
+                                  className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {["Fixed Price", "Timed Auction"].includes(listingType) && false ? (
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="country"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Listing Length (days)
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <select
+                                  id="listing-length"
+                                  name="listing-length"
+                                  value={listingLength}
+                                  onChange={(e) => setListingLength(e.target.value)}
+                                  className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                >
+                                  {listingLengths.map((item) => (
+                                    <option key={item} value={item}>
+                                      {item}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {["Open For Offers"].includes(listingType) ? (
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="country"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Listing Length (days)
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <select
+                                  id="listing-length"
+                                  name="listing-length"
+                                  className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                  disabled
+                                >
+                                  <option value="0">Until sold/cancelled</option>
+                                </select>
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 justify-start mt-5">
+                        <button
+                          onClick={listItem}
+                          type="button"
+                          className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
                         >
-                          {tokenTypes.map((item) => (
-                            <option key={item.tokenAddress} value={item.tokenAddress}>
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
+                          <span>List Item</span>
+                        </button>
                       </div>
                     </div>
+                  </AccordionPanel>
+                </Fragment>
+              ) : null}
+              
+            
+            </Accordion>
 
-                    {["Fixed Price"].includes(listingType) ? (
-                      
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Price per item
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <input
-                            type="text"
-                            name="listprice"
-                            id="listprice"
-                            value={ListPrice}
-                            onChange={(e) => setListPrice(e.target.value)}
-                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {["Fixed Price"].includes(listingType) ? (
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Quantity (Available : {nftQuantityOwned})
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <input
-                            type="number"
-                            name="listquantity"
-                            id="listquantity"
-                            value={ListQuantity}
-                            onChange={(e) => setListQuantity(e.target.value)}
-                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {["Timed Auction"].includes(listingType) ? (
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Starting Price (BNB)
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <input
-                            type="text"
-                            name="start-price"
-                            id="start-price"
-                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {["Open For Offers"].includes(listingType) ? (
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Minimum Offer (BNB)
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <input
-                            type="text"
-                            name="min-price"
-                            id="min-price"
-                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {["Fixed Price", "Timed Auction"].includes(listingType) && false ? (
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="country"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Listing Length (days)
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <select
-                            id="listing-length"
-                            name="listing-length"
-                            value={listingLength}
-                            onChange={(e) => setListingLength(e.target.value)}
-                            className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                          >
-                            {listingLengths.map((item) => (
-                              <option key={item} value={item}>
-                                {item}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {["Open For Offers"].includes(listingType) ? (
-                      <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                        <label
-                          htmlFor="country"
-                          className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                        >
-                          Listing Length (days)
-                        </label>
-                        <div className="mt-1 sm:mt-0 sm:col-span-2">
-                          <select
-                            id="listing-length"
-                            name="listing-length"
-                            className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                            disabled
-                          >
-                            <option value="0">Until sold/cancelled</option>
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="flex gap-2 justify-start mt-5">
-                  <button
-                    onClick={listItem}
-                    type="button"
-                    className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
-                  >
-                    <span>List Item</span>
-                  </button>
-                </div>
-              </div>
-            ) : null}
 
             <div className="border-b border-gray-200 mb-3">
               <div className="sm:flex sm:items-baseline">
