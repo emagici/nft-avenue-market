@@ -98,20 +98,18 @@ export default function Navbar() {
   const [provider, setProvider] = useState();
 
   const disconnect =  async () => {
-    console.log(provider)
     if(!provider) return
+
+    setMyAdd(null);
+    web3Context.dispatch({
+      type: "SET_USER_DISCONNECTED"
+    });
 
     if(provider.close) {
       await provider.close();
-  
-      // // If the cached provider is not cleared,
-      // // WalletConnect will default to the existing session
-      // // and does not allow to re-scan the QR code with a new wallet.
-      // // Depending on your use case you may want or want not his behavir.
-      // await web3Modal.clearCachedProvider();
-      provider = null;
     }
-  
+
+    setProvider(null);
   };
 
   const signMetamask = async () => {
@@ -164,43 +162,43 @@ export default function Navbar() {
         });
 
         let web3;
-        if (window.ethereum) {
+        // if (window.ethereum) {
 
-            web3 = new Web3(window.ethereum);
-            web3Context.dispatch({
-              type: "SET_WEB3_DATA",
-              payload: web3,
-            });
+        //     web3 = new Web3(window.ethereum);
+        //     web3Context.dispatch({
+        //       type: "SET_WEB3_DATA",
+        //       payload: web3,
+        //     });
 
-            web3.eth.getAccounts()
-            .then(async (addr) => {
-              if(addr.toString()){
-                setMyAdd(addr.toString());
-                web3Context.dispatch({
-                  type: "SET_USER_CONNECTED"
-                });
-              }
-            });
-        } else if (window.web3) {
+        //     web3.eth.getAccounts()
+        //     .then(async (addr) => {
+        //       if(addr.toString()){
+        //         setMyAdd(addr.toString());
+        //         web3Context.dispatch({
+        //           type: "SET_USER_CONNECTED"
+        //         });
+        //       }
+        //     });
+        // } else if (window.web3) {
 
-            web3 = new Web3(window.web3.currentProvider);
-            web3Context.dispatch({
-              type: "SET_WEB3_DATA",
-              payload: web3,
-            });
+        //     web3 = new Web3(window.web3.currentProvider);
+        //     web3Context.dispatch({
+        //       type: "SET_WEB3_DATA",
+        //       payload: web3,
+        //     });
 
-            web3.eth.getAccounts()
-            .then(async (addr) => {
-              if(addr.toString()){
-                setMyAdd(addr.toString());
-                web3Context.dispatch({
-                  type: "SET_USER_CONNECTED"
-                });
-              }
-            });
-        };
+        //     web3.eth.getAccounts()
+        //     .then(async (addr) => {
+        //       if(addr.toString()){
+        //         setMyAdd(addr.toString());
+        //         web3Context.dispatch({
+        //           type: "SET_USER_CONNECTED"
+        //         });
+        //       }
+        //     });
+        // };
 
-        if(!window.web3){
+        if(window.web3){
           web3 = new Web3("https://bsc-dataseed.binance.org");
 
           web3Context.dispatch({
@@ -280,6 +278,7 @@ export default function Navbar() {
       type: "SET_USER_CONNECTED"
     });
 
+    console.log(provider)
     setProvider(provider)
 
     if (callback) callback();
