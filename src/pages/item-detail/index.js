@@ -43,11 +43,8 @@ import {
   WhatsappIcon
 } from "react-share";
 
-<<<<<<< .merge_file_FvsVOc
-import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
+import { ClipboardCopyIcon } from "@heroicons/react/solid";
 import { SharedContext } from '../../context/shared-context';
-=======
->>>>>>> .merge_file_WLxiNh
 
 import AppUrls from '../../AppSettings';
 
@@ -536,7 +533,7 @@ export default function ItemDetail(props) {
 
       axios({
         method: "GET",
-        url: `${appUrls.fomoHostApi}/api/services/app/ShareUrls/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
+        url: `${appUrls.fomoHostApi}/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(longUrl)}`
       })
       .then(function (response) {
         setShortUrl(response.data.result);
@@ -698,7 +695,7 @@ export default function ItemDetail(props) {
                       {shortUrl ? (
                           <button
                             onClick={(e) => onCopyLink(e)}
-                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:-right-2"
+                            className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm focus:outline-none sm:left-4"
                           >
                             <span>Copy link</span>
                             <ClipboardCopyIcon
