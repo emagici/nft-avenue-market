@@ -43,11 +43,8 @@ import {
   WhatsappIcon
 } from "react-share";
 
-<<<<<<< .merge_file_FvsVOc
-import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
+import { ClipboardCopyIcon } from "@heroicons/react/solid";
 import { SharedContext } from '../../context/shared-context';
-=======
->>>>>>> .merge_file_WLxiNh
 
 import AppUrls from '../../AppSettings';
 
