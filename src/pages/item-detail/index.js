@@ -346,6 +346,8 @@ export default function ItemDetail(props) {
       return;
     } 
 
+    setMakeOfferModalOpen(false)
+
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalAmount = offerQuantity * offerPricePerItem;
