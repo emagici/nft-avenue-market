@@ -245,6 +245,7 @@ export default function ItemDetail(props) {
       return;
     }
 
+    isLoading(true);
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const listingFee = await marketplaceContract.methods.listingFee().call();
@@ -252,12 +253,14 @@ export default function ItemDetail(props) {
     if(Number(currentAllowance) < Number(listingFee)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, listingFee)
         .send({
-          from: myAdd
+          from: myAdd, gasPrice: await getTotalGasPrice()
         })
         .then( async function (result) {
+          isLoading(false);
           checkNftApprovalAndList();
         })
         .catch(error => {
+          isLoading(false);
         });
     }
     else
@@ -268,15 +271,18 @@ export default function ItemDetail(props) {
     const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
     const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
 
+    isLoading(true);
     if(!isApprovedForAll){
         await genericNftContract.methods.setApprovalForAll(MARKETPLACE_ADDRESS, true)
         .send({
-          from: myAdd
+          from: myAdd, gasPrice: await getTotalGasPrice()
         })
         .then( async function (result) {
+          isLoading(false);
           listItemConfirm();
         })
         .catch(error => {
+          isLoading(false);
         });
     }
     else
@@ -288,15 +294,22 @@ export default function ItemDetail(props) {
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
 
+    isLoading(true);
     await marketplaceContract.methods
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .then( async function (result) {
+        isLoading(false);
+      })
+      .catch(error => {
+        isLoading(false);
+      });
   }
 
   const updateListing = async (newPricePerItem) => {
     await marketplaceContract.methods
       .updateListing(nftAddress, tokenid, 200)
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
   };
 
   const cancelListing = async () => {
@@ -307,7 +320,7 @@ export default function ItemDetail(props) {
 
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
@@ -318,8 +331,14 @@ export default function ItemDetail(props) {
 
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
   };
+
+  const getTotalGasPrice = async () => {
+    var gasPrice = await web3.eth.getGasPrice();
+    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("10", "gwei"));
+    return totalGasPrice
+  }
 
   const createOffer = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
@@ -332,15 +351,18 @@ export default function ItemDetail(props) {
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
 
+    isLoading(true);
     if(Number(currentAllowance) < Number(totalAmountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAmountToSend)
         .send({
-          from: myAdd
+          from: myAdd, gasPrice: await getTotalGasPrice()
         })
         .then( async function (result) {
+          isLoading(false);
           createOfferConfirm();
         })
         .catch(error => {
+          isLoading(false);
         });
     }
     else
@@ -354,9 +376,16 @@ export default function ItemDetail(props) {
 
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
+    isLoading(true);
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .then( async function (result) {
+        isLoading(false);
+      })
+      .catch(error => {
+        isLoading(false);
+      });
   };
 
   const cancelOffer = async () => {
@@ -364,7 +393,7 @@ export default function ItemDetail(props) {
 
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
-      .send({ from: myAdd });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
   };
 
   const buyItem = async (obj) => {
@@ -378,13 +407,17 @@ export default function ItemDetail(props) {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
 
+    isLoading(true);
+
     if(Number(currentAllowance) < Number(amountToSend)){
         await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
-        .send({ from: myAdd })
+        .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
+            isLoading(false);
             buyItemConfirm(obj);
         })
         .catch(error => {
+          isLoading(false);
         });
     }
     else
@@ -395,13 +428,16 @@ export default function ItemDetail(props) {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const nftOwnerAdd = obj.owner;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
-    
+
+    isLoading(true);
     await marketplaceContract.methods.buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
-      .send({ from: myAdd })
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
+        isLoading(false);
         setShowPurchasedModal(true)
       })
-        .catch(error => {
+      .catch(error => {
+          isLoading(false);
       });
   };
 
