@@ -299,6 +299,7 @@ export default function ItemDetail(props) {
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
+        console.log(result)
         isLoading(false);
       })
       .catch(error => {
@@ -318,9 +319,16 @@ export default function ItemDetail(props) {
       return;
     } 
 
+    isLoading(true)
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .then( async function (result) {
+        isLoading(false);
+      })
+      .catch(error => {
+        isLoading(false);
+      });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
@@ -827,7 +835,7 @@ export default function ItemDetail(props) {
                                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
                                   {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  {isOwner && item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
+                                  {item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
                                       <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
                                        Cancel Listing
                                      </a>
@@ -896,7 +904,7 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {isOwner ? (
+                                    {isOwner && item.creatorAddress?.toLowerCase() != myAdd?.toLowerCase()  ? (
                                         <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                         Accept
                                       </a>
