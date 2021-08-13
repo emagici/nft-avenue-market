@@ -162,9 +162,11 @@ export default function ItemDetail(props) {
       url: url,
     })
     .then(async function (nftListingResponse) {
-      console.log(nftListingResponse)
-
       const nftListingResult = nftListingResponse.data.result;
+
+      console.log(nftListingResult)
+
+      if(nftListingResult.length === 0) return;
 
       setHasLiked(nftListingResult[0].nft.hasLiked);
       setNftDescription(nftListingResult[0].nft.description);
@@ -220,6 +222,7 @@ export default function ItemDetail(props) {
     })
       .then(function (response) {
         const nftDetails = response.data.result;
+        console.log(nftDetails)
         setVideoNftSrc(nftDetails.videoUrl)
         setImageNftSrc(nftDetails.imageUrl)
         setNftDescription(nftDetails.description)
@@ -924,13 +927,13 @@ export default function ItemDetail(props) {
                         ) : (
                           <div>
                             <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
-                            <button
+                            {/* <button
                               type="button"
                               onClick={() => setMakeOfferModalOpen(true)}
                               className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                             >
                               <span>Make Offer</span>
-                            </button>
+                            </button> */}
                           </div>
                         )}
                       </div>
