@@ -161,11 +161,15 @@ export default function UserMenu() {
               <div className="relative rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
                 <div className="border-b px-6 pt-5 pb-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <img
-                      className="inline-block h-8 w-8 rounded-full"
-                      src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-                      alt=""
-                    />
+                    {userContext.state.profilePictureUrl ? (
+                      <img
+                        className="inline-block h-8 w-8 rounded-full"
+                        src={userContext.state.profilePictureUrl}
+                        alt="user image"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-gray-200 ring-1 ring-white"></div>
+                    )}
                     <h2 className="font-bold sm:font-extrabold text-lg sm:text-lg">{userName}</h2>
                   </div>
                   <div className="mb-3">

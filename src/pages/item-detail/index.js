@@ -10,7 +10,7 @@ import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import { ThumbUpIcon, ClipboardCopyIcon } from "@heroicons/react/solid";
+import { HeartIcon } from "@heroicons/react/solid";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
@@ -99,7 +99,7 @@ export default function ItemDetail(props) {
   const [listingLength, setListingLength] = useState(7);
   const [shareUrl, setShareUrl] = useState(null);
 
-  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
+  const [showPurchasedModal, setShowPurchasedModal] = useState(true)
 
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
@@ -598,12 +598,12 @@ export default function ItemDetail(props) {
                       onClick={(e) => hasLiked ? onUnLike(e) : onLike(e)}
                       className={classNames(
                         hasLiked
-                         ? "bg-green-500 hover:bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-900",
+                         ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-900",
                          "relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none"
                       )}
                     >
-                      <span>{hasLiked ? "Unlike" : "Like"}</span>
-                      <ThumbUpIcon className="h-5 w-5 ml-1 relative bottom-0.5" />
+                      <span>{hasLiked ? "Liked" : "Like"}</span>
+                      <HeartIcon className="h-5 w-5 ml-1 -mr-1 relative bottom-0.5" />
                     </button>
                   ) : null }
                 </div>
@@ -1006,6 +1006,7 @@ export default function ItemDetail(props) {
                                   name="listquantity"
                                   id="listquantity"
                                   value={ListQuantity}
+                                  max={nftQuantityOwned ? nftQuantityOwned : 0}
                                   onChange={(e) => setListQuantity(e.target.value)}
                                   className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                                 />
@@ -1174,19 +1175,15 @@ export default function ItemDetail(props) {
 
             {activeTab === 'History' ? (
               <div>
-                <div>
+                {history && history.length ? (
                   <ul className="">
-
-                  {history.map((item) => (
-                    // console.log(item)
-                    <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
-
-                  ))}
-
-                    {/* <ItemHistoryRow type="bid-accepted" price="1.87" currency="BNB" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="17/07/2021, 09:42" />
-                    <ItemHistoryRow type="minted" userId="0xa27be4084d7548d8019931877dd9bb75cc028696" date="12/07/2021, 12:12" /> */}
+                    {history.filter((item, i) => i < 10).map((item) => (
+                      <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
+                    ))}
                   </ul>
-                </div>
+                ) : (
+                  <p className="mb-3 text-center md:text-left">No history for this item.</p>
+                )}
               </div>
             ) : null}
 

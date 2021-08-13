@@ -24,7 +24,7 @@ const navigation = {
   contactus: [
     { name: 'Email Us', href: 'mailto:contactus@fomolab.io' },
     // { name: 'Get Support', href: '/' },
-    { name: 'Apply For Verification', href: 'https://forms.gle/F9RCkjFmY3JxW5Pn8' },
+    { name: 'Apply For Verification', href: 'https://forms.gle/F9RCkjFmY3JxW5Pn8', target: "_blank" },
   ],
   legal: [
     { name: 'Privacy', href: '/privacy-policy' },
@@ -164,7 +164,7 @@ export default function Footer() {
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
                   </a>
                 </li>

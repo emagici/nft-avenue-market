@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Link } from "react-router-dom"
 import Modal from '../modal'
-import { TagIcon, ClockIcon, CurrencyDollarIcon, ThumbUpIcon } from '@heroicons/react/solid'
+import { TagIcon, ClockIcon, CurrencyDollarIcon, HeartIco, HeartIcon } from '@heroicons/react/solid'
 import VideoBox from '../video-box'
 
 export default function CardDefault(props) {
@@ -11,13 +11,27 @@ export default function CardDefault(props) {
     <Fragment>
 
       <li className="relative mb-8">
-        <div className="group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
+        <div className="relative group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
       
           {props.Video ? (
             <video muted playsInline autoPlay loop src={props.Video} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity" />
           ) : (
             <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity" />
           )}
+
+          {props.likes? (
+            <div className="absolute top-2 bottom-2 ml-2">
+              <div className="flex items-center justify-center bg-white h-6 w-10 rounded-xl ring-2 ring-black">
+                <HeartIcon
+                  className="h-4 w-4 text-gray-400 text-red-600"
+                  aria-hidden="true"
+                />
+                <span className="text-xs font-bold relative top-0.5 ml-0.5">
+                  {props.likes} 
+                </span>
+              </div>
+            </div>
+          ) : null}
 
           {!props.nolink ? (
             <Link
@@ -28,72 +42,29 @@ export default function CardDefault(props) {
             </Link>
           ) : null}
         </div>
-        <div className="flex justify-between">
-          <p className="mt-2 block text-md font-medium text-gray-900 truncate pointer-events-none">{props.TokenName}</p>
-         {props.price ? (
-           <p className="mt-2 block text-sm py-1 px-2 uppercase inline font-bold text-green-500 truncate pointer-events-none">{props.price}</p>
-         ) : null} 
+        <div className="grid gap-2">
+          <p className="block text-md font-bold text-gray-900 truncate">{props.TokenName}</p>
+
+          {props.highestbid ? (
+            <p className="block text-sm font-medium text-gray-900"><span className="font-light">Highest bid: </span>{props.highestbid}</p>
+          ) : null}
+
+          {props.price ? (
+            <p className="block text-sm uppercase font-bold text-green-500">{props.price}</p>
+          ) : null} 
+
         </div>
 
         {props.Audio ? (
-            <div className="flex justify-between items-end border-b border-gray-200 pb-3">
-              <audio controls src={props.Audio}></audio>
-
-              {/* {props.nolink ? (
-                <div className="flex items-center">
-                  <img
-                    className="inline-block h-6 w-6 rounded-full"
-                    src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-                    alt=""
-                  />
-                  <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p>
-                </div>
-              ) : (
-                <Link to="/user">
-                  <div className="flex items-center">
-                    <img
-                      className="inline-block h-6 w-6 rounded-full"
-                      src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
-                      alt=""
-                    />
-                    <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p>
-                  </div>
-                </Link>
-              )}
-              <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{props.available}</p> */}
-            </div>
+          <div className="flex justify-between items-end border-b border-gray-200 pb-3">
+            <audio controls src={props.Audio}></audio>
+          </div>
          ) : null} 
+
         <div className="flex justify-between">
-          {props.highestbid ? (
-            <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Highest bid </span>{props.highestbid}</p>
-          ) : null}
-
-          {props.sellItem && false ? (
-            // <p className="mt-2 block text-sm text-gray-900 truncate pointer-events-none font-light">New Bid</p>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="inline-flex justify-center items-center px-2 py-1 mt-1 shadow-md text-xs font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
-            >
-              <span>Sell Item</span>
-            </button>
-          ) : null}
-
-
-           {props.Quantity ? (
+          {/* {props.Quantity ? (
             <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Quantity </span>{props.Quantity}</p>
-          ) : null}
-
-          {props.likes? (
-            <p className="inline-flex mt-2 text-sm font-medium text-gray-900 truncate pointer-events-none">
-              <span className="font-light">
-              <ThumbUpIcon
-                  className="h-4 w-4 text-gray-400"
-                  aria-hidden="true"
-                />
-              </span>
-              {props.likes} 
-            </p>
-          ) : null}
+          ) : null} */}
         </div>
       </li>
 

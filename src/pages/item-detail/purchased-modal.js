@@ -5,6 +5,15 @@ import YayBalloon from '../../assets/img/misc/yay-balloons.png'
 import PartyEmoji from '../../assets/img/misc/party-emoji.png'
 import { useHistory } from "react-router";
 
+import {
+  TelegramShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  TelegramIcon,
+  TwitterIcon,
+  WhatsappIcon,
+} from "react-share";
+
 export default function PurchasedModal(props) {
   const history = useHistory()
 
@@ -24,6 +33,21 @@ export default function PurchasedModal(props) {
           <img src={PartyEmoji} className="h-44 w-44 mx-auto mb-2 object-contain -mt-8" />
           <h1 className="text-2xl font-bold text-center mb-5 ">Congratulations!</h1>
           <p className="text-center px-4">You just purchased an NFT on The Avenue Marketplace. Your item will now be visible in your profile.</p>
+        </div>
+
+        <div className="mb-12">
+          <p className="text-center font-bold mb-2">Share Your Purchase</p>
+          <div className="flex justify-center items-center gap-2">
+            <TwitterShareButton url={`I just purchased an NFT on The Avenue! https://theavenue.market`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+              <TwitterIcon size={32} round={true} />
+            </TwitterShareButton>
+            <TelegramShareButton title="I just purchased an NFT on The Avenue!" url="https://theavenue.market" className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+              <TelegramIcon size={32} round={true} />
+            </TelegramShareButton>
+            <WhatsappShareButton title="I just purchased an NFT on The Avenue!" url="https://theavenue.market" separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+              <WhatsappIcon size={32} round={true} />
+            </WhatsappShareButton>
+          </div>
         </div>
 
         <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
