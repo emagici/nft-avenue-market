@@ -636,7 +636,7 @@ export default function ItemDetail(props) {
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
             {isItemListed ? (
-              <div className="-mt-4 mb-4">
+              <div className="mt-0 mb-4">
                 {lowestSellerItem ? (
                     // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
                     //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
@@ -747,63 +747,69 @@ export default function ItemDetail(props) {
                   <div className="flex flex-col">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                       <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                        <div className="overflow-hidden sm:rounded-lg">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="">
-                              <tr>
-                              <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Token
-                                </th>
+                        {listings && listings.length ? (
+                          <div className="overflow-hidden sm:rounded-lg">
+                            <table className="min-w-full divide-y divide-gray-200">
+                              <thead className="">
+                                <tr>
                                 <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Price per item
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  Quantity
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
-                                >
-                                  From
-                                </th>
-                                <th scope="col" className="relative px-6 py-3">
-                                  <span className="sr-only">Actions</span>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {listings.map((item) => (
-                                <tr key={item.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
-                                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
-                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  {isOwner && item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
-                                      <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                       Cancel Listing
-                                     </a>
-                                   ) : (
-                                      <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
-                                        Buy Now
-                                      </a>
-                                   )}
-                                  </td>
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Token
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Price per item
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    Quantity
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                  >
+                                    From
+                                  </th>
+                                  <th scope="col" className="relative px-6 py-3">
+                                    <span className="sr-only">Actions</span>
+                                  </th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-200">
+                                {listings.map((item) => (
+                                  <tr key={item.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
+                                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    {isOwner && item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
+                                        <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Cancel Listing
+                                      </a>
+                                    ) : (
+                                        <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
+                                          Buy Now
+                                        </a>
+                                    )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="font-bold p-2 text-gray-600 mb-2">No listings for this item.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -872,13 +878,13 @@ export default function ItemDetail(props) {
                         ) : (
                           <div>
                             <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
-                            {/* <button
+                            <button
                               type="button"
                               onClick={() => setMakeOfferModalOpen(true)}
                               className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                             >
                               <span>Make Offer</span>
-                            </button> */}
+                            </button>
                           </div>
                         )}
                       </div>

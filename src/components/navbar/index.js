@@ -409,7 +409,7 @@ export default function Navbar() {
                     />
                   </Link>
                 </div>
-                <div className="hidden md:ml-2 md:flex md:space-x-8">
+                <div className="hidden md:ml-2 md:flex md:space-x-5">
                   {Routes.filter((item) => item.nav).map((item, index) => (
                     <Link
                       key={index}
@@ -451,6 +451,9 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
+
+              <CommunityMenu/>
+
               <div className="flex items-center">
 
                 {loggedIn ? (
@@ -510,8 +513,6 @@ export default function Navbar() {
                   </div>
                 ) : null}
 
-                <CommunityMenu/>
-
                 {false && myAdd ? (
                   <div className="flex-shrink-0 hidden md:block">
                     <Link
@@ -523,25 +524,24 @@ export default function Navbar() {
                   </div>
                 ) : null}
 
-                <div className="flex-shrink-0">
-                  <Fragment>
-                    {loggedIn ? (
-                      <UserMenu />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setSignInModalOpen(true)}
-                        className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-indigo-600 hover:bg-indigo-700"
-                      >
-                        <span>Sign In / Register</span>
-                      </button>
-                    )}
-                    <SignInRegisterModal
-                      modalOpen={signInModalOpen}
-                      setModalOpen={(v) => setSignInModalOpen(v)}
-                    />
-                  </Fragment>
+                {loggedIn ? (
+                  <UserMenu />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setSignInModalOpen(true)}
+                    className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-bold rounded-full text-white shadow-sm focus:outline-none bg-gray-100 hover:bg-gray-200 text-gray-900"
+                  >
+                    <span className="md:hidden">Sign In</span>
+                    <span className="hidden md:inline">Sign In / Register</span>
+                  </button>
+                )}
+                <SignInRegisterModal
+                  modalOpen={signInModalOpen}
+                  setModalOpen={(v) => setSignInModalOpen(v)}
+                />
 
+                <div className="flex-shrink-0">
                   {myAdd ? (
                     <Menu as="div" className="inline-flex relative">
                       {({ open }) => (

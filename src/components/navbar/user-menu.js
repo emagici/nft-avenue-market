@@ -2,6 +2,7 @@ import { Fragment, useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Popover, Transition } from '@headlessui/react'
 import { LogoutIcon } from '@heroicons/react/outline'
+import { UserIcon } from '@heroicons/react/solid'
 import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context'
 import {
@@ -137,11 +138,13 @@ export default function UserMenu() {
         <>
           <Popover.Button
             className={classNames(
-              open ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-700',
-              'relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none'
+              open ? 'bg-gray-200 hover:bg-gray-300' : 'bg-gray-100 hover:bg-gray-200',
+              'p-2 rounded-full flex justify-center items-center text-sm focus:outline-none shadow-sm'
             )}
           >
-            <span>Account</span>
+            <span>
+              <UserIcon className="h-6 w-6" aria-hidden="true" />
+            </span>
           </Popover.Button>
 
           <Transition

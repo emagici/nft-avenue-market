@@ -1,13 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import ReactPlayer from 'react-player'
-
-import Feg from '../../assets/img/featured/feg.png'
-import Cavendish from '../../assets/img/featured/mc.jpeg'
-import Pvlace from '../../assets/img/featured/pvlace.jpeg'
-import MiamiCrypto from '../../assets/img/featured/miamicrypto.jpeg'
-import QuestionMark from '../../assets/img/featured/question-mark.jpeg'
-
 
 export default function FeaturedGrid() {
   return (
@@ -20,24 +12,24 @@ export default function FeaturedGrid() {
         </div> */}
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:grid-rows-2">
-          <div className="group aspect-w-2 aspect-h-1 rounded-lg shadow-lg overflow-hidden col-span-2">
-            <ReactPlayer 
-              className="object-center object-cover"
-              width="100%"
-              height="100%"
-              url="https://youtu.be/4w4Z6ASCkvc"
-              playing
-              playsinline
+          <div className="group aspect-w-2 aspect-h-1 rounded-lg shadow-lg overflow-hidden col-span-2 bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628860907/avenue-v2-promo_qtkz3r.mp4"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
               loop
               muted
-              // controls
             />
           </div>
-          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full">
-            <img
-              src={Feg}
-              alt="Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters."
-              className="object-center object-cover group-hover:opacity-90 sm:absolute sm:inset-0 sm:w-full sm:h-full transition-opacity"
+          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_crop,h_600,w_600/v1628865396/fegnft-promo_hqgrqn.mp4"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
+              loop
+              muted
             />
             <div
               aria-hidden="true"
@@ -54,11 +46,14 @@ export default function FeaturedGrid() {
               </div>
             </div>
           </div>
-          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full">
-            <img
-              src={Cavendish}
-              alt="Walnut desk organizer set with white modular trays, next to porcelain mug on wooden desk."
-              className="object-center object-cover group-hover:opacity-90 sm:absolute sm:inset-0 sm:w-full sm:h-full"
+          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628864767/mc-video_mzsuhf.mp4"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
+              loop
+              muted
             />
             <div
               aria-hidden="true"
@@ -75,11 +70,14 @@ export default function FeaturedGrid() {
               </div>
             </div>
           </div>
-          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full order-5 md:order-4">
-            <img
-              src={Pvlace}
-              alt="Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters."
-              className="object-center object-cover group-hover:opacity-90 sm:absolute sm:inset-0 sm:w-full sm:h-full"
+          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full order-5 md:order-4 bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628863103/pvlace-showcase_vhmjdz.mp4"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
+              loop
+              muted
             />
             <div
               aria-hidden="true"
@@ -96,11 +94,14 @@ export default function FeaturedGrid() {
               </div>
             </div>
           </div>
-          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full order-6 md:order-5">
-            <img
-              src={MiamiCrypto}
-              alt="Walnut desk organizer set with white modular trays, next to porcelain mug on wooden desk."
-              className="object-center object-cover group-hover:opacity-90 sm:absolute sm:inset-0 sm:w-full sm:h-full"
+          <div className="group aspect-w-1 aspect-h-1 rounded-lg shadow-lg overflow-hidden relative h-full order-6 md:order-5 bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_crop,h_500,w_500/v1628864951/porsche-911-miamicrypto_k1yyz6.mp4"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
+              loop
+              muted
             />
             <div
               aria-hidden="true"
@@ -117,11 +118,14 @@ export default function FeaturedGrid() {
               </div>
             </div>
           </div>
-          <div className="group aspect-w-2 aspect-h-1 rounded-lg shadow-lg overflow-hidden col-span-2 order-4 md:order-6">
-            <img
-              src={QuestionMark}
-              alt="Two models wearing women's black cotton crewneck tee and off-white cotton crewneck tee."
-              className="object-center object-cover"
+          <div className="group aspect-w-2 aspect-h-1 rounded-lg shadow-lg overflow-hidden col-span-2 order-4 md:order-6 bg-gray-100">
+            <video
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,h_600/v1628865698/light-grid_dphqb1.mov"
+              className="object-cover object-center w-full h-full"
+              autoPlay
+              playsInline
+              loop
+              muted
             />
             <div
               aria-hidden="true"
