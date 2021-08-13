@@ -5,6 +5,7 @@ import HottestBidsSection from './hottest-bids'
 import Discover from './discover'
 import DiscoverSlider from './discover-slider'
 import FeaturedArtists from './featured-artists'
+import FeaturedGrid from './featured-grid'
 import TopSellers from './top-sellers'
 import Following from './following'
 import GettingStartedSection from './getting-started'
@@ -38,14 +39,10 @@ export default function Explore() {
 
   return (
     <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
-      <div className="mb-20">
-        {/* <TextBanner
-          title="The New Creative Economy"
-          subtitle="Create, Explore, Collect Digital Art NFTs"
-          {...promoColors}
-        /> */}
-        <VideoBanner />
+      <div className="mb-5">
+        {/* <VideoBanner /> */}
       </div>
+      <FeaturedGrid/>
       <Discover/>
       {/* <DiscoverSlider/> */}
       <TopSellers/>

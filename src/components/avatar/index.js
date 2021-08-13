@@ -22,7 +22,7 @@ export default function Avatar(props) {
         </span>
         <div className="space-y-2 mt-2">
           <div className="text-xs font-bold lg:text-sm">
-            <h3>{props.username.length > 10 ? `${props.username.substr(0,6)}...${props.username.substr(-4,4)}` : props.username}</h3>
+            <h3>{props.username.length > 12 ? `${props.username.substr(0,12)}...` : props.username}</h3>
             <p className="text-indigo-600 font-bold">{props.sales}</p>
           </div>
         </div>

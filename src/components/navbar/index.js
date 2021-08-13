@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/outline";
 import { useWallet } from "use-wallet";
 import AvenueLogo from "../../assets/img/theavenue-logo.png";
+import AvenueLogoGif from "../../assets/img/fomo/the-avenue-v2.gif";
 import Routes from "../../routes";
 import Web3 from "web3";
 import Web3Modal from "web3modal";
@@ -396,14 +397,19 @@ export default function Navbar() {
                 </div>
                 <div className="flex-shrink-0 flex items-center">
                   <Link to="/">
-                    <img
+                    {/* <img
                       className="hidden sm:block h-8 w-auto"
                       src={AvenueLogo}
+                      alt="Workflow"
+                    /> */}
+                    <img
+                      className="hidden sm:block h-16 object-contain w-auto -mx-4"
+                      src={AvenueLogoGif}
                       alt="Workflow"
                     />
                   </Link>
                 </div>
-                <div className="hidden md:ml-6 md:flex md:space-x-8">
+                <div className="hidden md:ml-2 md:flex md:space-x-8">
                   {Routes.filter((item) => item.nav).map((item, index) => (
                     <Link
                       key={index}
