@@ -99,7 +99,7 @@ export default function ItemDetail(props) {
   const [listingLength, setListingLength] = useState(7);
   const [shareUrl, setShareUrl] = useState(null);
 
-  const [showPurchasedModal, setShowPurchasedModal] = useState(true)
+  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
 
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
