@@ -5,7 +5,7 @@ import CardDefault from "../../components/cards/item-card-default";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons'
-import { PlusCircleIcon, StarIcon, MinusCircleIcon } from "@heroicons/react/solid";
+import { PlusCircleIcon, StarIcon, MinusCircleIcon, CheckCircleIcon } from "@heroicons/react/solid";
 
 
 import axios from "axios";
@@ -392,8 +392,8 @@ export default function ProfileInfo() {
                 </div>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1">
-                {userProfile ? displayName : "User"}
+              <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1 inline-flex">
+                {userProfile ? displayName : "User"} {userProfile && userProfile.hasVerified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
               </h1>
 
               {userProfile ? (

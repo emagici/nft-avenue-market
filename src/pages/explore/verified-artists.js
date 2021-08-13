@@ -16,13 +16,13 @@ export default function VerifiedArtistsSection() {
   const [items, setItems] = useState([]);
   
   useEffect(() => {
-    getTopSellers()
+    getVerifiedArtists()
   }, []);
 
-  async function getTopSellers() {
+  async function getVerifiedArtists() {
     await axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetTopSellers`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetVerifiedArtists`
     })
     .then(async function (response) {
       console.log(response.data.result)
