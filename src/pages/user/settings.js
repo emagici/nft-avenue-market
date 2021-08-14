@@ -4,6 +4,7 @@ import SectionHeader from "../../components/section-header";
 import Security from './security';
 import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
+import { SharedContext } from '../../context/shared-context';
 import axios from "axios";
 import AppUrls from '../../AppSettings';
 import Wallet from './wallet';
@@ -22,6 +23,7 @@ export default function UserSettings() {
   let history = useHistory();
   const userContext = useContext(UserContext);
   const web3Context = useContext(Web3Context);
+  const sharedContext = useContext(SharedContext);
 
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
@@ -32,8 +34,23 @@ export default function UserSettings() {
   const [discordUrl, setDiscordUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
 
+  function isLoading(state){
+    if(state){
+      sharedContext.dispatch({
+        type: "START_LOADING"
+      })
+    }
+    else{
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
+
+    isLoading(true);
 
     let formData = new FormData();
 
@@ -60,6 +77,7 @@ export default function UserSettings() {
       },
     })
       .then(function (response) {
+        isLoading(false)
         console.log(response)
         userContext.dispatch({
           type: "UPDATE_DATA",
@@ -69,6 +87,7 @@ export default function UserSettings() {
         history.push('/user')
       })
       .catch(function (response) {
+        isLoading(false)
         console.log(response);
       });
   };

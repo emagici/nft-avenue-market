@@ -199,14 +199,14 @@ export default function Navbar() {
         //     });
         // };
 
-        if(window.web3){
+        // if(!window.web3){
           web3 = new Web3("https://bsc-dataseed.binance.org");
 
           web3Context.dispatch({
             type: "SET_WEB3_DATA",
             payload: web3,
           });
-        }
+        // }
     };
     checkConnection();
   }, []);
