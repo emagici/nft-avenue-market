@@ -106,7 +106,7 @@ export default function ItemDetail(props) {
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
   const [offerToken, setOfferToken] = useState(fomoTokenAddress);
 
-  const [listings, setlistings] = useState([]);
+  const [listings, setListings] = useState([]);
   const [offers, setOffers] = useState([]);
   const [history, setHistory] = useState([]);
 
@@ -150,19 +150,24 @@ export default function ItemDetail(props) {
 
   const addNewListing = async (item) => {
 
-      const newItem = {
-        TokenId: item.tokenId,
-        NftAddress: item.nft,
-        owner: item.owner,
-        ownerUserId: userContext.state.id,
-        pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
-        quantity: item.quantity,
-        sellerName: userContext.state.name,
-        payToken: null
-      };
-      newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd);
-      setlistings(listings.filter(item => item.owner !== newItem.owner));
-      setlistings(([...listings, newItem]));
+    const newItem = {
+      TokenId: item.tokenId,
+      NftAddress: item.nft,
+      owner: item.owner,
+      ownerUserId: userContext.state.id,
+      pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
+      quantity: item.quantity,
+      sellerName: userContext.state.name,
+      payToken: null
+    };
+    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd);
+
+    setListings(prevState => {
+      return [
+        ...prevState.filter(item => item.owner !== newItem.owner),
+        newItem
+      ]
+    })
   }
 
   const getListedNftInfo = () => {
@@ -210,7 +215,7 @@ export default function ItemDetail(props) {
       const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
       setLowestSellerItem(sortedlistingItems[0])
 
-      setlistings(listingItems);
+      setListings(listingItems);
 
       const offerItems = nftListingResult[0].offers.map((item) => (
         {

@@ -155,7 +155,7 @@ export default function UserSettings() {
               </div>
             </div>
 
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center my-5">
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:py-5">
               <label htmlFor="photo" className="block text-sm font-bold text-gray-700">
                 Profile Photo
               </label>
@@ -174,6 +174,7 @@ export default function UserSettings() {
                     <input id="file-input-profile" onChange={onProfileImageChange} id="file-upload" name="file-upload" accept="image/*" type="file" className="sr-only" />
                   </label>
                 </div>
+                <p className="mt-2 text-sm text-gray-500 mt-5">Recommended size: 500 x 500 pixels</p>
               </div>
             </div>
 
@@ -196,6 +197,7 @@ export default function UserSettings() {
                   <span className="py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
                   <input id="file-input-banner" onChange={onCoverImageChange} id="coverfile-upload" name="coverfile-upload" type="file" accept="image/*" className="sr-only" />
                 </label>
+                <p className="mt-2 text-sm text-gray-500 mt-5">Recommended size: 1400 x 250 pixels</p>
               </div>
             </div>
 

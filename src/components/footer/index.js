@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronDownIcon } from '@heroicons/react/solid'
-import AvenueLogo from '../../assets/img/theavenue-logo.png'
+import Logo from '../../assets/img/fomo/the-avenue-v2.gif'
 import MailchimpSubscribe from "react-mailchimp-subscribe";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -61,7 +61,7 @@ const navigation = {
     },
     {
       name: 'Telegram',
-      href: 'https://github.com/TheFomolab',
+      href: 'https://www.t.me/FOMOlab',
       icon: (props) => (
         <FontAwesomeIcon icon={faTelegramPlane} size='lg' {...props} />
       ),
@@ -142,7 +142,7 @@ export default function Footer() {
       <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 text-center lg:text-left">
         <div className="pb-8 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-8">
           <div className="md:col-span-3 lg:col-span-2 mb-10 md:mb-5">
-            <img src={AvenueLogo} className="h-12 mb-3 mx-auto lg:mx-0" />
+            <img src={Logo} className="h-16 mb-3 mx-auto lg:mx-0 lg:-ml-5" />
             <a href="https://fomolab.io">
               <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">Powered by Fomo Lab</h3>
             </a>
@@ -231,7 +231,7 @@ export default function Footer() {
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
           <div className="flex space-x-6 md:order-2 justify-center">
             {navigation.social.map((item) => (
-              <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
+              <a key={item.name} href={item.href} target="_blank" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>

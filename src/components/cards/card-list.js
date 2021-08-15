@@ -1,8 +1,24 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
 import CardDefault from "./item-card-default"
 import ItemCardLoading from "./item-card-loading"
 
 export default function CardList(props) {
+  const [displayCount, setDisplayCount] = useState(10)
+  const [showMoreVisible, setShowMoreVisible] = useState(false)
+
+  useEffect(() => {
+    setDisplayCount(10)
+  }, [props.items])
+
+  useEffect(() => {
+    if (!props.items) return
+    if (props.items.length > displayCount) {
+      setShowMoreVisible(true)
+    } else {
+      setShowMoreVisible(false)
+    }
+  }, [props.items, displayCount])
+
   return (
     <div>
       {props.loading ? (
@@ -14,7 +30,7 @@ export default function CardList(props) {
       ) : (
         props.items && props.items.length ? (
           <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
-            {props.items.map((item) => <CardDefault {...item} /> )}
+            {props.items.filter((item, i) => i < displayCount).map((item) => <CardDefault {...item} /> )}
           </ul>
         ) : (
           <div>
@@ -23,14 +39,18 @@ export default function CardList(props) {
           </div>
         )
       )}
-      {/* <div className="flex justify-center mt-10">
-        <button
-          type="button"
-          className="inline-flex items-center px-6 py-2 border-2 border-indigo-600 rounded-full text-md font-medium text-indigo-600 hover:text-white bg-white hover:bg-indigo-600 focus:outline-none"
-        >
-          Load More
-        </button>
-      </div> */}
+      
+      {showMoreVisible ? (
+        <div className="flex justify-center mt-4">
+          <button
+            type="button"
+            onClick={() => setDisplayCount(prevState => prevState + 10)}
+            className="inline-flex items-center px-6 py-2 border-4 border-indigo-600 rounded-full text-md font-bold text-indigo-600 hover:text-white bg-white hover:bg-indigo-600 focus:outline-none transition-all"
+          >
+            Load More
+          </button>
+        </div>
+      ) : null}
     </div>   
   )
 }

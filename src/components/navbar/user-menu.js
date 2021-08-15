@@ -12,6 +12,7 @@ import axios from "axios";
 import AppUrls from '../../AppSettings';
 
 const menuItems = [
+  { name: 'Buy $FOMO', href: 'https://pancakeswap.finance/swap?outputCurrency=0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985', target: '_blank' },
   { name: 'My Profile', href: '/user' },
   { name: 'Edit Profile', href: '/settings' },
 ]
@@ -161,7 +162,7 @@ export default function UserMenu() {
               static
               className="absolute z-10 right-0 left-0 sm:left-auto sm:top-auto sm:bottom-auto mt-14 w-screen sm:w-max sm:w-auto"
             >
-              <div className="relative rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
+              <div className="relative rounded-lg w-60 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
                 <div className="border-b px-6 pt-5 pb-4">
                   <div className="flex items-center space-x-2 mb-3">
                     {userContext.state.profilePictureUrl ? (
@@ -186,16 +187,28 @@ export default function UserMenu() {
                 </div>
                 <div className="p-2 pt-1">
                   {menuItems.map((item) => (
-                    <Popover.Button
-                      as={Link}
-                      key={item.name}
-                      to={item.href}
-                      className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
-                    >
-                      <div className="ml-4">
-                        <p className="text-sm font-bold text-gray-900">{item.name}</p>
-                      </div>
-                    </Popover.Button>
+                    item.target ? (
+                      <a
+                        key={item.name}
+                        href={item.href} target={item.target ? item.target : '_self'}
+                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                      >
+                        <div className="ml-4">
+                          <p className="text-sm font-bold text-gray-900">{item.name}</p>
+                        </div>
+                      </a>
+                    ) : (
+                      <Popover.Button
+                        as={Link}
+                        key={item.name}
+                        to={item.href}
+                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                      >
+                        <div className="ml-4">
+                          <p className="text-sm font-bold text-gray-900">{item.name}</p>
+                        </div>
+                      </Popover.Button>
+                    )
                   ))}
                   <a
                     href="javascript:void(0);"
