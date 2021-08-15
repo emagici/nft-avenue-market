@@ -148,6 +148,23 @@ export default function ItemDetail(props) {
     }
   };
 
+  const addNewListing = async (item) => {
+
+      const newItem = {
+        TokenId: item.tokenId,
+        NftAddress: item.nft,
+        owner: item.owner,
+        ownerUserId: userContext.state.id,
+        pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
+        quantity: item.quantity,
+        sellerName: userContext.state.name,
+        payToken: null
+      };
+      newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd);
+      setlistings(listings.filter(item => item.owner !== newItem.owner));
+      setlistings(([...listings, newItem]));
+  }
+
   const getListedNftInfo = () => {
     getEvent();
 
@@ -302,7 +319,8 @@ export default function ItemDetail(props) {
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result)
+        console.log(result.events.ItemListed.returnValues)
+        addNewListing(result.events.ItemListed.returnValues)
         isLoading(false);
       })
       .catch(error => {
