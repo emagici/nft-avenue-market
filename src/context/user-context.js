@@ -17,7 +17,8 @@ const initialState = {
   sign: null,
   ownNfts: [],
   id: null,
-  registeredWalletAddress: null
+  registeredWalletAddress: null,
+  blockchainId: null
 };
 
 let reducer = (state, action) => {
@@ -58,6 +59,12 @@ let reducer = (state, action) => {
         ownNfts: action.payload
       };
 
+    case 'SET_BLOCKCHAIN_ID':
+      return {
+        ...state,
+        blockchainId: action.payload
+      };
+
     case 'RESET_ALL':
       return {
         bannerPictureUrl: null,
@@ -72,7 +79,8 @@ let reducer = (state, action) => {
         sign: null,
         ownNfts: [],
         id: null,
-        registeredWalletAddress: null
+        registeredWalletAddress: null,
+        blockchainId: null
       };
 
     default:

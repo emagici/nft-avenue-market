@@ -173,7 +173,7 @@ export default function ItemDetail(props) {
   const getListedNftInfo = () => {
     getEvent();
 
-    let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}`;
+    let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}&blockchain=${userContext.state.blockchainId}`;
 
     if(userContext.state.id){
       url += `&loggedInUserId=${userContext.state.id}`
@@ -555,7 +555,7 @@ export default function ItemDetail(props) {
   
       axios({
         method: "POST",
-        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0`,
+        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
         headers: {
           "Authorization": "Bearer " + userContext.state.accessToken + ""
         }
@@ -578,7 +578,7 @@ export default function ItemDetail(props) {
   
       axios({
         method: "POST",
-        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0`,
+        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
         headers: {
           "Authorization": "Bearer " + userContext.state.accessToken + ""
         }

@@ -5,6 +5,7 @@ import SectionHeader from '../../components/section-header'
 import axios from "axios";
 import Web3 from "web3";
 import { Web3Context } from '../../context/web3-context'
+import { UserContext } from '../../context/user-context';
 import AppUrls from '../../AppSettings';
 import Spinner from '../../components/loading-spinner/spinner';
 import {
@@ -44,6 +45,7 @@ export default function Discover() {
   ];
   const [loading, setLoading] = useState(true);
   const web3Context = useContext(Web3Context);
+  const userContext = useContext(UserContext);
 
   useEffect(() => {
     setWeb3(web3Context.state.web3Data);
@@ -60,7 +62,7 @@ export default function Discover() {
 
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&categoryFilter=${normalizeCategoryFilter()}&sorting=${activeDropdown}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=${filterText}&categoryFilter=${normalizeCategoryFilter()}&sorting=${activeDropdown}&blockchain=${userContext.state.blockchainId ?? 0}`
     })
     .then(async function (response) {
 
