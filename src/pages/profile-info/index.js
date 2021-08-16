@@ -469,13 +469,11 @@ export default function ProfileInfo() {
                 <CardList loading={true} />
               ) : (
                 onSaleNfts && onSaleNfts.length ? (
-                  <ul
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {onSaleNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOnSaleObj(item)} sellItem />
-                    ))}
-                  </ul>
+                  <CardList loading={loading} items={onSaleNfts.map(item => {
+                    return {
+                      ...transformOnSaleObj(item)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
@@ -489,13 +487,11 @@ export default function ProfileInfo() {
                 <CardList loading={true} />
               ) : (
                 ownNfts && ownNfts.length ? (
-                  <ul
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {ownNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOwnNftObj(item)} />
-                    ))}
-                  </ul>
+                  <CardList loading={loading} items={ownNfts.map(item => {
+                    return {
+                      ...transformOwnNftObj(item)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No owned items</h1>

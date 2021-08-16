@@ -40,7 +40,7 @@ export default function CardList(props) {
         )
       )}
       
-      {showMoreVisible ? (
+      {!props.loading && showMoreVisible ? (
         <div className="flex justify-center mt-4">
           <button
             type="button"
