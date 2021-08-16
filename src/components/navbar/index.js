@@ -162,7 +162,6 @@ export default function Navbar() {
   const loadMyOwnNfts = () => {
     if (!userContext.state.sign) return;
 
-    alert('adas')
     axios({
       method: "post",
       url: `${appUrls.fomoNodeAPI}`,
