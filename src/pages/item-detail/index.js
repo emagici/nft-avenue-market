@@ -164,7 +164,7 @@ export default function ItemDetail(props) {
 
     setListings(prevState => {
       return [
-        ...prevState.filter(item => item.owner !== newItem.owner),
+        ...prevState.filter(item => item.owner.toLowerCase() !== newItem.owner.toLowerCase()),
         newItem
       ]
     })
@@ -230,7 +230,7 @@ export default function ItemDetail(props) {
         }
       ))
 
-      setOffers(offerItems);
+      setOffers(offerItems.filter(item => item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
       console.log(response);
@@ -350,6 +350,9 @@ export default function ItemDetail(props) {
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
+        console.log(result.events.ItemCanceled.returnValues)
+        const canceledItem = result.events.ItemCanceled.returnValues;
+        setListings(listings.filter(item => item.owner !== canceledItem.owner));
         isLoading(false);
       })
       .catch(error => {
@@ -405,24 +408,53 @@ export default function ItemDetail(props) {
       createOfferConfirm();
   };
 
-  const createOfferConfirm = async () => {
+  const getCurrentTimeInSeconds = () => {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
-    var seconds = Number(timestampInSeconds) + (offerLength * 24 * 60 * 60);
+    return Number(timestampInSeconds);
+  }
 
+  const createOfferConfirm = async () => {
+    const seconds = getCurrentTimeInSeconds() + (offerLength * 24 * 60 * 60);
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
+
+    console.log(seconds)
 
     isLoading(true);
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
+        console.log(result.events.OfferCreated.returnValues)
+        addNewOffer(result.events.OfferCreated.returnValues)
         isLoading(false);
       })
       .catch(error => {
         isLoading(false);
       });
   };
+
+  const addNewOffer = async (item) => {
+
+    const newItem = {
+        TokenId: item.tokenId,
+        NftAddress: item.nft,
+        creatorAddress: item.creator,
+        pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
+        quantity: item.quantity,
+        creatorUsername: myAdd,
+        deadline: item.deadline,
+        offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+    }
+
+    console.log(offers)
+    setOffers(prevState => {
+      return [
+        ...prevState.filter(item => item.creatorAddress.toLowerCase() !== newItem.creatorAddress.toLowerCase()),
+        newItem
+      ]
+    })
+  }
 
   const cancelOffer = async () => {
     if (!web3 || !web3Context.state.userConnected) return;
