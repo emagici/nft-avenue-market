@@ -4,6 +4,7 @@ import SectionHeader from "../../components/section-header";
 import Security from './security';
 import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
+import { SharedContext } from '../../context/shared-context';
 import axios from "axios";
 import AppUrls from '../../AppSettings';
 import Wallet from './wallet';
@@ -22,6 +23,7 @@ export default function UserSettings() {
   let history = useHistory();
   const userContext = useContext(UserContext);
   const web3Context = useContext(Web3Context);
+  const sharedContext = useContext(SharedContext);
 
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
@@ -32,8 +34,23 @@ export default function UserSettings() {
   const [discordUrl, setDiscordUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
 
+  function isLoading(state){
+    if(state){
+      sharedContext.dispatch({
+        type: "START_LOADING"
+      })
+    }
+    else{
+      sharedContext.dispatch({
+        type: "STOP_LOADING"
+      })
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
+
+    isLoading(true);
 
     let formData = new FormData();
 
@@ -60,6 +77,7 @@ export default function UserSettings() {
       },
     })
       .then(function (response) {
+        isLoading(false)
         console.log(response)
         userContext.dispatch({
           type: "UPDATE_DATA",
@@ -69,6 +87,7 @@ export default function UserSettings() {
         history.push('/user')
       })
       .catch(function (response) {
+        isLoading(false)
         console.log(response);
       });
   };
@@ -136,7 +155,7 @@ export default function UserSettings() {
               </div>
             </div>
 
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center my-5">
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:py-5">
               <label htmlFor="photo" className="block text-sm font-bold text-gray-700">
                 Profile Photo
               </label>
@@ -155,6 +174,7 @@ export default function UserSettings() {
                     <input id="file-input-profile" onChange={onProfileImageChange} id="file-upload" name="file-upload" accept="image/*" type="file" className="sr-only" />
                   </label>
                 </div>
+                <p className="mt-2 text-sm text-gray-500 mt-5">Recommended size: 500 x 500 pixels</p>
               </div>
             </div>
 
@@ -177,6 +197,7 @@ export default function UserSettings() {
                   <span className="py-2 px-4 rounded-full shadow-lg text-sm leading-4 font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">Change</span>
                   <input id="file-input-banner" onChange={onCoverImageChange} id="coverfile-upload" name="coverfile-upload" type="file" accept="image/*" className="sr-only" />
                 </label>
+                <p className="mt-2 text-sm text-gray-500 mt-5">Recommended size: 1400 x 250 pixels</p>
               </div>
             </div>
 

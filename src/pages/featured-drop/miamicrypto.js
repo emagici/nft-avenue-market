@@ -142,7 +142,7 @@ export default function MiamiDrop() {
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="About The Drop" />
           <p className="mb-3 font-bold">The Miami Crypto Experience was one of the most exclusive NFT/Crypto events in the 2021 Calendar!</p>
-          <p className="mb-3 font-medium">With collaborations from Rick Ross, Rich B Caliente, Ali Spagnola, AAVE and many others the Miami Crypto EXP was truly a landmark event for blockchain and a sign of things to come for the crypto communities growth in Miami.</p>
+          <p className="mb-3 font-medium">With collaborations from Rick Ross, Rich B Caliente, Ali Spagnola, Aavegotchi and many others the Miami Crypto EXP was truly a landmark event for blockchain and a sign of things to come for the crypto communities growth in Miami.</p>
           <p className="mb-3 font-medium">The star of the show was the incredible RBC9ELEVEN NFT, The worlds first Porsche 911 Auction available on the blockchain, powered by fomo lab. The owner of this NFT would also gain full ownership of the actual art-car itself!</p>
           <p className="mb-3 font-medium">Visit the <a className="font-bold text-indigo-600" target="_blank" href="https://expcrypto.io">expcrypto.io</a> website for more information on the event.</p>
           <p className="mb-3 font-medium">For more information on the NFTs and the RBC 9 Eleven scroll down to see more content below.</p>

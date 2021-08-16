@@ -13,7 +13,8 @@ import {
 import { faCommentDots, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 const menuItems = [
-  { name: 'Discussion', href: '/' },
+
+  { name: 'Discussion', href: 'https://www.reddit.com/r/Fomo_Lab/', target: "_blank" },
   { name: 'Subscribe', href: '/' },
   { name: 'Suggest Feature', href: '/' },
   { name: 'Voting (Coming Soon)', href: '#' },
@@ -51,7 +52,7 @@ const socials = [
   },
   {
     name: 'Telegram',
-    href: 'https://github.com/TheFomolab',
+    href: 'https://www.t.me/FOMOlab',
     icon: (props) => (
       <FontAwesomeIcon icon={faTelegramPlane} size='lg' {...props} />
     ),
@@ -90,16 +91,28 @@ export default function CommunityMenu() {
               >
                 <div className="p-2 pt-1 border-b">
                   {menuItems.map((item) => (
-                    <Menu.Button
-                      as={Link}
-                      key={item.name}
-                      to={item.href}
-                      className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
-                    >
-                      <div className="ml-4">
-                        <p className="text-sm font-bold text-gray-900">{item.name}</p>
-                      </div>
-                    </Menu.Button>
+                    item.target ? (
+                      <a
+                        key={item.name}
+                        href={item.href} target={item.target ? item.target : '_self'}
+                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                      >
+                        <div className="ml-4">
+                          <p className="text-sm font-bold text-gray-900">{item.name}</p>
+                        </div>
+                      </a>
+                    ) : (
+                      <Menu.Button
+                        as={Link}
+                        key={item.name}
+                        to={item.href}
+                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                      >
+                        <div className="ml-4">
+                          <p className="text-sm font-bold text-gray-900">{item.name}</p>
+                        </div>
+                      </Menu.Button>
+                    )
                   ))}
                 </div>
                 <div className="px-2 py-3">

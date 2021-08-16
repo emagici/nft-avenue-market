@@ -157,14 +157,14 @@ export default function ProfileInfo() {
     setOnSaleNfts(nftItem.nftsListed);
 
     var items = nftItem.nftsOwned.map((item, i) => {   
-      var listedItem = nftItem.nftsListed.find(o => o.tokenId === Number(item.tokenId) && o.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
+      var listedItem = nftItem.nftsListed.find(o => o.tokenId === Number(item.tokenid) && o.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
     
       var obj = {
         listed: listedItem ? true : false,
         TokenName: item.tokenName,
         Image: item.image,
         TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
-        TokenId: item.tokenId,
+        TokenId: item.tokenid,
         NftAddress: item.tokenContractAddress,
         OwnedNftQuantity: item.count,
       };

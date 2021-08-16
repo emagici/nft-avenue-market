@@ -199,14 +199,14 @@ export default function Navbar() {
         //     });
         // };
 
-        if(window.web3){
+        // if(!window.web3){
           web3 = new Web3("https://bsc-dataseed.binance.org");
 
           web3Context.dispatch({
             type: "SET_WEB3_DATA",
             payload: web3,
           });
-        }
+        // }
     };
     checkConnection();
   }, []);
@@ -324,7 +324,8 @@ export default function Navbar() {
     .then(function (response) {
         console.log(response);
         if(response.data.result){
-            setNotifications(response.data.result);
+          console.log(response.data.result)
+          setNotifications(response.data.result)
         }
     })
     .catch(function (response) {
@@ -482,21 +483,17 @@ export default function Navbar() {
                               static
                               className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                             >
-                              <div className="px-4 py-3">
-                                <h1 className="font-bold mb-2">Notifications</h1>
+                              <div className="pt-3 pb-1">
+                                <h1 className="font-bold mb-2 px-4">Notifications</h1>
                                 {notifications && notifications.length ? (
                                   notifications.map((notification) => (
                                     <Menu.Item 
-                                      as="a" 
-                                      href="#"
-                                      className="block px-4 py-2 text-sm text-gray-700 text-center">
-                                        {notification.eventName.replace(/([A-Z])/g, " $1")}
-
-                                        <Menu.Item 
-                                          as="span"
-                                          className="block text-xs text-right">
-                                          {moment(notification.dateCreated).fromNow()}
-                                        </Menu.Item>
+                                      as={'span'} 
+                                      // hrefto="#"
+                                      className="block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg"
+                                    >
+                                      {notification.eventName.replace(/([A-Z])/g, " $1")}
+                                      <span className="block text-xs">{moment(notification.dateCreated).fromNow()}</span>
                                     </Menu.Item>
                                   ))
                                 ) : (
