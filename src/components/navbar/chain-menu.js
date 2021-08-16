@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useContext, useEffect } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
@@ -7,16 +7,33 @@ import { classNames } from '../../utilities/utils'
 import BnbLogo from '../../assets/img/logos/bnb-64.png'
 import EthLogo from '../../assets/img/logos/eth-64.png'
 
+import { UserContext } from '../../context/user-context';
+
 const menuItems = [
-  { name: 'BSC', image: BnbLogo },
-  { name: 'Ethereum', image: EthLogo }
+  { name: 'BSC', image: BnbLogo, id: 0 },
+  { name: 'Ethereum', image: EthLogo, id: 1 }
 ]
 
 export default function ChainMenu() {
-  const [activeNetwork, setActiveNetwork] = useState({ name: 'BSC', image: BnbLogo })
+  const userContext = useContext(UserContext);
+
+  let blockchain = menuItems[userContext.state.blockchainId];
+  const [activeNetwork, setActiveNetwork] = useState(blockchain? blockchain : { name: 'BSC', image: BnbLogo, id: 0 });
+
+  useEffect(() => {
+    userContext.dispatch({
+      type: "SET_BLOCKCHAIN_ID",
+      payload: activeNetwork.id
+    });
+  }, [activeNetwork]);
 
   function networkSelected(item) {
-    setActiveNetwork(item)
+    setActiveNetwork(item);
+    goToMainPage()
+  }
+
+  function goToMainPage(text){
+    document.location.href = `/`;
   }
 
   return (
