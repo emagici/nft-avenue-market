@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useToasts } from 'react-toast-notifications'
 import axios from "axios";
 import AppUrls from "../../AppSettings";
 import Modal from "../../components/modal";
@@ -14,6 +15,8 @@ const appUrls = {
 };
 
 export default function MetamaskSignIn(props) {
+  const { addToast } = useToasts()
+
   const [web3, setWeb3] = useState();
   const [accept1, setAccept1] = useState(false);
   const [accept2, setAccept2] = useState(false);
@@ -68,7 +71,10 @@ export default function MetamaskSignIn(props) {
 
   function handleConfirmSignIn() {
     if (!web3) {
-      alert("Please connect wallet");
+      addToast("Please connect wallet", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     }
 
@@ -87,7 +93,7 @@ export default function MetamaskSignIn(props) {
           <div className="mt-2">
             <p className="text-sm text-gray-500 mb-5">
               Please take a few minutes to read and understand the{" "}
-              <a href="/terms" target="_blank" className="text-indigo-600 font-bold">
+              <a href="/terms" target="_blank" rel="noreferrer" className="text-indigo-600 font-bold">
                 Fomo Lab Terms of Service
               </a>
               . To continue, you'll need to accept the Terms of Service by

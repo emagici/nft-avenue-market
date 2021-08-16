@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import AppUrls from "../../AppSettings";
+import React, { useState, Fragment } from "react";
 import Modal from "../../components/modal";
 import { MailIcon, PencilAltIcon } from '@heroicons/react/solid'
 import MMLogo from '../../assets/img/logos/mm-logo.png'
@@ -9,21 +7,7 @@ import Register from "./register";
 import MetamaskSignIn from "./MetamaskSignIn";
 import UsernameSignIn from "./UsernameSignIn";
 
-import { UserContext } from '../../context/user-context';
-import { Web3Context } from '../../context/web3-context';
-import { Fragment } from "react";
-
-const appUrls = {
-  fomoHost: AppUrls.fomoHost,
-  fomoHostApi: AppUrls.fomoHostApi,
-  fomoClient: AppUrls.fomoClient,
-};
-
 export default function SignInRegisterModal(props) {
-  const userContext = useContext(UserContext);
-  const web3Context = useContext(Web3Context);
-
-  const [web3, setWeb3] = useState();
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const [metamaskSignInModalOpen, setMetamaskSignInModalOpen] = useState(false);
   const [usernameModalOpen, setUsernameModalOpen] = useState(false);

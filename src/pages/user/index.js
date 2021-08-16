@@ -103,8 +103,7 @@ export default function Profile() {
       setLoggedIn(true);
       loadProfile(accessToken);
       loadMyRegisteredWalletAddress(accessToken);
-      //alert("you have successfully logged in!, get your accessToken in console log");
-      console.warn("access token: ", accessToken);
+      // console.warn("access token: ", accessToken);
 
       userContext.dispatch({
         type: "SET_ACCESS_TOKEN",
@@ -465,7 +464,6 @@ export default function Profile() {
               ) : (
                 onSaleNfts && onSaleNfts.length ? (
                   <ul
-                    role="list"
                     className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
                   >
                     {onSaleNfts.map((item, index) => (
@@ -496,7 +494,6 @@ export default function Profile() {
               ) : (
                 ownNfts && ownNfts.length ? (
                   <ul
-                    role="list"
                     className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
                   >
                     {ownNfts.map((item, index) => (
@@ -628,7 +625,7 @@ export default function Profile() {
                                   <span>{item.nftDetails?.name}</span>
                                 </Link>
                                 {item.txHash ? (
-                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" className="block text-sm underline mt-0.5">
+                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" rel="noreferrer" className="block text-sm underline mt-0.5">
                                     <span>tx: {`${item.txHash.substr(0,4)}...${item.txHash.substr(-6,6)}`}</span>
                                     <ExternalLinkIcon
                                       className="inline ml-1 h-4 w-4 opacity-80"

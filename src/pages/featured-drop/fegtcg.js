@@ -57,7 +57,7 @@ export default function FegTcgDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {collaborators.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from "react-router-dom"
+import { useToasts } from 'react-toast-notifications'
 import Spinner from '../../components/loading-spinner/spinner'
 import CardList from '../../components/cards/card-list'
 import qs from 'qs'
@@ -18,6 +19,8 @@ const appUrls = {
 
 export default function SearchPage() {
   const location = useLocation();
+  const { addToast } = useToasts()
+  
   const [loading, setLoading] = useState(true);
   const [searchStr, setSearchStr] = useState(null);
   const [results, setResults] = useState(null);
@@ -111,8 +114,11 @@ export default function SearchPage() {
       }
     })
     .catch(function (response) {
-      console.log(response);
-      alert("Unable to process request!");
+      // console.log(response);
+      addToast("Error while searching.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     })
     .finally(function(){
       setLoading(false);

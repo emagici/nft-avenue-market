@@ -63,11 +63,11 @@ export default function Wallet(props) {
 									<div className="mt-4 space-y-4">
 										{walletAddresses && walletAddresses.length ? (
 											walletAddresses.map((walletAddress, i) =>
-											<>
-												<span>{walletAddress}</span>
-												<br />
-												<br />
-												</>
+												<div key={i}>
+													<span>{walletAddress}</span>
+													<br />
+													<br />
+												</div>
 											)
 										) : (
 											<div>

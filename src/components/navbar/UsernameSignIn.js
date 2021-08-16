@@ -38,7 +38,7 @@ export default function UsernameSignIn(props) {
           <div className="mt-2">
             <p className="text-sm text-gray-500 mb-5">
               Please take a few minutes to read and understand the{" "}
-              <a href="/terms" target="_blank" className="text-indigo-600 font-bold">
+              <a href="/terms" target="_blank" rel="noreferrer" className="text-indigo-600 font-bold">
                 Fomo Lab Terms of Service
               </a>
               . To continue, you'll need to accept the Terms of Service by

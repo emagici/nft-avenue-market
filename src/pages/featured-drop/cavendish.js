@@ -117,7 +117,7 @@ export default function CavendishDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {collaborators.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>
@@ -138,7 +138,7 @@ export default function CavendishDrop() {
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="Find Out More" />
-          <p>To find out more about this drop you can <a className="font-bold text-indigo-700" href="https://thefomolab.medium.com/mark-cavendish-tour-de-france-series-nft-collection-faq-dccee086a4c4" target="_blank">read the article on Medium</a> now.</p>
+          <p>To find out more about this drop you can <a className="font-bold text-indigo-700" href="https://thefomolab.medium.com/mark-cavendish-tour-de-france-series-nft-collection-faq-dccee086a4c4" target="_blank" rel="noreferrer">read the article on Medium</a> now.</p>
         </div>
 
       </div>

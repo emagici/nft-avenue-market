@@ -22,15 +22,15 @@ export default function CardList(props) {
   return (
     <div>
       {props.loading ? (
-        <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8 mb-20">
+        <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8 mb-20">
           {[0,1,2,3,4].map(i => (
             <ItemCardLoading key={i} />
           ))}
         </ul>
       ) : (
         props.items && props.items.length ? (
-          <ul role="list" className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
-            {props.items.filter((item, i) => i < displayCount).map((item) => <CardDefault {...item} /> )}
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8">
+            {props.items.filter((item, i) => i < displayCount).map((item, i) => <CardDefault key={i} {...item} /> )}
           </ul>
         ) : (
           <div>

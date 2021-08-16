@@ -81,7 +81,7 @@ export default function ChainMenu() {
                           </div>
                           {item.name === activeNetwork.name ? (
                             <div className="flex items-center">
-                              <FontAwesomeIcon icon={faCheckCircle} size='md' className="mr-4 text-gray-800" />
+                              <FontAwesomeIcon icon={faCheckCircle} className="mr-4 text-gray-800" />
                             </div>
                           ) : null}
                         </div>

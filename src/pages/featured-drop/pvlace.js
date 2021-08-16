@@ -226,7 +226,7 @@ export default function PvlaceDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {collaborators.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>
@@ -243,7 +243,7 @@ export default function PvlaceDrop() {
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="As Featured In" />
           <img src={CTLogo} alt="forbes" className="h-14 mb-3 mx-auto mb-5" />
-          <p><a className="font-bold text-indigo-700" href="https://cointelegraph.com/press-releases/fomo-lab-to-launch-for-the-culture-nft-collection-by-pvlace-and-gunboi" target="_blank">Read the article</a> now to find out more.</p>
+          <p><a className="font-bold text-indigo-700" href="https://cointelegraph.com/press-releases/fomo-lab-to-launch-for-the-culture-nft-collection-by-pvlace-and-gunboi" target="_blank" rel="noreferrer">Read the article</a> now to find out more.</p>
         </div>
 
         <div className="mb-20 sm:mb-28">
@@ -256,7 +256,7 @@ export default function PvlaceDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {newsArticles.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-24 w-24 sm:h-36 sm:w-36 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>
@@ -269,7 +269,7 @@ export default function PvlaceDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {mediaLinks.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-32 w-32 sm:h-44 sm:w-44 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>

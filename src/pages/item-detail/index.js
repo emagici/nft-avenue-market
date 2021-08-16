@@ -118,6 +118,10 @@ export default function ItemDetail(props) {
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
 
+  useEffect(() => {
+    // console.log(offers)
+  }, [offers])
+
   const getEvent = () =>{
       axios({
         method: "get",
@@ -127,7 +131,7 @@ export default function ItemDetail(props) {
         setHistory(response.data.result)
       })
       .catch(function (response) {
-        console.log(response);
+        // console.log(response);
       });
   }
 
@@ -168,6 +172,20 @@ export default function ItemDetail(props) {
         newItem
       ]
     })
+
+    addToast("Item listed successfully!", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
+
+    // reset listing form
+    try {
+      setListPrice(0)
+      setListQuantity(0)
+      setNftQuantityOwned(prevState => prevState - 1)
+    } catch(err) {
+      // console.log(err)
+    }
   }
 
   const getListedNftInfo = () => {
@@ -186,7 +204,7 @@ export default function ItemDetail(props) {
     .then(async function (nftListingResponse) {
       const nftListingResult = nftListingResponse.data.result;
 
-      console.log(nftListingResult)
+      // console.log(nftListingResult)
 
       if(nftListingResult.length === 0) return;
 
@@ -233,7 +251,7 @@ export default function ItemDetail(props) {
       setOffers(offerItems.filter(item => item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
-      console.log(response);
+      // console.log(response);
     });
   }
 
@@ -244,7 +262,7 @@ export default function ItemDetail(props) {
     })
       .then(function (response) {
         const nftDetails = response.data.result;
-        console.log(nftDetails)
+        // console.log(nftDetails)
         setVideoNftSrc(nftDetails.videoUrl)
         setImageNftSrc(nftDetails.imageUrl)
         setNftDescription(nftDetails.description)
@@ -255,18 +273,24 @@ export default function ItemDetail(props) {
         }
       })
       .catch(function (response) {
-        console.log(response);
+        // console.log(response);
       });
   }
 
   const listItem = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
     if(ListPrice <= 0 || ListQuantity <= 0){
-      alert("Please enter price and quantity more than 0");
+      addToast("Invalid quantity or price.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     }
 
@@ -325,7 +349,7 @@ export default function ItemDetail(props) {
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.ItemListed.returnValues)
+        // console.log(result.events.ItemListed.returnValues)
         addNewListing(result.events.ItemListed.returnValues)
         isLoading(false);
       })
@@ -342,7 +366,10 @@ export default function ItemDetail(props) {
 
   const cancelListing = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
@@ -351,19 +378,31 @@ export default function ItemDetail(props) {
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.ItemCanceled.returnValues)
+        // console.log(result.events.ItemCanceled.returnValues)
         const canceledItem = result.events.ItemCanceled.returnValues;
         setListings(listings.filter(item => item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()));
         isLoading(false);
+
+        addToast("Listing cancelled successfully.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
+
       })
       .catch(error => {
-        isLoading(false);
+        addToast("Error cancelling listing.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
@@ -373,7 +412,7 @@ export default function ItemDetail(props) {
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result)
+        // console.log(result)
         isLoading(false);
 
         const soldItem = result.events.ItemSold.returnValues;
@@ -394,8 +433,11 @@ export default function ItemDetail(props) {
 
   const createOffer = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
-      return;
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      return
     } 
 
     setMakeOfferModalOpen(false)
@@ -406,7 +448,7 @@ export default function ItemDetail(props) {
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
 
-    console.log(totalAllowanceRequierd)
+    // console.log(totalAllowanceRequierd)
 
 
     isLoading(true);
@@ -420,6 +462,10 @@ export default function ItemDetail(props) {
           createOfferConfirm();
         })
         .catch(error => {
+          addToast("Error creating offer.", {
+            appearance: 'error',
+            autoDismiss: true,
+          })
           isLoading(false);
         });
     // }
@@ -437,18 +483,26 @@ export default function ItemDetail(props) {
     const seconds = getCurrentTimeInSeconds() + (offerLength * 24 * 60 * 60);
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
-    console.log(seconds)
+    // console.log(seconds)
 
     isLoading(true);
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.OfferCreated.returnValues)
+        // console.log(result.events.OfferCreated.returnValues)
         addNewOffer(result.events.OfferCreated.returnValues)
+        addToast("Your offer has been sent!.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
         isLoading(false);
       })
       .catch(error => {
+        addToast("Error making offer.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
         isLoading(false);
       });
   };
@@ -466,7 +520,7 @@ export default function ItemDetail(props) {
         offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
     }
 
-    console.log(offers)
+    // console.log(offers)
     setOffers(prevState => {
       return [
         ...prevState.filter(item => item.creatorAddress.toLowerCase() !== newItem.creatorAddress.toLowerCase()),
@@ -485,7 +539,10 @@ export default function ItemDetail(props) {
 
   const buyItem = async (obj) => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
@@ -582,11 +639,17 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(true);
-        // alert("You have liked this item!");
+        addToast("Liked item!", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
       })
       .catch(function (response) {
-        console.log(response);
-        alert("Unable to process request!");
+        // console.log(response);
+        addToast("Error processing request.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       })
       .finally(function(){
         isLoading(false);
@@ -605,11 +668,17 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(false);
-        // alert("You have unliked this item!");
+        addToast("Unliked item.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
       })
       .catch(function (response) {
-        console.log(response);
-        alert("Unable to process request!");
+        // console.log(response);
+        addToast("Error processing request.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       })
       .finally(function(){
         isLoading(false);
@@ -652,7 +721,7 @@ export default function ItemDetail(props) {
     }
 
     const generateShortUrl = async (url) => {
-      console.log('getting short url')
+      // console.log('getting short url')
 
       const resp = await axios({
         method: "GET",
@@ -662,8 +731,8 @@ export default function ItemDetail(props) {
         return response.data.result
       })
       .catch(function (response) {
-        console.log('short URL resp');
-        console.log(response);
+        // console.log('short URL resp');
+        // console.log(response);
         return null
       })
 
@@ -740,7 +809,7 @@ export default function ItemDetail(props) {
                     {shareUrl ? (
                       <CopyToClipboard text={shareUrl} onCopy={() => handleCopyNotification()}>
                         <div className="bg-gray-200 rounded-full shadow-lg flex items-center justify-center h-8 w-8 ring-1 ring-white hover:opacity-80 transition-opacity cursor-pointer">
-                          <FontAwesomeIcon icon={faCopy} size='md' className="text-gray-700" />
+                          <FontAwesomeIcon icon={faCopy} className="text-gray-700" />
                         </div>
                       </CopyToClipboard>
                     ) : null}
@@ -1312,7 +1381,7 @@ export default function ItemDetail(props) {
                 {history && history.length ? (
                   <ul className="">
                     {history.filter((item, i) => i < 10).map((item) => (
-                      <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
+                      <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
                     ))}
                   </ul>
                 ) : (
@@ -1343,7 +1412,7 @@ export default function ItemDetail(props) {
         </div>
 
         <Modal
-          title="Make an Offer"
+          title="Make an offer"
           open={makeOfferModalOpen}
           setOpen={(v) => setMakeOfferModalOpen(v)}
         >

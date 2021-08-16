@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import { useToasts } from 'react-toast-notifications'
 import { UserContext } from "../../context/user-context";
+import axios from "axios";
 import AppUrls from "../../AppSettings";
 import Modal from "../../components/modal";
 import Spinner from '../../components/loading-spinner/spinner';
@@ -12,6 +13,8 @@ const appUrls = {
 };
 
 export default function Register(props) {
+  const { addToast } = useToasts()
+
   const [registerItem, setRegisterItem] = useState({Username: '', Password: '', Email: ''});
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
@@ -25,7 +28,10 @@ export default function Register(props) {
 
     if(!registerItem.Username || !registerItem.Password || !registerItem.Email)
     {
-      alert("Please fill all details.")
+      addToast("Please complete all fields.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     }
 
@@ -41,8 +47,11 @@ export default function Register(props) {
     .then(function (response) {
         setLoading(false);
         props.setRegisterModalOpen(false);
-        alert('success');
-        console.log(response);
+        addToast("Registration complete.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
+        // console.log(response);
         // setSeedWords(response.data.result.seedWords);
         setWalletAddress(response.data.result.address);
         setSeedWordsModalOpen(true);
@@ -66,11 +75,13 @@ export default function Register(props) {
     .then(function (response) {
         setPasswordResetModalOpen(false);
         setPasswordResetSuccessModalOpen(true);
-        alert('success');
         console.log(response);
     })
     .catch(function (response) {
-        alert("Invalid email address");
+        addToast("Error resetting password.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
         setPasswordResetModalOpen(true);
         console.log(response);
     })
