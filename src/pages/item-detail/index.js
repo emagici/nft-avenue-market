@@ -272,11 +272,12 @@ export default function ItemDetail(props) {
 
     isLoading(true);
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const listingFee = await marketplaceContract.methods.listingFee().call();
+    const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
-    if(Number(currentAllowance) < Number(listingFee)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, listingFee)
+    // if(Number(currentAllowance) < Number(listingFee)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -287,9 +288,9 @@ export default function ItemDetail(props) {
         .catch(error => {
           isLoading(false);
         });
-    }
-    else
-      checkNftApprovalAndList();
+    // }
+    // else
+    //   checkNftApprovalAndList();
   };
 
   const checkNftApprovalAndList = async () => {
@@ -389,10 +390,12 @@ export default function ItemDetail(props) {
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
+    const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
+
 
     isLoading(true);
-    if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAmountToSend)
+    // if(Number(currentAllowance) < Number(totalAmountToSend)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -403,9 +406,9 @@ export default function ItemDetail(props) {
         .catch(error => {
           isLoading(false);
         });
-    }
-    else
-      createOfferConfirm();
+    // }
+    // else
+    //   createOfferConfirm();
   };
 
   const getCurrentTimeInSeconds = () => {
@@ -474,11 +477,12 @@ export default function ItemDetail(props) {
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
+    const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
 
     isLoading(true);
 
-    if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, amountToSend)
+    // if(Number(currentAllowance) < Number(amountToSend)){
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
         .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
             isLoading(false);
@@ -487,9 +491,9 @@ export default function ItemDetail(props) {
         .catch(error => {
           isLoading(false);
         });
-    }
-    else
-      buyItemConfirm(obj);
+    // }
+    // else
+    //   buyItemConfirm(obj);
   };
 
   const buyItemConfirm = async (obj) => {
@@ -968,7 +972,7 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {isOwner && item.creatorAddress?.toLowerCase() != myAdd?.toLowerCase()  ? (
+                                    {isOwner   ? (
                                         <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                         Accept
                                       </a>
