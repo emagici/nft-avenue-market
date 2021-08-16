@@ -4,6 +4,8 @@ import SectionHeader from '../../components/section-header'
 import AvatarList from '../../components/avatar/avatar-list'
 import axios from "axios";
 
+import { UserContext } from '../../context/user-context';
+
 import AppUrls from '../../AppSettings';
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
@@ -15,6 +17,8 @@ export default function TopSellers() {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   
+  const userContext = useContext(UserContext);
+
   useEffect(() => {
     getTopSellers()
   }, []);
@@ -22,7 +26,7 @@ export default function TopSellers() {
   async function getTopSellers() {
     await axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetTopSellers`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetTopSellers?blockchain=${userContext.state.blockchainId ?? 0}`
     })
     .then(async function (response) {
       console.log(response.data.result)

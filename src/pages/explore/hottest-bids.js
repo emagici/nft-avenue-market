@@ -7,6 +7,7 @@ import SectionHeader from '../../components/section-header'
 import CardList from '../../components/cards/card-list'
 import Web3 from "web3";
 import { Web3Context } from '../../context/web3-context'
+import { UserContext } from '../../context/user-context';
 import {
   getPayTokenFromListing, getPayTokenDetailByAddress
 } from "../../utilities/utils";
@@ -33,7 +34,8 @@ export default function HottestBidsSection() {
     { id: 'week', 'title': 'This Week' },
     { id: 'month', 'title': 'This Month' },
   ]
-  const web3Context = useContext(Web3Context)
+  const web3Context = useContext(Web3Context);
+  const userContext = useContext(UserContext);
 
   useEffect(async () => {
     if (!web3) return;
@@ -41,7 +43,7 @@ export default function HottestBidsSection() {
 
     await axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetHottestBids`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetHottestBids?blockchain=${userContext.state.blockchainId ?? 0}`
     })
     .then(async function (response) {
       var allItems = response.data.result;

@@ -166,7 +166,7 @@ export default function Profile() {
 
     await axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile`,
+      url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile?blockchain=${userContext.state.blockchainId}`,
       headers: {
         "Authorization": "Bearer " + accessToken + ""
       }
