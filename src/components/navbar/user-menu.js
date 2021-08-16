@@ -12,7 +12,7 @@ import axios from "axios";
 import AppUrls from '../../AppSettings';
 
 const menuItems = [
-  { name: 'Buy $FOMO', href: 'https://pancakeswap.finance/swap?outputCurrency=0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985', target: '_blank' },
+  // { name: 'Buy $FOMO', href: 'https://pancakeswap.finance/swap?outputCurrency=0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985', target: '_blank' },
   { name: 'My Profile', href: '/user' },
   { name: 'Edit Profile', href: '/settings' },
 ]
@@ -183,6 +183,14 @@ export default function UserMenu() {
                   <div>
                     <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
                     <p className="text-lg font-bold text-gray-800">{fomoBalance} FOMO</p>
+                  </div>
+                  <div className="-mx-3 mt-3 -mb-2">
+                    <a
+                      href="https://pancakeswap.finance/swap?outputCurrency=0x5eef8c4320e2bf8d1e6231a31500fd7a87d02985" target="_blank"
+                      className="py-2 my-1 flex items-center rounded-lg bg-gray-900 hover:bg-gray-800 transition ease-in-out duration-150"
+                    >
+                      <p className="flex-1 text-sm font-bold text-white text-center">Buy $FOMO</p>
+                    </a>
                   </div>
                 </div>
                 <div className="p-2 pt-1">

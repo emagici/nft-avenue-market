@@ -13,6 +13,7 @@ import ProfileInfo from './pages/profile-info';
 import PrivacyPolicy from './pages/policies/privacy-policy';
 import TermsPage from './pages/policies/terms';
 import AGuideToNFTs from './pages/getting-started/a-guide-to-nfts';
+import RecentlyAddedPage from './pages/recently-added';
 
 export default [
 	{
@@ -21,6 +22,12 @@ export default [
 	  component: Explore,
 	  exact: true,
 		nav: true
+	},
+	{
+	  path: "/recently-added",
+	  title: "Recently Added",
+	  component: RecentlyAddedPage,
+	  exact: true
 	},
 	{
 	  path: "/featured",

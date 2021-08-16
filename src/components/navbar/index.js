@@ -453,9 +453,10 @@ export default function Navbar() {
                 </div>
               </div>
 
-              <CommunityMenu/>
 
               <div className="flex items-center">
+                
+                <CommunityMenu/>
 
                 {loggedIn ? (
                   <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">

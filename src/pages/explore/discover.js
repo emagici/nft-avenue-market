@@ -6,16 +6,13 @@ import axios from "axios";
 import Web3 from "web3";
 import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context';
-import AppUrls from '../../AppSettings';
 import Spinner from '../../components/loading-spinner/spinner';
+import { classNames } from '../../utilities/utils'
 import {
   getPayTokenFromListing, getPayTokenDetailByAddress
 } from "../../utilities/utils";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
+import AppUrls from '../../AppSettings';
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
   fomoHostApi: AppUrls.fomoHostApi,
@@ -52,8 +49,7 @@ export default function Discover() {
   }, [web3Context.state.web3Data]);
 
   useEffect(() => {
-    if (!web3) return;
-    
+    if (!web3) return;  
     GetListedNfts();
   }, [web3, activeDropdown, activeTab]);
 

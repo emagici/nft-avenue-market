@@ -675,7 +675,7 @@ export default function ItemDetail(props) {
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
-        <div className="mt-10 md:grid md:grid-cols-3 gap-x-8">
+        <div className=" mt-4 md:mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
             <div className="flex-1 max-w-sm">
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
