@@ -34,24 +34,22 @@ export default function RecentlyAddedSection() {
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=&categoryFilter=&sorting=recent&blockchain=${userContext.state.blockchainId ?? 0}`
     })
     .then(async function (response) {
-      var allItems = response.data.result;
+      const allItems = response.data.result;
 
       var items = await Promise.all(allItems.map(async (item) => (
-        {
-         Listed: true,
-         TokenId: item.tokenId,
-         NftAddress: item.contractAddress,
-         TokenName:  item.tokenName,
-         Image: item.imageUrl,
-         Video: item.videoUrl,
-         highestbidValue: item.highestBid,
-         highestbid: item.highestBid ? Web3.utils.fromWei(item.highestBid.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress).payTokenName : "",
-         price: item.buyNowPrice ? Web3.utils.fromWei(item.buyNowPrice.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress)).payTokenName : "",
-       }
-     )))
-
-     items = items.sort(function(a, b) {return b.highestbidValue - a.highestbidValue;});
-     setItems(items && items.length ? items.filter((item, i) => i < 10) : items)
+         {
+          Listed: true,
+          TokenId: item.tokenId,
+          NftAddress: item.nft,
+          TokenName:  item.tokenName,
+          Image: item.imageUrl,
+          Video: item.videoUrl,
+          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken).payTokenName : "",
+          price: Web3.utils.fromWei(item.price.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress)).payTokenName,
+          likes: item.numberOfLikes
+        }
+      )))
+      setItems(items && items.length ? items.filter((item,i) => i < 10) : items);
     })
     .catch(function (response) {
       // console.log(response);
