@@ -243,17 +243,6 @@ export default function Profile() {
 
   const getOwnNfts = async (sign, myadd) => {
 
-    setLoadingData(prevState => { return {...prevState, onsale: true } })
-
-    var myListedNfts = await axios({
-      method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}`,
-    })
-
-    setOnSaleNfts(myListedNfts.data.result);
-    setLoadingData(prevState => { return {...prevState, onsale: false } })
-
-    console.log(sign)
     if(sign){
       setLoadingData(prevState => { return {...prevState, owned: true } })
       axios({
@@ -261,13 +250,9 @@ export default function Profile() {
         url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}`,
       })
       .then(function (response) {
-        console.log(response)
-  
         var items = response.data.result.nftsOwned.map((item, i) => {   
-            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.tokenId) && o.nft.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
-          
             var obj = {
-              id: listedItem ? listedItem.nft.id : 0,
+              id: 0,
               TokenName: item.tokenName,
               Image: item.image,
               TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
@@ -286,13 +271,21 @@ export default function Profile() {
         })
 
         setLoadingData(prevState => { return {...prevState, owned: false } })
-  
       })
       .catch(function (response) {
         console.log(response);
       });
-      
     }
+
+    setLoadingData(prevState => { return {...prevState, onsale: true } })
+
+    var myListedNfts = await axios({
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}`,
+    })
+
+    setOnSaleNfts(myListedNfts.data.result);
+    setLoadingData(prevState => { return {...prevState, onsale: false } })
   }
   
   // const signAndGetUserData = async () => {
