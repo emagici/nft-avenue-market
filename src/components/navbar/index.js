@@ -386,50 +386,6 @@ export default function Navbar() {
       });
   };
 
-  // useEffect(() => {
-  //   console.log(status)
-  //   if (status === 'connected') {
-  //     setErrorStr(null)
-  //   }
-  // }, [status])
-
-  // useEffect(() => {
-  //   if (error) {
-  //     console.log(error.name)
-  //     setErrorStr(error.name === 'ChainUnsupportedError' ? 'Unsupported Network' : null)
-  //   } else {
-  //     setErrorStr(null)
-  //   }
-  // }, [error])
-
-  // function updateUserContext(data) {
-  //   userContext.dispatch({
-  //     type: "UPDATE_DATA",
-  //     payload: data
-  //   })
-  // }
-  // function connectUser() {
-  //   web3Context.dispatch({
-  //     type: "SET_USER_CONNECTED"
-  //   })
-  // }
-  // function disconnectUser() {
-  //   web3Context.dispatch({
-  //     type: "SET_USER_DISCONNECTED"
-  //   })
-  // }
-  // function disconnectUser(data) {
-  //   web3Context.dispatch({
-  //     type: "SET_WEB3_DATA",
-  //     payload: data
-  //   })
-  // }
-
-  // function howToAccessState() {
-  //   const description = userContext.state.description;
-  //   // etc etc
-  // }
-
   return (
     <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
       {({ open }) => (
