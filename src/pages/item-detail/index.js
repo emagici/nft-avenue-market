@@ -775,6 +775,8 @@ export default function ItemDetail(props) {
                     muted
                     controls
                     loop
+                    onContextMenu={e => e.preventDefault()}
+                    controlsList="nodownload"
                     src={nftVideoSrc}
                     className="object-cover group-hover:opacity-90 transition-opacity"
                   />
