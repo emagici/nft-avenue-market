@@ -67,7 +67,6 @@ export default function ProfileInfo() {
   function init(){
     let userId = getUrlUserId();
     if (userId) {
-      loadProfile(userId);
       getUserNfts(userId);
     }
   }
@@ -303,6 +302,11 @@ export default function ProfileInfo() {
         if(userId){
           loadProfile(userId, viewerUserId);
         }
+    }else{
+      let userId = getUrlUserId();
+      if(userId){
+        loadProfile(userId);
+      }
     }
   }, [userContext.state.id]);
 
@@ -311,6 +315,7 @@ export default function ProfileInfo() {
   }, [userContext.state.accessToken]);
 
   useEffect(() => {
+    if(!ratingModalOpen) return;
     let userId = getUrlUserId();
     if (userId) {
       loadProfile(userId);
