@@ -167,7 +167,7 @@ export default function Navbar() {
 
     axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${userContext.state.sign}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${userContext.state.sign}&blockchain=${userContext.state.blockchainId}`,
     })
     .then(function (response) {
       var items = response.data.result.nftsOwned.map((item, i) => {   

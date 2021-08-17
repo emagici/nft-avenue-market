@@ -155,7 +155,7 @@ export default function ProfileInfo() {
 
     var nftResponse = await axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftsOwnedByUser?userId=${userId}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftsOwnedByUser?userId=${userId}&blockchain=${userContext.state.blockchainId}`,
     })
 
     const nftItem = nftResponse.data.result;
