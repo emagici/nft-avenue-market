@@ -19,7 +19,7 @@ import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
   MARKETPLACE_ABI,
-  MARKETPLACE_ADDRESS,
+  getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace";
 import {
   GENERICNFT_ABI
@@ -28,11 +28,11 @@ import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
 import {
-  tokenTypes,
-  fomoTokenAddress,
+  getTokenTypes,
+  getDefaultTokenAddress,
   getPayTokenFromListing,
   getPayTokenDetailByAddress,
-  listingFeeToken,
+  listingFeeTokenBsc,
 } from "../../utilities/utils";
 
 import {
@@ -73,10 +73,12 @@ const appUrls = {
   fomoClient: AppUrls.fomoClient
 };
 
-
 export default function ItemDetail(props) {
   const location = useLocation();
   const { addToast } = useToasts()
+  const sharedContext = useContext(SharedContext);
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
 
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
@@ -93,7 +95,7 @@ export default function ItemDetail(props) {
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [ListingToken, setListingToken] = useState(fomoTokenAddress);
+  const [ListingToken, setListingToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
@@ -104,7 +106,7 @@ export default function ItemDetail(props) {
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
-  const [offerToken, setOfferToken] = useState(fomoTokenAddress);
+  const [offerToken, setOfferToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
 
   const [listings, setListings] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -113,14 +115,13 @@ export default function ItemDetail(props) {
   const [lowestSellerItem, setLowestSellerItem] = useState();
 
   const [hasLiked, setHasLiked] = useState(false);
-  
-  const sharedContext = useContext(SharedContext);
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
+  const [tokenTypes, setTokenTypes] = useState([]);
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState();
 
   useEffect(() => {
-    // console.log(offers)
-  }, [offers])
+    setTokenTypes(getTokenTypes(userContext.state.blockchainId));
+    setMarketplaceContractAddress(getMarketplaceContractAddress(userContext.state.blockchainId));
+  }, [userContext.state.blockchainId])
 
   const getEvent = () =>{
       axios({
@@ -164,7 +165,7 @@ export default function ItemDetail(props) {
       sellerName: userContext.state.name,
       payToken: null
     };
-    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd);
+    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd, userContext.state.blockchainId);
 
     setListings(prevState => {
       return [
@@ -226,7 +227,7 @@ export default function ItemDetail(props) {
           quantity: item.nft.quantity,
           sellerName: item.seller.name,
           sellerProfilePic: item.seller.profilePictureUrl,
-          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
+          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner, userContext.state.blockchainId)
         }
       )));
 
@@ -244,7 +245,7 @@ export default function ItemDetail(props) {
           quantity: item.quantity,
           creatorUsername: item.creatorUsername,
           deadline: item.deadline,
-          offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+          offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
         }
       ))
 
@@ -295,13 +296,13 @@ export default function ItemDetail(props) {
     }
 
     isLoading(true);
-    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
-    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
+    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const listingFee = await marketplaceContract.methods.listingFee().call();
     const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
     // if(Number(currentAllowance) < Number(listingFee)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -319,11 +320,11 @@ export default function ItemDetail(props) {
 
   const checkNftApprovalAndList = async () => {
     const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
-    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
+    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, marketplaceContractAddress).call();
 
     isLoading(true);
     if(!isApprovedForAll){
-        await genericNftContract.methods.setApprovalForAll(MARKETPLACE_ADDRESS, true)
+        await genericNftContract.methods.setApprovalForAll(marketplaceContractAddress, true)
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -427,7 +428,7 @@ export default function ItemDetail(props) {
 
   const getTotalGasPrice = async () => {
     var gasPrice = await web3.eth.getGasPrice();
-    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("10", "gwei"));
+    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("5", "gwei"));
     return totalGasPrice
   }
 
@@ -443,7 +444,7 @@ export default function ItemDetail(props) {
     setMakeOfferModalOpen(false)
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
@@ -453,7 +454,7 @@ export default function ItemDetail(props) {
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -517,7 +518,7 @@ export default function ItemDetail(props) {
         quantity: item.quantity,
         creatorUsername: myAdd,
         deadline: item.deadline,
-        offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+        offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
     }
 
     // console.log(offers)
@@ -547,7 +548,7 @@ export default function ItemDetail(props) {
     } 
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
@@ -555,7 +556,7 @@ export default function ItemDetail(props) {
     isLoading(true);
 
     // if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
             isLoading(false);
@@ -601,7 +602,7 @@ export default function ItemDetail(props) {
     var myadd = accounts[0];
     setMyadd(myadd);
     setMarketplaceContract(
-      new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS)
+      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress)
     );
   }, [web3]);
 

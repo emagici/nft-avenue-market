@@ -30,7 +30,7 @@ import ChainMenu from "./chain-menu";
 
 import {
   MARKETPLACE_ABI,
-  MARKETPLACE_ADDRESS,
+  getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace";
 
 function classNames(...classes) {
@@ -162,28 +162,25 @@ export default function Navbar() {
     loadMyOwnNfts();
   }, [userContext.state.sign]);
 
-
   const loadMyOwnNfts = () => {
     if (!userContext.state.sign) return;
 
     axios({
-      method: "post",
-      url: `${appUrls.fomoNodeAPI}`,
-      data: JSON.stringify({ Signature: userContext.state.sign }),
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${userContext.state.sign}`,
     })
     .then(function (response) {
-
-      var items = response.data.map((item, i) => {   
+      var items = response.data.result.nftsOwned.map((item, i) => {   
         
           var obj = {
             id: 0,
-            TokenName: item.TokenName,
-            Image: item.Image,
-            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-            TokenId: item.TokenId,
-            NftAddress: item.TokenContractAddress,
-            OwnedNftQuantity: item.Count,
-            TokenIPFSAudioPreview: item.WavAudioFile
+            TokenName: item.tokenName,
+            Image: item.image,
+            TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
+            TokenId: item.tokenId,
+            NftAddress: item.tokenContractAddress,
+            OwnedNftQuantity: item.count,
+            TokenIPFSAudioPreview: item.wavAudioFile
           };
           return obj;
       })
@@ -325,7 +322,7 @@ export default function Navbar() {
 
     const myContract = new web3.eth.Contract(
       MARKETPLACE_ABI,
-      MARKETPLACE_ADDRESS
+      getMarketplaceContractAddress(userContext.state.blockchainId)
     );
 
     myContract.events

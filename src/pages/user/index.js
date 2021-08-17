@@ -253,27 +253,28 @@ export default function Profile() {
     setOnSaleNfts(myListedNfts.data.result);
     setLoadingData(prevState => { return {...prevState, onsale: false } })
 
+    console.log(sign)
     if(sign){
       setLoadingData(prevState => { return {...prevState, owned: true } })
       axios({
-        method: "post",
-        url: `${appUrls.fomoNodeAPI}`,
-        data: JSON.stringify({ Signature: sign }),
+        method: "get",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}`,
       })
       .then(function (response) {
+        console.log(response)
   
-        var items = response.data.map((item, i) => {   
-            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
+        var items = response.data.result.nftsOwned.map((item, i) => {   
+            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.tokenId) && o.nft.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
           
             var obj = {
               id: listedItem ? listedItem.nft.id : 0,
-              TokenName: item.TokenName,
-              Image: item.Image,
-              TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-              TokenId: item.TokenId,
-              NftAddress: item.TokenContractAddress,
-              OwnedNftQuantity: item.Count,
-              TokenIPFSAudioPreview: item.WavAudioFile
+              TokenName: item.tokenName,
+              Image: item.image,
+              TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
+              TokenId: item.tokenId,
+              NftAddress: item.tokenContractAddress,
+              OwnedNftQuantity: item.count,
+              TokenIPFSAudioPreview: item.wavAudioFile
             };
             return obj;
         })
