@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
+import { useToasts } from 'react-toast-notifications'
 import CardList from "../../components/cards/card-list";
 import CardDefault from "../../components/cards/item-card-default";
 
@@ -31,6 +32,8 @@ const appUrls = {
 
 export default function ProfileInfo() {
   const location = useLocation();
+  const { addToast } = useToasts()
+
   const [web3, setWeb3] = useState();
   const [loading, setLoading] = useState(false);
   const [ownNfts, setOwnNfts] = useState([]);
@@ -135,7 +138,10 @@ export default function ProfileInfo() {
     })
     .catch(function (response) {
       console.log(response);
-      alert("Unable to process request!");
+      addToast("Error loading profile.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     });
   }
 
@@ -191,11 +197,17 @@ export default function ProfileInfo() {
     })
     .then(function (response) {
       setHasBeenFollowing(true);
-      alert("You are now following this user");
+      addToast("User followed!", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     })
     .catch(function (response) {
-      console.log(response);
-      alert("Unable to process request!");
+      // console.log(response);
+      addToast("Error following user.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     })
     .finally(function(){
       isLoading(false);
@@ -214,11 +226,17 @@ export default function ProfileInfo() {
     })
     .then(function (response) {
       setHasBeenFollowing(false);
-      alert("You have unfollowed this user");
+      addToast("User unfollowed.", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     })
     .catch(function (response) {
-      console.log(response);
-      alert("Unable to process request!");
+      // console.log(response);
+      addToast("Error unfollowing user.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     })
     .finally(function(){
       isLoading(false);
@@ -379,8 +397,9 @@ export default function ProfileInfo() {
 
               <div className="block">
                 <div className="flex items-center">
-                  {ratings.map(val => (
+                  {ratings.map((val,i) => (
                     <StarIcon
+                      key={i}
                       className={classNames(
                         val <= averageRating
                           ? "text-yellow-400"
@@ -404,17 +423,17 @@ export default function ProfileInfo() {
 
               <div className="flex items-center justify-center gap-3 text-gray-800">
                 {userProfile && userProfile.twitterUrl ? (
-                  <a href={`https://twitter.com/${userProfile.twitterUrl}`} target="_blank" className="p-3 hover:text-blue-500 transition-all">
+                  <a href={`https://twitter.com/${userProfile.twitterUrl}`} target="_blank" rel="noreferrer" className="p-3 hover:text-blue-500 transition-all">
                     <FontAwesomeIcon icon={faTwitter} size='2x' />
                   </a>
                 ) : null}
                 {userProfile && userProfile.instagramUrl ? (
-                  <a href={`https://instagram.com/${userProfile.instagramUrl}`} target="_blank" className="p-3 hover:text-pink-600 transition-all">
+                  <a href={`https://instagram.com/${userProfile.instagramUrl}`} target="_blank" rel="noreferrer" className="p-3 hover:text-pink-600 transition-all">
                     <FontAwesomeIcon icon={faInstagram} size='2x' />
                   </a>
                 ) : null}
                 {userProfile && userProfile.discordUrl ? (
-                  <a href={userProfile.discordUrl} target="_blank" className="p-3 hover:text-purple-600 transition-all">
+                  <a href={userProfile.discordUrl} target="_blank" rel="noreferrer" className="p-3 hover:text-purple-600 transition-all">
                     <FontAwesomeIcon icon={faDiscord} size='2x' />
                   </a>
                 ) : null}
@@ -450,14 +469,11 @@ export default function ProfileInfo() {
                 <CardList loading={true} />
               ) : (
                 onSaleNfts && onSaleNfts.length ? (
-                  <ul
-                    role="list"
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {onSaleNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOnSaleObj(item)} sellItem />
-                    ))}
-                  </ul>
+                  <CardList loading={loading} items={onSaleNfts.map(item => {
+                    return {
+                      ...transformOnSaleObj(item)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
@@ -471,14 +487,11 @@ export default function ProfileInfo() {
                 <CardList loading={true} />
               ) : (
                 ownNfts && ownNfts.length ? (
-                  <ul
-                    role="list"
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {ownNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOwnNftObj(item)} />
-                    ))}
-                  </ul>
+                  <CardList loading={loading} items={ownNfts.map(item => {
+                    return {
+                      ...transformOwnNftObj(item)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No owned items</h1>

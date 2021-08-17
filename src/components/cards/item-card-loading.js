@@ -1,4 +1,3 @@
-import { Fragment, useState } from 'react'
 import Spinner from '../loading-spinner/spinner'
 
 export default function ItemCardLoading(props) {

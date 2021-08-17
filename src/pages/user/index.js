@@ -103,8 +103,7 @@ export default function Profile() {
       setLoggedIn(true);
       loadProfile(accessToken);
       loadMyRegisteredWalletAddress(accessToken);
-      //alert("you have successfully logged in!, get your accessToken in console log");
-      console.warn("access token: ", accessToken);
+      // console.warn("access token: ", accessToken);
 
       userContext.dispatch({
         type: "SET_ACCESS_TOKEN",
@@ -254,27 +253,28 @@ export default function Profile() {
     setOnSaleNfts(myListedNfts.data.result);
     setLoadingData(prevState => { return {...prevState, onsale: false } })
 
+    console.log(sign)
     if(sign){
       setLoadingData(prevState => { return {...prevState, owned: true } })
       axios({
-        method: "post",
-        url: `${appUrls.fomoNodeAPI}`,
-        data: JSON.stringify({ Signature: sign }),
+        method: "get",
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}`,
       })
       .then(function (response) {
+        console.log(response)
   
-        var items = response.data.map((item, i) => {   
-            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.TokenId) && o.nft.nft.toLowerCase() === item.TokenContractAddress.toLowerCase());
+        var items = response.data.result.nftsOwned.map((item, i) => {   
+            var listedItem = myListedNfts.data.result.find(o => o.nft.tokenId === Number(item.tokenId) && o.nft.nft.toLowerCase() === item.tokenContractAddress.toLowerCase());
           
             var obj = {
               id: listedItem ? listedItem.nft.id : 0,
-              TokenName: item.TokenName,
-              Image: item.Image,
-              TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-              TokenId: item.TokenId,
-              NftAddress: item.TokenContractAddress,
-              OwnedNftQuantity: item.Count,
-              TokenIPFSAudioPreview: item.WavAudioFile
+              TokenName: item.tokenName,
+              Image: item.image,
+              TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
+              TokenId: item.tokenId,
+              NftAddress: item.tokenContractAddress,
+              OwnedNftQuantity: item.count,
+              TokenIPFSAudioPreview: item.wavAudioFile
             };
             return obj;
         })
@@ -464,14 +464,11 @@ export default function Profile() {
                 <CardList loading={true} />
               ) : (
                 onSaleNfts && onSaleNfts.length ? (
-                  <ul
-                    role="list"
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {onSaleNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOnSaleObj(item.nft)} sellItem />
-                    ))}
-                  </ul>
+                  <CardList loading={loadingData.onsale} items={onSaleNfts.map(item => {
+                    return {
+                      ...transformOnSaleObj(item.nft)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
@@ -495,14 +492,11 @@ export default function Profile() {
                 <CardList loading={true} />
               ) : (
                 ownNfts && ownNfts.length ? (
-                  <ul
-                    role="list"
-                    className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-5 xl:gap-x-8"
-                  >
-                    {ownNfts.map((item, index) => (
-                      <CardDefault key={index} {...transformOwnNftObj(item)} />
-                    ))}
-                  </ul>
+                  <CardList loading={loadingData.owned} items={ownNfts.map(item => {
+                    return {
+                      ...transformOwnNftObj(item)
+                    }
+                  })} />
                 ) : (
                   <div className="text-center">
                     <h1 className="font-bold text-2xl mb-2">No items owned</h1>
@@ -628,7 +622,7 @@ export default function Profile() {
                                   <span>{item.nftDetails?.name}</span>
                                 </Link>
                                 {item.txHash ? (
-                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" className="block text-sm underline mt-0.5">
+                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" rel="noreferrer" className="block text-sm underline mt-0.5">
                                     <span>tx: {`${item.txHash.substr(0,4)}...${item.txHash.substr(-6,6)}`}</span>
                                     <ExternalLinkIcon
                                       className="inline ml-1 h-4 w-4 opacity-80"

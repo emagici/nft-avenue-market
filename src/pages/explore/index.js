@@ -10,6 +10,7 @@ import TopSellers from './top-sellers'
 import Following from './following'
 import GettingStartedSection from './getting-started'
 import VerifiedArtistsSection from './verified-artists'
+import RecentlyAddedSection from './recently-added'
 
 
 export default function Explore() {
@@ -50,6 +51,7 @@ export default function Explore() {
       {/* <FeaturedArtists/>
       <Following/> */}
       <HottestBidsSection/>
+      <RecentlyAddedSection/>
       <GettingStartedSection/>
     </div>
   )

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useToasts } from 'react-toast-notifications'
 import SectionHeader from '../../components/section-header'
 
 import WCLogo from '../../assets/img/logos/wc-logo.png'
@@ -18,6 +19,7 @@ const people = [
 ]
 
 export default function Connect() {
+  const { addToast } = useToasts()
   return (
     <div className="p-6">
       <div className="max-w-screen-2xl mx-auto py-10 px-4 sm:px-6">

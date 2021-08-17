@@ -130,7 +130,7 @@ export default function MiamiDrop() {
           <div className="flex flex-wrap justify-center items-center">
             {collaborators.map(item => (
               <div key={item.name} className="flex justify-center items-center p-5">
-                <a href={item.url} target="_blank">
+                <a href={item.url} target="_blank" rel="noreferrer">
                   <img className="h-24 sm:h-36 object-contain" src={item.image} alt={item.name} />
                 </a>
               </div>
@@ -144,14 +144,14 @@ export default function MiamiDrop() {
           <p className="mb-3 font-bold">The Miami Crypto Experience was one of the most exclusive NFT/Crypto events in the 2021 Calendar!</p>
           <p className="mb-3 font-medium">With collaborations from Rick Ross, Rich B Caliente, Ali Spagnola, Aavegotchi and many others the Miami Crypto EXP was truly a landmark event for blockchain and a sign of things to come for the crypto communities growth in Miami.</p>
           <p className="mb-3 font-medium">The star of the show was the incredible RBC9ELEVEN NFT, The worlds first Porsche 911 Auction available on the blockchain, powered by fomo lab. The owner of this NFT would also gain full ownership of the actual art-car itself!</p>
-          <p className="mb-3 font-medium">Visit the <a className="font-bold text-indigo-600" target="_blank" href="https://expcrypto.io">expcrypto.io</a> website for more information on the event.</p>
+          <p className="mb-3 font-medium">Visit the <a className="font-bold text-indigo-600" target="_blank" rel="noreferrer" href="https://expcrypto.io">expcrypto.io</a> website for more information on the event.</p>
           <p className="mb-3 font-medium">For more information on the NFTs and the RBC 9 Eleven scroll down to see more content below.</p>
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="As Featured In" />
           <img src={ForbesLogo} alt="forbes" className="h-14 mb-3 mx-auto mb-5" />
-          <p><a className="font-bold text-indigo-700" href="https://www.forbes.com/sites/andreabossi/2021/06/04/porsche-911-nft-made-by-rick-ross-caliente-startup-auctions-in-miami/" target="_blank">Read the article</a> now to find out more.</p>
+          <p><a className="font-bold text-indigo-700" href="https://www.forbes.com/sites/andreabossi/2021/06/04/porsche-911-nft-made-by-rick-ross-caliente-startup-auctions-in-miami/" target="_blank" rel="noreferrer">Read the article</a> now to find out more.</p>
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-12 sm:mb-20">

@@ -1,5 +1,6 @@
 import { Fragment, useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
 import { Popover, Transition } from '@headlessui/react'
 import { LogoutIcon } from '@heroicons/react/outline'
 import { UserIcon } from '@heroicons/react/solid'
@@ -29,8 +30,10 @@ const appUrls = {
 };
 
 export default function UserMenu() {
+  const { addToast } = useToasts()
   const web3Context = useContext(Web3Context);
   const userContext = useContext(UserContext);
+
   const [userName, setUserName] = useState("User");
   const [bnbBalance, setBnbBalance] = useState("0");
   const [fomoBalance, setFomoBalance] = useState("0");
@@ -128,7 +131,10 @@ export default function UserMenu() {
     })
     .catch(function (response) {
       console.log(response);
-      alert("Unable to process request!");
+      addToast("Error signing out.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     });
   }
 

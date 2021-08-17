@@ -19,7 +19,7 @@ import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
 import {
   MARKETPLACE_ABI,
-  MARKETPLACE_ADDRESS,
+  getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace";
 import {
   GENERICNFT_ABI
@@ -28,11 +28,11 @@ import {
   GENERIC_TOKEN_ABI
 } from "../../contracts/GenericToken";
 import {
-  tokenTypes,
-  fomoTokenAddress,
+  getTokenTypes,
+  getDefaultTokenAddress,
   getPayTokenFromListing,
   getPayTokenDetailByAddress,
-  listingFeeToken,
+  listingFeeTokenBsc,
 } from "../../utilities/utils";
 
 import {
@@ -73,10 +73,12 @@ const appUrls = {
   fomoClient: AppUrls.fomoClient
 };
 
-
 export default function ItemDetail(props) {
   const location = useLocation();
   const { addToast } = useToasts()
+  const sharedContext = useContext(SharedContext);
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
 
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
@@ -93,7 +95,7 @@ export default function ItemDetail(props) {
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [ListingToken, setListingToken] = useState(fomoTokenAddress);
+  const [ListingToken, setListingToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
   const [isItemListed, setIsItemListed] = useState(false);
   const [listingType, setListingType] = useState("Fixed Price");
   const [listingLength, setListingLength] = useState(7);
@@ -104,7 +106,7 @@ export default function ItemDetail(props) {
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
-  const [offerToken, setOfferToken] = useState(fomoTokenAddress);
+  const [offerToken, setOfferToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
 
   const [listings, setListings] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -113,10 +115,13 @@ export default function ItemDetail(props) {
   const [lowestSellerItem, setLowestSellerItem] = useState();
 
   const [hasLiked, setHasLiked] = useState(false);
-  
-  const sharedContext = useContext(SharedContext);
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
+  const [tokenTypes, setTokenTypes] = useState([]);
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState();
+
+  useEffect(() => {
+    setTokenTypes(getTokenTypes(userContext.state.blockchainId));
+    setMarketplaceContractAddress(getMarketplaceContractAddress(userContext.state.blockchainId));
+  }, [userContext.state.blockchainId])
 
   const getEvent = () =>{
       axios({
@@ -127,7 +132,7 @@ export default function ItemDetail(props) {
         setHistory(response.data.result)
       })
       .catch(function (response) {
-        console.log(response);
+        // console.log(response);
       });
   }
 
@@ -160,7 +165,7 @@ export default function ItemDetail(props) {
       sellerName: userContext.state.name,
       payToken: null
     };
-    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd);
+    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd, userContext.state.blockchainId);
 
     setListings(prevState => {
       return [
@@ -168,6 +173,20 @@ export default function ItemDetail(props) {
         newItem
       ]
     })
+
+    addToast("Item listed successfully!", {
+      appearance: 'success',
+      autoDismiss: true,
+    })
+
+    // reset listing form
+    try {
+      setListPrice(0)
+      setListQuantity(0)
+      setNftQuantityOwned(prevState => prevState - 1)
+    } catch(err) {
+      // console.log(err)
+    }
   }
 
   const getListedNftInfo = () => {
@@ -186,7 +205,7 @@ export default function ItemDetail(props) {
     .then(async function (nftListingResponse) {
       const nftListingResult = nftListingResponse.data.result;
 
-      console.log(nftListingResult)
+      // console.log(nftListingResult)
 
       if(nftListingResult.length === 0) return;
 
@@ -208,7 +227,7 @@ export default function ItemDetail(props) {
           quantity: item.nft.quantity,
           sellerName: item.seller.name,
           sellerProfilePic: item.seller.profilePictureUrl,
-          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner)
+          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner, userContext.state.blockchainId)
         }
       )));
 
@@ -226,14 +245,14 @@ export default function ItemDetail(props) {
           quantity: item.quantity,
           creatorUsername: item.creatorUsername,
           deadline: item.deadline,
-          offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+          offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
         }
       ))
 
       setOffers(offerItems.filter(item => item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
-      console.log(response);
+      // console.log(response);
     });
   }
 
@@ -244,7 +263,7 @@ export default function ItemDetail(props) {
     })
       .then(function (response) {
         const nftDetails = response.data.result;
-        console.log(nftDetails)
+        // console.log(nftDetails)
         setVideoNftSrc(nftDetails.videoUrl)
         setImageNftSrc(nftDetails.imageUrl)
         setNftDescription(nftDetails.description)
@@ -255,29 +274,35 @@ export default function ItemDetail(props) {
         }
       })
       .catch(function (response) {
-        console.log(response);
+        // console.log(response);
       });
   }
 
   const listItem = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
     if(ListPrice <= 0 || ListQuantity <= 0){
-      alert("Please enter price and quantity more than 0");
+      addToast("Invalid quantity or price.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     }
 
     isLoading(true);
-    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeToken);
-    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
+    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const listingFee = await marketplaceContract.methods.listingFee().call();
     const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
     // if(Number(currentAllowance) < Number(listingFee)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -295,11 +320,11 @@ export default function ItemDetail(props) {
 
   const checkNftApprovalAndList = async () => {
     const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
-    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, MARKETPLACE_ADDRESS).call();
+    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, marketplaceContractAddress).call();
 
     isLoading(true);
     if(!isApprovedForAll){
-        await genericNftContract.methods.setApprovalForAll(MARKETPLACE_ADDRESS, true)
+        await genericNftContract.methods.setApprovalForAll(marketplaceContractAddress, true)
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -325,7 +350,7 @@ export default function ItemDetail(props) {
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.ItemListed.returnValues)
+        // console.log(result.events.ItemListed.returnValues)
         addNewListing(result.events.ItemListed.returnValues)
         isLoading(false);
       })
@@ -342,7 +367,10 @@ export default function ItemDetail(props) {
 
   const cancelListing = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
@@ -351,19 +379,31 @@ export default function ItemDetail(props) {
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.ItemCanceled.returnValues)
+        // console.log(result.events.ItemCanceled.returnValues)
         const canceledItem = result.events.ItemCanceled.returnValues;
         setListings(listings.filter(item => item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()));
         isLoading(false);
+
+        addToast("Listing cancelled successfully.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
+
       })
       .catch(error => {
-        isLoading(false);
+        addToast("Error cancelling listing.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
@@ -373,7 +413,7 @@ export default function ItemDetail(props) {
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result)
+        // console.log(result)
         isLoading(false);
 
         const soldItem = result.events.ItemSold.returnValues;
@@ -388,30 +428,33 @@ export default function ItemDetail(props) {
 
   const getTotalGasPrice = async () => {
     var gasPrice = await web3.eth.getGasPrice();
-    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("10", "gwei"));
+    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("5", "gwei"));
     return totalGasPrice
   }
 
   const createOffer = async () => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
-      return;
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      return
     } 
 
     setMakeOfferModalOpen(false)
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
 
-    console.log(totalAllowanceRequierd)
+    // console.log(totalAllowanceRequierd)
 
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -420,6 +463,10 @@ export default function ItemDetail(props) {
           createOfferConfirm();
         })
         .catch(error => {
+          addToast("Error creating offer.", {
+            appearance: 'error',
+            autoDismiss: true,
+          })
           isLoading(false);
         });
     // }
@@ -437,18 +484,26 @@ export default function ItemDetail(props) {
     const seconds = getCurrentTimeInSeconds() + (offerLength * 24 * 60 * 60);
     const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
 
-    console.log(seconds)
+    // console.log(seconds)
 
     isLoading(true);
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
-        console.log(result.events.OfferCreated.returnValues)
+        // console.log(result.events.OfferCreated.returnValues)
         addNewOffer(result.events.OfferCreated.returnValues)
+        addToast("Your offer has been sent!.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
         isLoading(false);
       })
       .catch(error => {
+        addToast("Error making offer.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
         isLoading(false);
       });
   };
@@ -463,10 +518,10 @@ export default function ItemDetail(props) {
         quantity: item.quantity,
         creatorUsername: myAdd,
         deadline: item.deadline,
-        offerTokenName: getPayTokenDetailByAddress(item.payToken).payTokenName
+        offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
     }
 
-    console.log(offers)
+    // console.log(offers)
     setOffers(prevState => {
       return [
         ...prevState.filter(item => item.creatorAddress.toLowerCase() !== newItem.creatorAddress.toLowerCase()),
@@ -485,12 +540,15 @@ export default function ItemDetail(props) {
 
   const buyItem = async (obj) => {
     if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
-      alert("Please connect wallet and sign in")
+      addToast("Please connect wallet and sign in.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
       return;
     } 
 
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, MARKETPLACE_ADDRESS).call();
+    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
@@ -498,7 +556,7 @@ export default function ItemDetail(props) {
     isLoading(true);
 
     // if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
             isLoading(false);
@@ -544,7 +602,7 @@ export default function ItemDetail(props) {
     var myadd = accounts[0];
     setMyadd(myadd);
     setMarketplaceContract(
-      new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS)
+      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress)
     );
   }, [web3]);
 
@@ -582,11 +640,17 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(true);
-        // alert("You have liked this item!");
+        addToast("Liked item!", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
       })
       .catch(function (response) {
-        console.log(response);
-        alert("Unable to process request!");
+        // console.log(response);
+        addToast("Error processing request.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       })
       .finally(function(){
         isLoading(false);
@@ -605,11 +669,17 @@ export default function ItemDetail(props) {
       })
       .then(function (response) {
         setHasLiked(false);
-        // alert("You have unliked this item!");
+        addToast("Unliked item.", {
+          appearance: 'success',
+          autoDismiss: true,
+        })
       })
       .catch(function (response) {
-        console.log(response);
-        alert("Unable to process request!");
+        // console.log(response);
+        addToast("Error processing request.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       })
       .finally(function(){
         isLoading(false);
@@ -652,7 +722,7 @@ export default function ItemDetail(props) {
     }
 
     const generateShortUrl = async (url) => {
-      console.log('getting short url')
+      // console.log('getting short url')
 
       const resp = await axios({
         method: "GET",
@@ -662,8 +732,8 @@ export default function ItemDetail(props) {
         return response.data.result
       })
       .catch(function (response) {
-        console.log('short URL resp');
-        console.log(response);
+        // console.log('short URL resp');
+        // console.log(response);
         return null
       })
 
@@ -706,6 +776,8 @@ export default function ItemDetail(props) {
                     muted
                     controls
                     loop
+                    onContextMenu={e => e.preventDefault()}
+                    controlsList="nodownload"
                     src={nftVideoSrc}
                     className="object-cover group-hover:opacity-90 transition-opacity"
                   />
@@ -740,7 +812,7 @@ export default function ItemDetail(props) {
                     {shareUrl ? (
                       <CopyToClipboard text={shareUrl} onCopy={() => handleCopyNotification()}>
                         <div className="bg-gray-200 rounded-full shadow-lg flex items-center justify-center h-8 w-8 ring-1 ring-white hover:opacity-80 transition-opacity cursor-pointer">
-                          <FontAwesomeIcon icon={faCopy} size='md' className="text-gray-700" />
+                          <FontAwesomeIcon icon={faCopy} className="text-gray-700" />
                         </div>
                       </CopyToClipboard>
                     ) : null}
@@ -1312,7 +1384,7 @@ export default function ItemDetail(props) {
                 {history && history.length ? (
                   <ul className="">
                     {history.filter((item, i) => i < 10).map((item) => (
-                      <ItemHistoryRow type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
+                      <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
                     ))}
                   </ul>
                 ) : (
@@ -1343,7 +1415,7 @@ export default function ItemDetail(props) {
         </div>
 
         <Modal
-          title="Make an Offer"
+          title="Make an offer"
           open={makeOfferModalOpen}
           setOpen={(v) => setMakeOfferModalOpen(v)}
         >

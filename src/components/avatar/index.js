@@ -16,7 +16,7 @@ export default function Avatar(props) {
           ) : null}
           {props.verified ? (
             <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 shadow-lg block h-6 w-6 rounded-full ring-2 ring-white bg-green-600 border-0 text-white text-sm flex justify-center items-center font-bold">
-              <FontAwesomeIcon icon={faCheck} size='md' />
+              <FontAwesomeIcon icon={faCheck} />
             </span>
           ) : null}
         </span>

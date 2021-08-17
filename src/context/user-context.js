@@ -18,7 +18,7 @@ const initialState = {
   ownNfts: [],
   id: null,
   registeredWalletAddress: null,
-  blockchainId: null
+  blockchainId: 0
 };
 
 let reducer = (state, action) => {
@@ -80,7 +80,7 @@ let reducer = (state, action) => {
         ownNfts: [],
         id: null,
         registeredWalletAddress: null,
-        blockchainId: null
+        blockchainId: 0
       };
 
     default:

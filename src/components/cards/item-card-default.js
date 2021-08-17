@@ -1,8 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Link } from "react-router-dom"
 import Modal from '../modal'
-import { TagIcon, ClockIcon, CurrencyDollarIcon, HeartIco, HeartIcon } from '@heroicons/react/solid'
-import VideoBox from '../video-box'
+import { TagIcon, ClockIcon, CurrencyDollarIcon, HeartIcon } from '@heroicons/react/solid'
 
 export default function CardDefault(props) {
   const [modalOpen, setModalOpen] = useState(false);

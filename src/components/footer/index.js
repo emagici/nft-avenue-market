@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronDownIcon } from '@heroicons/react/solid'
 import Logo from '../../assets/img/fomo/the-avenue-v2.gif'
 import MailchimpSubscribe from "react-mailchimp-subscribe";
 
@@ -93,7 +92,7 @@ const CustomForm = ({ status, message, onValidated }) => {
     <div>
       <form
         onSubmit={(e) => handleSubmit(e)}
-        className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0"
+        className="mt-4 flex-col sm:flex-row sm:flex justify-center items-center lg:max-w-md lg:mt-0 ml-auto"
       >
         <input
           className="appearance-none min-w-0 w-full bg-white border border-gray-300 py-2 px-4 text-base rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:placeholder-gray-400 sm:max-w-xs"
@@ -102,7 +101,7 @@ const CustomForm = ({ status, message, onValidated }) => {
           type="email"
           value={email}
           placeholder="your@email.com"
-          isRequired
+          required
         />
         <div className="mt-3 rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
           <input
@@ -110,7 +109,7 @@ const CustomForm = ({ status, message, onValidated }) => {
             label="subscribe"
             type="submit"
             value={status === "sending" ? "Please Wait" : "Subscribe"}
-            formValues={[email]}
+            // formValues={[email]}
           />
         </div>
       </form>
@@ -141,7 +140,7 @@ export default function Footer() {
       <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 text-center lg:text-left">
         <div className="pb-8 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-8">
           <div className="md:col-span-3 lg:col-span-2 mb-10 md:mb-5">
-            <img src={Logo} className="h-16 mb-3 mx-auto lg:mx-0 lg:-ml-5" />
+            <img src={Logo} alt="avenue logo" className="h-16 mb-3 mx-auto lg:mx-0 lg:-ml-5" />
             <a href="https://fomolab.io">
               <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">Powered by Fomo Lab</h3>
             </a>
@@ -163,7 +162,7 @@ export default function Footer() {
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} className="text-base text-gray-500 hover:text-gray-900">
+                  <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} rel={item.target === "_blank" ? "noreferrer" : ""} className="text-base text-gray-500 hover:text-gray-900">
                     {item.name}
                   </a>
                 </li>
@@ -230,7 +229,7 @@ export default function Footer() {
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
           <div className="flex space-x-6 md:order-2 justify-center">
             {navigation.social.map((item) => (
-              <a key={item.name} href={item.href} target="_blank" className="text-gray-400 hover:text-gray-500">
+              <a key={item.name} href={item.href} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>

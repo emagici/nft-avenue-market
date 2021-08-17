@@ -1,10 +1,9 @@
 import {
   MARKETPLACE_ABI,
-  MARKETPLACE_ADDRESS,
+  getMarketplaceContractAddress,
 } from "../contracts/FomoMarketPlace"
 
 import { BitlyClient } from 'bitly'
-
 
 export async function shortenLink(url) {
   const bitly = new BitlyClient('f2364f5c80a64f3f8500d1a2f4ba9d91b2111425', {})
@@ -26,40 +25,58 @@ export async function shortenLink(url) {
   }
 }
 
-
 export function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+export const getTokenTypes = (blockchainId) => {
+  if(blockchainId === 0){
+    return [
+      { name: "Fomo", tokenAddress: "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985" },
+      { name: "BNB", tokenAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" },
+      { name: "BUSD", tokenAddress: "0xe9e7cea3dedca5984780bafc599bd69add087d56" }
+    ]
+  }
+  if(blockchainId === 1){
+    return [
+      { name: "ETH", tokenAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" },
+      { name: "USDT", tokenAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7" }
+    ]
+  }
+}
 
-export const tokenTypes = [
-  { name: "Fomo", tokenAddress: "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985" },
-  { name: "BNB", tokenAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" },
-  { name: "BUSD", tokenAddress: "0xe9e7cea3dedca5984780bafc599bd69add087d56" },
-];
+export const getDefaultTokenAddress = (blockchainId) => {
+  if(blockchainId === 0){
+    return '0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985'
+  }
+  if(blockchainId === 1){
+    return '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+  }
+}
 
 export const fomoTokenAddress = "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985";
-export const listingFeeToken = "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985";
+export const listingFeeTokenBsc = "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985";
 
 export const getPayTokenFromListing = async (
   web3,
   chkAddress,
   chkTokenId,
-  chkOwnerAdd
+  chkOwnerAdd,
+  blockchainId
 ) => {
-  var contract = new web3.eth.Contract(MARKETPLACE_ABI, MARKETPLACE_ADDRESS);
+  var contract = new web3.eth.Contract(MARKETPLACE_ABI, getMarketplaceContractAddress(blockchainId));
   const listingDetails = await contract.methods
     .listings(chkAddress, chkTokenId, chkOwnerAdd)
     .call();
 
-  return getPayTokenDetailByAddress(listingDetails.payToken);
+  return getPayTokenDetailByAddress(listingDetails.payToken, blockchainId);
 };
 
-export const getPayTokenDetailByAddress = (tokenAddress) => {
+export const getPayTokenDetailByAddress = (tokenAddress, blockchainId) => {
   if (!tokenAddress)
     return { payTokenName: "", payTokenAddress: "" };
 
-  var tokenDetail = tokenTypes.find(
+  var tokenDetail = getTokenTypes(blockchainId).find(
     (x) => x.tokenAddress.toLowerCase() === tokenAddress.toLowerCase()
   );
 

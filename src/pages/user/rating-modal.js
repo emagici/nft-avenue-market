@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, Fragment } from "react";
-import Modal from "../../components/modal";
+import { useToasts } from 'react-toast-notifications'
 import { StarIcon } from '@heroicons/react/solid'
+import Modal from "../../components/modal";
 
 import { SharedContext } from '../../context/shared-context';
 import Spinner from '../../components/loading-spinner/spinner';
@@ -19,6 +20,7 @@ function classNames(...classes) {
 }
 
 export default function RatingModal(props) {
+  const { addToast } = useToasts()
   const sharedContext = useContext(SharedContext);
   const userContext = useContext(UserContext);
 
@@ -66,12 +68,18 @@ export default function RatingModal(props) {
       }
     })
     .then(function (response) {
-        // alert("Rating given!");
-        console.log(response);
+      // console.log(response);
+      addToast("Successfully rated user!", {
+        appearance: 'success',
+        autoDismiss: true,
+      })
     })
     .catch(function (response) {
-        alert("Unable to process request!");
-        console.log(response);
+      // console.log(response);
+      addToast("Error rating user.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     })
     .finally(function(){
       setLoading(false);
@@ -90,14 +98,15 @@ export default function RatingModal(props) {
     })
     .then(function (response) {
         setRating(response.data.result.rate);
-        console.log(response);
+        // console.log(response);
     })
     .catch(function (response) {
-        alert("Unable to process request!");
-        console.log(response);
+      addToast("Error checking user rating.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      // console.log(response);
     })
-    .finally(function(){
-    });
   }
 
   return (
@@ -111,8 +120,9 @@ export default function RatingModal(props) {
       <div>
         <p className="text-sm text-gray-500 mb-5 text-center -mt-3">Select rating below</p>
         <div className="flex justify-center items-center">
-          {ratings.map(val => (
+          {ratings.map((val,i) => (
             <a
+              key={i}
               href="javascript:void(0);"
               onClick={() => ratingSelected(val)}
             >

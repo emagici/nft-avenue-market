@@ -13,7 +13,6 @@ import {
 import { faCommentDots, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 const menuItems = [
-
   { name: 'Discussion', href: 'https://www.reddit.com/r/Fomo_Lab/', target: "_blank" },
   // { name: 'Subscribe', href: '/#subscribe' },
   { name: 'Suggest Feature', href: 'https://forms.gle/TYgFzj6rxfiDdrMt9', target: "_blank" },
@@ -70,7 +69,7 @@ export default function CommunityMenu() {
             <div>
               <Menu.Button className="bg-gray-100 hover:bg-gray-200 relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-gray-900 shadow-sm focus:outline-none">
                 <span className="lg:hidden">
-                  <FontAwesomeIcon icon={faEllipsisH} size='md' />
+                  <FontAwesomeIcon icon={faEllipsisH} />
                 </span>
                 <span className="hidden lg:inline">Community</span>
               </Menu.Button>
@@ -95,6 +94,7 @@ export default function CommunityMenu() {
                       <a
                         key={item.name}
                         href={item.href} target={item.target ? item.target : '_self'}
+                        rel={item.target && item.target === "_blank" ? "noreferrer" : ""}
                         className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
                       >
                         <div className="ml-4">

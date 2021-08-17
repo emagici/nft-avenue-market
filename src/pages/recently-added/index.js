@@ -54,8 +54,8 @@ export default function RecentlyAddedPage() {
           TokenName:  item.tokenName,
           Image: item.imageUrl,
           Video: item.videoUrl,
-          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken).payTokenName : "",
-          price: Web3.utils.fromWei(item.price.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress)).payTokenName,
+          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
+          price: Web3.utils.fromWei(item.price.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress, userContext.state.blockchainId)).payTokenName,
           likes: item.numberOfLikes
         }
       )))

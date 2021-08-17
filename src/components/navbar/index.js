@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useToasts } from 'react-toast-notifications'
 import {
   BellIcon,
   MenuIcon,
@@ -8,7 +9,6 @@ import {
   SearchIcon,
 } from "@heroicons/react/outline";
 import { useWallet } from "use-wallet";
-import AvenueLogo from "../../assets/img/theavenue-logo.png";
 import AvenueLogoGif from "../../assets/img/fomo/the-avenue-v2.gif";
 import Routes from "../../routes";
 import Web3 from "web3";
@@ -30,7 +30,7 @@ import ChainMenu from "./chain-menu";
 
 import {
   MARKETPLACE_ABI,
-  MARKETPLACE_ADDRESS,
+  getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace";
 
 function classNames(...classes) {
@@ -81,20 +81,21 @@ const appUrls = {
 };
 
 export default function Navbar() {
-  const userContext = useContext(UserContext);
-  const web3Context = useContext(Web3Context);
-  const [signInModalOpen, setSignInModalOpen] = useState(false);
-
-  const location = useLocation();
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+  const location = useLocation()
+  const { addToast } = useToasts()
+  
+  const [signInModalOpen, setSignInModalOpen] = useState(false)
   // const { account, chainId, connect, error, reset, status } = useWallet()
-  const [myAdd, setMyAdd] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [walletSigned, setWalletSigned] = useState(false);
-  const [errorStr, setErrorStr] = useState(null);
-  //const { inputText, setInputText, searchResults } = useSearch();
-  const [inputText, setInputText] = useState(null);
-  const [accessToken, setAccessToken] = useState();
-  const [notifications, setNotifications] = useState([]);
+  const [myAdd, setMyAdd] = useState(null)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [walletSigned, setWalletSigned] = useState(false)
+  const [errorStr, setErrorStr] = useState(null)
+  //const { inputText, setInputText, searchResults } = useSearch()
+  const [inputText, setInputText] = useState("")
+  const [accessToken, setAccessToken] = useState()
+  const [notifications, setNotifications] = useState([])
 
   const [provider, setProvider] = useState();
 
@@ -149,8 +150,11 @@ export default function Navbar() {
         document.location.href = `/`;
       })
       .catch(function (response) {
-        console.log(response);
-        alert("Unable to process request!");
+        // console.log(response);
+        addToast("Error signing out.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
       });
   };
 
@@ -158,28 +162,25 @@ export default function Navbar() {
     loadMyOwnNfts();
   }, [userContext.state.sign]);
 
-
   const loadMyOwnNfts = () => {
     if (!userContext.state.sign) return;
 
     axios({
-      method: "post",
-      url: `${appUrls.fomoNodeAPI}`,
-      data: JSON.stringify({ Signature: userContext.state.sign }),
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${userContext.state.sign}`,
     })
     .then(function (response) {
-
-      var items = response.data.map((item, i) => {   
+      var items = response.data.result.nftsOwned.map((item, i) => {   
         
           var obj = {
             id: 0,
-            TokenName: item.TokenName,
-            Image: item.Image,
-            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
-            TokenId: item.TokenId,
-            NftAddress: item.TokenContractAddress,
-            OwnedNftQuantity: item.Count,
-            TokenIPFSAudioPreview: item.WavAudioFile
+            TokenName: item.tokenName,
+            Image: item.image,
+            TokenIPFSVideoPreview: item.tokenIPFSVideoPreview,
+            TokenId: item.tokenId,
+            NftAddress: item.tokenContractAddress,
+            OwnedNftQuantity: item.count,
+            TokenIPFSAudioPreview: item.wavAudioFile
           };
           return obj;
       })
@@ -273,7 +274,10 @@ export default function Navbar() {
         userContext.state.registeredWalletAddress.toLowerCase() !=
         myAdd.toLowerCase()
       ) {
-        alert("Please use the wallet sent to email during registration.");
+        addToast("Please use the wallet sent to email during registration.", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
         handleSignOut();
       } else if (!userContext.state.sign) {
         signMetamask();
@@ -318,7 +322,7 @@ export default function Navbar() {
 
     const myContract = new web3.eth.Contract(
       MARKETPLACE_ABI,
-      MARKETPLACE_ADDRESS
+      getMarketplaceContractAddress(userContext.state.blockchainId)
     );
 
     myContract.events
@@ -502,10 +506,10 @@ export default function Navbar() {
                                   Notifications
                                 </h1>
                                 {notifications && notifications.length ? (
-                                  notifications.map((notification) => (
+                                  notifications.map((notification,i) => (
                                     <Menu.Item
+                                      key={i}
                                       as={"span"}
-                                      // hrefto="#"
                                       className="block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg"
                                     >
                                       {notification.eventName.replace(
