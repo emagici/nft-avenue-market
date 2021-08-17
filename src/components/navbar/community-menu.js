@@ -15,8 +15,8 @@ import { faCommentDots, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 const menuItems = [
 
   { name: 'Discussion', href: 'https://www.reddit.com/r/Fomo_Lab/', target: "_blank" },
-  { name: 'Subscribe', href: '/' },
-  { name: 'Suggest Feature', href: '/' },
+  // { name: 'Subscribe', href: '/#subscribe' },
+  { name: 'Suggest Feature', href: 'https://forms.gle/TYgFzj6rxfiDdrMt9', target: "_blank" },
   { name: 'Voting (Coming Soon)', href: '#' },
   { name: 'FAQ', href: '/faq' },
 ]

@@ -277,7 +277,7 @@ export default function ItemDetail(props) {
     const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
     // if(Number(currentAllowance) < Number(listingFee)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -353,7 +353,7 @@ export default function ItemDetail(props) {
       .then( async function (result) {
         console.log(result.events.ItemCanceled.returnValues)
         const canceledItem = result.events.ItemCanceled.returnValues;
-        setListings(listings.filter(item => item.owner !== canceledItem.owner));
+        setListings(listings.filter(item => item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()));
         isLoading(false);
       })
       .catch(error => {
@@ -367,9 +367,23 @@ export default function ItemDetail(props) {
       return;
     } 
 
+    isLoading(true);
+
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
+      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .then( async function (result) {
+        console.log(result)
+        isLoading(false);
+
+        const soldItem = result.events.ItemSold.returnValues;
+        setListings(listings.filter(item => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()));
+        setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()));
+        setNftQuantityOwned(prevState => prevState - Number(soldItem.quantity));
+      })
+      .catch(error => {
+        isLoading(false);
+      });
   };
 
   const getTotalGasPrice = async () => {
@@ -392,10 +406,12 @@ export default function ItemDetail(props) {
     const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
 
+    console.log(totalAllowanceRequierd)
+
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -482,7 +498,7 @@ export default function ItemDetail(props) {
     isLoading(true);
 
     // if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd)
+        await genericTokenContract.methods.approve(MARKETPLACE_ADDRESS, totalAllowanceRequierd.toString())
         .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
             isLoading(false);
@@ -507,6 +523,10 @@ export default function ItemDetail(props) {
       .then( async function (result) {
         isLoading(false);
         setShowPurchasedModal(true)
+        const soldItem = result.events.ItemSold.returnValues;
+        setListings(listings.filter(item => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()));
+        setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()));
+        setNftQuantityOwned(prevState => prevState + Number(soldItem.quantity));
       })
       .catch(error => {
           isLoading(false);
@@ -675,7 +695,7 @@ export default function ItemDetail(props) {
   return (
     <div className="">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
-        <div className="mt-10 md:grid md:grid-cols-3 gap-x-8">
+        <div className=" mt-4 md:mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
             <div className="flex-1 max-w-sm">
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
@@ -972,7 +992,7 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {isOwner   ? (
+                                    {isOwner && item.creatorAddress.toLowerCase() != myAdd?.toLowerCase() ? (
                                         <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                         Accept
                                       </a>

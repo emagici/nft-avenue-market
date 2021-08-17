@@ -23,8 +23,7 @@ const navigation = {
   ],
   contactus: [
     { name: 'Email Us', href: 'mailto:contactus@fomolab.io' },
-    // { name: 'Get Support', href: '/' },
-    { name: 'Apply For Verification', href: 'https://forms.gle/F9RCkjFmY3JxW5Pn8', target: "_blank" },
+    { name: 'Apply For Verification', href: 'https://forms.gle/rrKs57QTfdGA1mJB8', target: "_blank" },
   ],
   legal: [
     { name: 'Privacy', href: '/privacy-policy' },
@@ -184,7 +183,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0">
+        <div id="subscribe" className="border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0">
           <div>
             <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
               Subscribe to our mailing list

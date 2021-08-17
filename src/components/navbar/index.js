@@ -18,15 +18,20 @@ import SignInRegisterModal from "./SignInRegisterModal";
 
 import { UserContext, initialState } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import { useAsync } from 'react-async-hook';
-import useConstant from 'use-constant';
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { useAsync } from "react-async-hook";
+import useConstant from "use-constant";
 import UserMenu from "./user-menu";
 import axios from "axios";
-import AppUrls from '../../AppSettings';
+import AppUrls from "../../AppSettings";
 import moment from "moment";
 import CommunityMenu from "./community-menu";
 import ChainMenu from "./chain-menu";
+
+import {
+  MARKETPLACE_ABI,
+  MARKETPLACE_ADDRESS,
+} from "../../contracts/FomoMarketPlace";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -35,9 +40,8 @@ function classNames(...classes) {
 //reference: https://stackoverflow.com/a/28046731
 // Generic reusable hook
 const useDebouncedSearch = (searchFunction) => {
-
   // Handle the input text state
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
 
   // Debounce the original search async function
   const debouncedSearchFunction = useConstant(() =>
@@ -47,16 +51,13 @@ const useDebouncedSearch = (searchFunction) => {
   // The async callback is run each time the text changes,
   // but as the search function is debounced, it does not
   // fire a new request on each keystroke
-  const searchResults = useAsync(
-    async () => {
-      if (inputText.length === 0) {
-        return [];
-      } else {
-        return debouncedSearchFunction(inputText);
-      }
-    },
-    [debouncedSearchFunction, inputText]
-  );
+  const searchResults = useAsync(async () => {
+    if (inputText.length === 0) {
+      return [];
+    } else {
+      return debouncedSearchFunction(inputText);
+    }
+  }, [debouncedSearchFunction, inputText]);
 
   // Return everything needed for the hook consumer
   return {
@@ -66,19 +67,18 @@ const useDebouncedSearch = (searchFunction) => {
   };
 };
 
-function goToSearchPage(text){
+function goToSearchPage(text) {
   document.location.href = `/search?search=${text}&auto=1`;
 }
 
-const useSearch = () => useDebouncedSearch(text => goToSearchPage(text));
+const useSearch = () => useDebouncedSearch((text) => goToSearchPage(text));
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
   fomoHostApi: AppUrls.fomoHostApi,
   fomoClient: AppUrls.fomoClient,
-  fomoNodeAPI: AppUrls.fomoNodeAPI
+  fomoNodeAPI: AppUrls.fomoNodeAPI,
 };
-
 
 export default function Navbar() {
   const userContext = useContext(UserContext);
@@ -98,15 +98,15 @@ export default function Navbar() {
 
   const [provider, setProvider] = useState();
 
-  const disconnect =  async () => {
-    if(!provider) return
+  const disconnect = async () => {
+    if (!provider) return;
 
     setMyAdd(null);
     web3Context.dispatch({
-      type: "SET_USER_DISCONNECTED"
+      type: "SET_USER_DISCONNECTED",
     });
 
-    if(provider.close) {
+    if (provider.close) {
       await provider.close();
     }
 
@@ -125,105 +125,140 @@ export default function Navbar() {
   };
 
   function handleSignOut() {
-    console.log('signing out');
+    console.log("signing out");
     web3Context.dispatch({
-      type: "RESET_ALL"
+      type: "RESET_ALL",
     });
     userContext.dispatch({
-      type: "RESET_ALL"
+      type: "RESET_ALL",
     });
     signout();
   }
 
   const signout = () => {
-
-    if(!userContext.state.accessToken) return
+    if (!userContext.state.accessToken) return;
 
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/TokenAuth/LogOut`,
       headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
+        Authorization: "Bearer " + accessToken + "",
+      },
+    })
+      .then(function (response) {
+        document.location.href = `/`;
+      })
+      .catch(function (response) {
+        console.log(response);
+        alert("Unable to process request!");
+      });
+  };
+
+  useEffect(() => {
+    loadMyOwnNfts();
+  }, [userContext.state.sign]);
+
+
+  const loadMyOwnNfts = () => {
+    if (!userContext.state.sign) return;
+
+    axios({
+      method: "post",
+      url: `${appUrls.fomoNodeAPI}`,
+      data: JSON.stringify({ Signature: userContext.state.sign }),
     })
     .then(function (response) {
-      document.location.href = `/`;
+
+      var items = response.data.map((item, i) => {   
+        
+          var obj = {
+            id: 0,
+            TokenName: item.TokenName,
+            Image: item.Image,
+            TokenIPFSVideoPreview: item.TokenIPFSVideoPreview,
+            TokenId: item.TokenId,
+            NftAddress: item.TokenContractAddress,
+            OwnedNftQuantity: item.Count,
+            TokenIPFSAudioPreview: item.WavAudioFile
+          };
+          return obj;
+      })
+
+      userContext.dispatch({
+        type: "SET_OWN_NFTS",
+        payload: items
+      })
     })
     .catch(function (response) {
       console.log(response);
-      alert("Unable to process request!");
     });
   }
 
   useEffect(() => {
     const checkConnection = async () => {
+      web3Context.dispatch({
+        type: "SET_USER_DISCONNECTED",
+      });
 
-        web3Context.dispatch({
-          type: "SET_USER_DISCONNECTED"
-        });
+      let web3;
+      // if (window.ethereum) {
 
-        let web3;
-        // if (window.ethereum) {
+      //     web3 = new Web3(window.ethereum);
+      //     web3Context.dispatch({
+      //       type: "SET_WEB3_DATA",
+      //       payload: web3,
+      //     });
 
-        //     web3 = new Web3(window.ethereum);
-        //     web3Context.dispatch({
-        //       type: "SET_WEB3_DATA",
-        //       payload: web3,
-        //     });
+      //     web3.eth.getAccounts()
+      //     .then(async (addr) => {
+      //       if(addr.toString()){
+      //         setMyAdd(addr.toString());
+      //         web3Context.dispatch({
+      //           type: "SET_USER_CONNECTED"
+      //         });
+      //       }
+      //     });
+      // } else if (window.web3) {
 
-        //     web3.eth.getAccounts()
-        //     .then(async (addr) => {
-        //       if(addr.toString()){
-        //         setMyAdd(addr.toString());
-        //         web3Context.dispatch({
-        //           type: "SET_USER_CONNECTED"
-        //         });
-        //       }
-        //     });
-        // } else if (window.web3) {
+      //     web3 = new Web3(window.web3.currentProvider);
+      //     web3Context.dispatch({
+      //       type: "SET_WEB3_DATA",
+      //       payload: web3,
+      //     });
 
-        //     web3 = new Web3(window.web3.currentProvider);
-        //     web3Context.dispatch({
-        //       type: "SET_WEB3_DATA",
-        //       payload: web3,
-        //     });
+      //     web3.eth.getAccounts()
+      //     .then(async (addr) => {
+      //       if(addr.toString()){
+      //         setMyAdd(addr.toString());
+      //         web3Context.dispatch({
+      //           type: "SET_USER_CONNECTED"
+      //         });
+      //       }
+      //     });
+      // };
 
-        //     web3.eth.getAccounts()
-        //     .then(async (addr) => {
-        //       if(addr.toString()){
-        //         setMyAdd(addr.toString());
-        //         web3Context.dispatch({
-        //           type: "SET_USER_CONNECTED"
-        //         });
-        //       }
-        //     });
-        // };
+      // if(!window.web3){
+      web3 = new Web3("https://bsc-dataseed.binance.org");
 
-        // if(!window.web3){
-          web3 = new Web3("https://bsc-dataseed.binance.org");
-
-          web3Context.dispatch({
-            type: "SET_WEB3_DATA",
-            payload: web3,
-          });
-        // }
+      web3Context.dispatch({
+        type: "SET_WEB3_DATA",
+        payload: web3,
+      });
+      // }
     };
     checkConnection();
   }, []);
 
   useEffect(() => {
     setLoggedIn(userContext.state.accessToken ? true : false);
-    
-    if(userContext.state.accessToken)
-    {
+
+    if (userContext.state.accessToken) {
       setAccessToken(userContext.state.accessToken);
     }
-
   }, [userContext.state.accessToken]);
 
   useEffect(() => {
-    if(accessToken)
-    {
+    if (accessToken) {
       getNotifications();
     }
   }, [accessToken]);
@@ -232,13 +267,15 @@ export default function Navbar() {
     setWalletSigned(userContext.state.sign ? true : false);
   }, [userContext.state.sign]);
 
-
   useEffect(() => {
-    if(userContext.state.registeredWalletAddress && myAdd){
-      if(userContext.state.registeredWalletAddress.toLowerCase() != myAdd.toLowerCase()){
-        alert("Please use the wallet sent to email during registration.")
+    if (userContext.state.registeredWalletAddress && myAdd) {
+      if (
+        userContext.state.registeredWalletAddress.toLowerCase() !=
+        myAdd.toLowerCase()
+      ) {
+        alert("Please use the wallet sent to email during registration.");
         handleSignOut();
-      }else if(!userContext.state.sign){
+      } else if (!userContext.state.sign) {
         signMetamask();
       }
     }
@@ -254,7 +291,7 @@ export default function Navbar() {
           rpc: {
             56: "https://bsc-dataseed.binance.org",
           },
-          network: 'binance'
+          network: "binance",
         },
       },
     };
@@ -276,11 +313,29 @@ export default function Navbar() {
     var myadd = accounts[0];
     setMyAdd(myadd);
     web3Context.dispatch({
-      type: "SET_USER_CONNECTED"
+      type: "SET_USER_CONNECTED",
     });
 
-    console.log(provider)
-    setProvider(provider)
+    const myContract = new web3.eth.Contract(
+      MARKETPLACE_ABI,
+      MARKETPLACE_ADDRESS
+    );
+
+    myContract.events
+      .allEvents()
+      .on("data", async function (event) {
+        if (event.event == "ItemSold") {
+          const item = event.returnValues;
+          if (item.seller.toLowerCase() == myadd || item.buyer.toLowerCase() == myadd) {
+            loadMyOwnNfts();
+          }
+        }
+
+        console.log(event);
+      })
+      .on("error", console.error);
+
+    setProvider(provider);
 
     if (callback) callback();
 
@@ -301,38 +356,35 @@ export default function Navbar() {
   }
 
   //reference: https://stackoverflow.com/a/11365682/4490058
-  function onEnter(e){
+  function onEnter(e) {
     if (!e) e = window.event;
     var keyCode = e.code || e.key;
-    
-    if (keyCode == 'Enter' || 
-        keyCode == 'NumpadEnter'){
+
+    if (keyCode == "Enter" || keyCode == "NumpadEnter") {
       // Enter pressed
       goToSearchPage(e.target.value);
     }
   }
 
   const getNotifications = () => {
-
     axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNotifications?take=10`,
       headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
+        Authorization: "Bearer " + accessToken + "",
+      },
     })
-    .then(function (response) {
+      .then(function (response) {
         console.log(response);
-        if(response.data.result){
-          console.log(response.data.result)
-          setNotifications(response.data.result)
+        if (response.data.result) {
+          console.log(response.data.result);
+          setNotifications(response.data.result);
         }
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
-}
-
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  };
 
   // useEffect(() => {
   //   console.log(status)
@@ -453,9 +505,10 @@ export default function Navbar() {
                 </div>
               </div>
 
-              <CommunityMenu/>
 
               <div className="flex items-center">
+                
+                <CommunityMenu/>
 
                 {loggedIn ? (
                   <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
@@ -465,8 +518,13 @@ export default function Navbar() {
                         <>
                           <div>
                             <Menu.Button className="bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
-                              <span className="sr-only">View notifications</span>
-                              <BellIcon className="h-6 w-6" aria-hidden="true" />
+                              <span className="sr-only">
+                                View notifications
+                              </span>
+                              <BellIcon
+                                className="h-6 w-6"
+                                aria-hidden="true"
+                              />
                             </Menu.Button>
                           </div>
                           <Transition
@@ -484,21 +542,32 @@ export default function Navbar() {
                               className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                             >
                               <div className="pt-3 pb-1">
-                                <h1 className="font-bold mb-2 px-4">Notifications</h1>
+                                <h1 className="font-bold mb-2 px-4">
+                                  Notifications
+                                </h1>
                                 {notifications && notifications.length ? (
                                   notifications.map((notification) => (
-                                    <Menu.Item 
-                                      as={'span'} 
+                                    <Menu.Item
+                                      as={"span"}
                                       // hrefto="#"
                                       className="block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg"
                                     >
-                                      {notification.eventName.replace(/([A-Z])/g, " $1")}
-                                      <span className="block text-xs">{moment(notification.dateCreated).fromNow()}</span>
+                                      {notification.eventName.replace(
+                                        /([A-Z])/g,
+                                        " $1"
+                                      )}
+                                      <span className="block text-xs">
+                                        {moment(
+                                          notification.dateCreated
+                                        ).fromNow()}
+                                      </span>
                                     </Menu.Item>
                                   ))
                                 ) : (
                                   <div className="">
-                                    <p className="text-sm font-medium">No notifications to display.</p>
+                                    <p className="text-sm font-medium">
+                                      No notifications to display.
+                                    </p>
                                   </div>
                                 )}
                               </div>
@@ -546,7 +615,7 @@ export default function Navbar() {
                           <div>
                             <Menu.Button className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
                               <span className="sr-only">Wallet</span>
-                              {myAdd.substr(0,6) + "..."}
+                              {myAdd.substr(0, 6) + "..."}
                             </Menu.Button>
                           </div>
                           <Transition
@@ -569,7 +638,9 @@ export default function Navbar() {
                                 className="py-2 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
                               >
                                 <div className="ml-4">
-                                  <p className="text-sm font-bold text-red-500">Disconnect</p>
+                                  <p className="text-sm font-bold text-red-500">
+                                    Disconnect
+                                  </p>
                                 </div>
                               </a>
                             </Menu.Items>
@@ -587,7 +658,7 @@ export default function Navbar() {
                     </button>
                   )}
                 </div>
-                <ChainMenu/>
+                <ChainMenu />
               </div>
             </div>
           </div>
@@ -611,7 +682,6 @@ export default function Navbar() {
                 </Disclosure.Button>
               ))}
             </div>
-
           </Disclosure.Panel>
         </>
       )}
