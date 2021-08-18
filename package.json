@@ -17,7 +17,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@walletconnect/web3-provider": "^1.5.2",
-    "autoprefixer": "^9.8.6",
+    "autoprefixer": "^9",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.21.1",
     "bitly": "^7.1.2",
@@ -70,7 +70,6 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^9.8.6",
     "postcss": "^7.0.36",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.4"
   }

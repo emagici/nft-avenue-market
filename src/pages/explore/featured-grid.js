@@ -14,7 +14,7 @@ export default function FeaturedGrid() {
         <div className="grid grid-cols-2 gap-2 md:gap-4 md:grid-cols-4 md:grid-rows-2">
           <div className="group aspect-w-2 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden col-span-2 bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628860907/avenue-v2-promo_qtkz3r.mp4"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,q_auto,w_754/v1628860907/avenue-v2-promo_qtkz3r.mp4"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
@@ -24,7 +24,7 @@ export default function FeaturedGrid() {
           </div>
           <div className="group aspect-w-1 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden relative h-full bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/c_crop,h_600,w_600/v1628865396/fegnft-promo_hqgrqn.mp4"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,q_auto,w_737/v1628865396/fegnft-promo_hqgrqn.mp4"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
@@ -48,7 +48,7 @@ export default function FeaturedGrid() {
           </div>
           <div className="group aspect-w-1 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden relative h-full bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628864767/mc-video_mzsuhf.mp4"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,q_auto,w_355/v1628864767/mc-video_mzsuhf.mp4"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
@@ -72,7 +72,7 @@ export default function FeaturedGrid() {
           </div>
           <div className="group aspect-w-1 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden relative h-full order-5 md:order-4 bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/v1628863103/pvlace-showcase_vhmjdz.mp4"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/q_auto/v1628863103/pvlace-showcase_vhmjdz.mp4"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
@@ -96,7 +96,7 @@ export default function FeaturedGrid() {
           </div>
           <div className="group aspect-w-1 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden relative h-full order-6 md:order-5 bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/c_crop,h_500,w_500/v1628864951/porsche-911-miamicrypto_k1yyz6.mp4"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,q_auto,w_735/v1628864951/porsche-911-miamicrypto_k1yyz6.mp4"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
@@ -120,7 +120,7 @@ export default function FeaturedGrid() {
           </div>
           <div className="group aspect-w-2 aspect-h-1 rounded-lg md:rounded-2xl shadow-lg overflow-hidden col-span-2 order-4 md:order-6 bg-gray-100">
             <video
-              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,h_600/v1628865698/light-grid_dphqb1.mov"
+              src="https://res.cloudinary.com/fomo-lab/video/upload/c_scale,q_auto,w_743/v1628865698/light-grid_dphqb1.mov"
               className="object-cover object-center w-full h-full"
               autoPlay
               playsInline
