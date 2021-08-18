@@ -9,6 +9,7 @@ import Routes from './routes'
 import Footer from './components/footer'
 import ScrollToTop from './scrollToTop'
 import LoadingSpinner from "./components/loading-spinner";
+import PageTitle from "./components/page-title";
 
 import CookieConsent from "react-cookie-consent";
 
@@ -32,6 +33,7 @@ function App() {
             placement="top-right"
           >
             <LoadingSpinner/>
+            <PageTitle/>
             <Router>
               <ScrollToTop/>
               <div className="min-h-screen bg-white">

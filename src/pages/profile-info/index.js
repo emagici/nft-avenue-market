@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications'
 import CardList from "../../components/cards/card-list";
-import CardDefault from "../../components/cards/item-card-default";
+import PageTitle from "../../components/page-title";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons'
@@ -324,6 +324,7 @@ export default function ProfileInfo() {
 
   return (
     <div className="">
+      {userProfile ? <PageTitle title={displayName} /> : null}
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
           {userProfile && userProfile.bannerPictureUrl ? (

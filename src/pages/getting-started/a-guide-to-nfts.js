@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import PageTitle from '../../components/page-title'
 
 import BG1 from '../../assets/img/bg/bg-pattern-1.jpeg'
 
@@ -58,6 +59,7 @@ const sections = [
 export default function AGuideToNFTs() {
   return (
     <div className="p-6">
+      <PageTitle title="A Guide To NFTs" />
       <div className="max-w-screen-2xl mx-auto">
         <div className="bg-white">
           <div className="max-w-7xl mx-auto">

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from "react";
 import SectionHeader from "../../components/section-header";
+import PageTitle from "../../components/page-title";
 import Security from './security';
 import { UserContext } from '../../context/user-context';
 import { Web3Context } from '../../context/web3-context';
@@ -134,6 +135,7 @@ export default function UserSettings() {
 
   return (
     <div className="max-w-screen-lg mx-auto py-10 px-4 sm:px-6">
+      <PageTitle title="Settings" />
 
       <SectionHeader title="Edit Profile" />
 

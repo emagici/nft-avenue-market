@@ -3,6 +3,7 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
 import VideoBox from '../../components/video-box'
+import PageTitle from '../../components/page-title'
 
 import FegBg from '../../assets/img/feg/feg-bg.png'
 import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
@@ -36,6 +37,8 @@ const items = [
 export default function FegTcgDrop() {
   return (
     <div className="p-6">
+      <PageTitle title="FEG Trading Card Game" />
+
       <div className="max-w-screen-2xl mx-auto">
 
         <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20 sm:mb-28">

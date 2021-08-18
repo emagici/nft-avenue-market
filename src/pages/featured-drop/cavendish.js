@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from "react-router-dom"
+import React from 'react'
 
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
+import PageTitle from '../../components/page-title'
 
 import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
 import BlakMadreLogo from '../../assets/img/logos/blkmadre-logo.jpeg'
@@ -95,6 +95,7 @@ const items = [
 export default function CavendishDrop() {
   return (
     <div className="p-6">
+      <PageTitle title="Mark Cavendish" />
       <div className="max-w-screen-2xl mx-auto">
 
         <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20 sm:mb-28">

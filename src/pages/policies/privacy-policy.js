@@ -1,6 +1,9 @@
+import PageTitle from "../../components/page-title"
+
 export default function PrivacyPolicy() {
   return(
     <div className="max-w-screen-lg mx-auto px-4 sm:px-6 py-8">
+      <PageTitle title="Privacy Policy" />
       <h1 className="font-bold text-2xl sm:text-4xl mb-14 text-center">Privacy Policy</h1>
 
       <h1 className="font-bold text-xl mb-2 mt-6">Privacy Policy for The Avenue (Fomo Lab)</h1>

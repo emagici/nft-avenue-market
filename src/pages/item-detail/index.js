@@ -6,6 +6,7 @@ import { Accordion, AccordionItem, AccordionPanel } from '../../components/accor
 import Web3 from "web3";
 import axios from "axios";
 import Modal from "../../components/modal";
+import PageTitle from "../../components/page-title";
 import ItemHistoryRow from "./item-history-row";
 import PurchasedModal from "./purchased-modal";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -765,6 +766,7 @@ export default function ItemDetail(props) {
 
   return (
     <div className="">
+      {nftName ? <PageTitle title={nftName} /> : null }
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className=" mt-4 md:mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">

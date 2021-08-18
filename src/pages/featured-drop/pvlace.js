@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
+import PageTitle from '../../components/page-title'
 
 import PvlaceImg from '../../assets/img/pvlace/pvlace-lg.jpeg'
 import CTLogo from '../../assets/img/logos/cointelegraph.png'
@@ -179,6 +180,8 @@ const items = [
 export default function PvlaceDrop() {
   return (
     <div className="p-6">
+      <PageTitle title="PVLACE x 808 MAFIA x GUNBOI" />
+
       <div className="max-w-screen-2xl mx-auto">
 
         <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20 sm:mb-28">

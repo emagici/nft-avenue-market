@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import CardDefault from "../../components/cards/item-card-default";
 import SectionHeader from "../../components/section-header";
 import AvatarList from "../../components/avatar/avatar-list";
+import PageTitle from "../../components/page-title";
 import {
   PencilAltIcon,
   ExternalLinkIcon,
@@ -372,6 +373,7 @@ export default function Profile() {
 
   return (
     <div className="">
+      <PageTitle title="My Profile" />
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className="relative">
           <div className="h-40 md:h-60 mt-5 shadow-xl w-full rounded-2xl bg-gray-100">

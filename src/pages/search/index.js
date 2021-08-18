@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import { useToasts } from 'react-toast-notifications'
 import Spinner from '../../components/loading-spinner/spinner'
 import CardList from '../../components/cards/card-list'
+import PageTitle from '../../components/page-title'
 import qs from 'qs'
 
 import { SearchIcon } from "@heroicons/react/outline";
@@ -127,6 +128,7 @@ export default function SearchPage() {
 
   return (
     <div className="p-6">
+      <PageTitle title="Search" />
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         {loading ? (
           <div className="flex items-center justify-center">

@@ -4,6 +4,7 @@ import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context';
 import Spinner from '../../components/loading-spinner/spinner'
 import CardList from '../../components/cards/card-list'
+import PageTitle from '../../components/page-title'
 import axios from "axios";
 import Web3 from "web3";
 import { getPayTokenFromListing, getPayTokenDetailByAddress } from "../../utilities/utils";
@@ -73,6 +74,7 @@ export default function RecentlyAddedPage() {
   
   return (
     <div className="py-6 px-4">
+      <PageTitle title="Recently Added" />
       <div className="max-w-screen-2xl mx-auto">
         {loading ? (
           <div className="flex items-center justify-center">

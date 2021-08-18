@@ -3,6 +3,7 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
 import VideoBox from '../../components/video-box'
+import PageTitle from '../../components/page-title'
 
 import ForbesLogo from '../../assets/img/logos/forbes-logo.png'
 import FomoLogo from '../../assets/img/fomo/fomo-logo.png'
@@ -109,6 +110,7 @@ const items = [
 export default function MiamiDrop() {
   return (
     <div className="p-6">
+      <PageTitle title="Miami Crypto" />
       <div className="max-w-screen-2xl mx-auto">
 
         <div className="relative bg-gray-50 rounded-xl shadow-2xl overflow-hidden mb-20">

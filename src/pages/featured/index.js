@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PromoBanner from '../../components/banner/promo-banner'
+import PageTitle from '../../components/page-title'
 import PvlaceImg from '../../assets/img/pvlace/pvlace-lg.jpeg'
 import FegImg from '../../assets/img/feg/feg-bg.png'
+
 
 const drops = [
   {
@@ -30,6 +32,8 @@ const drops = [
 export default function Featured() {
   return (
     <div className="p-6">
+      <PageTitle title="Featured" />
+
       <div className="max-w-screen-2xl mx-auto">
 
         <div className="grid md:grid-cols-2 gap-5 auto-rows-auto mb-20">

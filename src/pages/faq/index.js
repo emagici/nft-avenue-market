@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import SectionHeader from "../../components/section-header"
+import PageTitle from "../../components/page-title"
 
 const faqs = {
   General: [
@@ -167,6 +168,7 @@ export default function FaqSection() {
 
   return (
     <div className="p-6">
+      <PageTitle title="FAQ" />
       <div className="max-w-screen-2xl mx-auto py-10 px-4 sm:px-6">
         <div className="bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
