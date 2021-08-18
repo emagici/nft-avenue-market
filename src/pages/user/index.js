@@ -247,7 +247,7 @@ export default function Profile() {
       setLoadingData(prevState => { return {...prevState, owned: true } })
       axios({
         method: "get",
-        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}`,
+        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}&blockchain=${userContext.state.blockchainId}`,
       })
       .then(function (response) {
         var items = response.data.result.nftsOwned.map((item, i) => {   
@@ -281,7 +281,7 @@ export default function Profile() {
 
     var myListedNfts = await axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}`,
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}&blockchain=${userContext.state.blockchainId}`,
     })
 
     setOnSaleNfts(myListedNfts.data.result);
