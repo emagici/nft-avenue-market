@@ -93,13 +93,13 @@ const UserContext = createContext(initialState);
 function UserProvider(props) {
   const [state, dispatch] = useReducer(
     reducer, 
-    initialState
-    // (initial) => JSON.parse(sessionStorage.getItem(storageKey)) || initial
+    initialState, 
+    (initial) => JSON.parse(sessionStorage.getItem(storageKey)) || initial
   );
 
-  // useEffect(() => {
-  //   sessionStorage.setItem(storageKey, JSON.stringify(state));
-  // }, [state]);
+  useEffect(() => {
+    sessionStorage.setItem(storageKey, JSON.stringify(state));
+  }, [state]);
 
   return <UserContext.Provider value={{ state, dispatch }}>{props.children}</UserContext.Provider>;
 }
