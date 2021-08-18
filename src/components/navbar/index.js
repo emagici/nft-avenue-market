@@ -27,11 +27,17 @@ import AppUrls from "../../AppSettings";
 import moment from "moment";
 import CommunityMenu from "./community-menu";
 import ChainMenu from "./chain-menu";
+import {
+  ExternalLinkIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/solid";
 
 import {
   MARKETPLACE_ABI,
   getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace";
+
+import { setupSignalRConnection } from "../../signalr";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -80,6 +86,10 @@ const appUrls = {
   fomoNodeAPI: AppUrls.fomoNodeAPI,
 };
 
+const userNotificationConnectionHub = `${appUrls.fomoHostApi}/signalr-user-notification`;
+
+const hub = setupSignalRConnection(userNotificationConnectionHub);
+
 export default function Navbar() {
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
@@ -96,6 +106,8 @@ export default function Navbar() {
   const [inputText, setInputText] = useState("")
   const [accessToken, setAccessToken] = useState()
   const [notifications, setNotifications] = useState([])
+  const [newNotificationCount, setNewNotificationCount] = useState(0);
+  const [hasBellIconAnimate, setHasBellIconAnimate] = useState(false);
 
   const [provider, setProvider] = useState();
 
@@ -405,6 +417,7 @@ provider.on("connect",  (chainId)  => {
         if (response.data.result) {
           console.log(response.data.result);
           setNotifications(response.data.result);
+          setNewOrUnreadNotificationCount(response.data.result);
         }
       })
       .catch(function (response) {
@@ -412,50 +425,66 @@ provider.on("connect",  (chainId)  => {
       });
   };
 
-  // useEffect(() => {
-  //   console.log(status)
-  //   if (status === 'connected') {
-  //     setErrorStr(null)
-  //   }
-  // }, [status])
+  const setNewOrUnreadNotificationCount = (notifications) => {
+    let newOrUnreadNotificationCount = 
+        notifications
+          .filter(x => !x.hasRead)
+          .length;
 
-  // useEffect(() => {
-  //   if (error) {
-  //     console.log(error.name)
-  //     setErrorStr(error.name === 'ChainUnsupportedError' ? 'Unsupported Network' : null)
-  //   } else {
-  //     setErrorStr(null)
-  //   }
-  // }, [error])
+    setNewNotificationCount(newOrUnreadNotificationCount);
+  };
 
-  // function updateUserContext(data) {
-  //   userContext.dispatch({
-  //     type: "UPDATE_DATA",
-  //     payload: data
-  //   })
-  // }
-  // function connectUser() {
-  //   web3Context.dispatch({
-  //     type: "SET_USER_CONNECTED"
-  //   })
-  // }
-  // function disconnectUser() {
-  //   web3Context.dispatch({
-  //     type: "SET_USER_DISCONNECTED"
-  //   })
-  // }
-  // function disconnectUser(data) {
-  //   web3Context.dispatch({
-  //     type: "SET_WEB3_DATA",
-  //     payload: data
-  //   })
-  // }
+  const markNotificationsAsRead = (notificationIds) => {
+    let ids = [];
 
-  // function howToAccessState() {
-  //   const description = userContext.state.description;
-  //   // etc etc
-  // }
+    if(notificationIds){
+      ids = notificationIds;
+    }
+    else if(notifications.length == 0){
+      return;
+    }
+    else {
+      ids = notifications.map(x => x.id);
+    }
 
+    axios({
+      method: "POST",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/MarkNotificationsAsRead`,
+      headers: {
+        Authorization: "Bearer " + accessToken + "",
+      },
+      data: { notificationIds: ids }
+    })
+      .then(function (response) {
+        getNotifications();
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  };
+
+  function showNewNotificationAnimation(){
+    setHasBellIconAnimate(true);
+  }
+
+  function hideNewNotificationAnimation(){
+    setHasBellIconAnimate(false);
+  }
+
+  //need to remove previous event handler on component re-render
+  hub.off('ReceiveMessage');
+  
+  hub.on('ReceiveMessage', (userId, message) => {
+    if(userContext.state.id == userId){
+      addToast(message, {
+        appearance: 'info',
+        autoDismiss: true,
+      });
+      showNewNotificationAnimation();
+      getNotifications();
+    }
+  });
+  
   return (
     <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
       {({ open }) => (
@@ -548,9 +577,11 @@ provider.on("connect",  (chainId)  => {
                                 View notifications
                               </span>
                               <BellIcon
-                                className="h-6 w-6"
+                                className={hasBellIconAnimate ? "h-6 w-6 align-text-top animate-swing origin-top" : "h-6 w-6"}
                                 aria-hidden="true"
+                                onClick={() => hideNewNotificationAnimation()}
                               />
+                              {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)}
                             </Menu.Button>
                           </div>
                           <Transition
@@ -565,20 +596,90 @@ provider.on("connect",  (chainId)  => {
                           >
                             <Menu.Items
                               static
-                              className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                              className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                             >
-                              <div className="pt-3 pb-1">
+                              <div className="pt-3 pb-1 max-h-96 overflow-y-scroll">
                                 <h1 className="font-bold mb-2 px-4">
                                   Notifications
                                 </h1>
+                                {notifications && notifications.length && 
+                                  <a className="block mb-2 mt-0.5 px-4 text-sm underline" 
+                                     href="#"
+                                     onClick={() => markNotificationsAsRead()}
+                                    >Mark all as read
+                                  </a>
+                                }
                                 {notifications && notifications.length ? (
-                                  notifications.map((notification,i) => (
+                                  notifications.map((item, index) => (
                                     <Menu.Item
-                                      key={i}
+                                      key={index}
                                       as={"span"}
-                                      className="block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg"
+                                      className={item.hasRead ? "block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg mb-1 mt-1" : "block py-2 font-medium mx-2 px-2 rounded-lg mb-1 mt-1 hover:bg-blue-100 bg-blue-50 text-blue-700"}
+                                      onClick={() => markNotificationsAsRead([item.id])}
                                     >
-                                      {notification.eventName.replace(
+
+                                      <div className="flex items-center py-5">
+                                        <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                                          <Link to={`/item-detail?listed=false&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
+                                            {item.nftDetails && item.nftDetails.imageUrl ? (
+                                              <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover" />
+                                            ) : null}
+                                            {item.nftDetails && item.nftDetails.videoUrl ? (
+                                              <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+                                            ) : null}
+                                            {item.userLike && item.userLike.userFk.profilePictureUrl? (
+                                              <img src={item.userLike.userFk.profilePictureUrl} className="w-full h-full object-cover" />
+                                            ) : null}
+                                            {item.userFollower && item.userFollower.followerUserFk.profilePictureUrl ? (
+                                              <img src={item.userFollower.followerUserFk.profilePictureUrl} className="w-full h-full object-cover" />
+                                            ) : null}
+                                            {!item.nftDetails ? (
+                                              <div className="h-full w-full flex items-center justify-center">
+                                                <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                              </div>
+                                            ) : null}
+                                          </Link>
+                                        </div>
+                                        <div className="max-w-lg">
+                                          {(() => {
+                                              if(item.eventName == "UserFollowed" && item.userFollower)
+                                                return <p className="text-md font-bold">{item.userFollower.followerUserFk.name} is following you</p>
+                                              else if (item.eventName == "ItemLiked" && item.userLike)
+                                                return <p className="text-md font-bold">{item.userLike.userFk.name} liked your NFT</p>
+                                              else
+                                                return <p className="text-md font-bold">{item.eventName.replace(/([A-Z])/g," $1")}</p>
+                                            })()
+                                          }
+                                          <Link to={`/item-detail?listed=false&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="block text-xs hover:opacity-90 font-medium transition-opacity">
+                                            <span>{item.nftDetails?.name}</span>
+                                          </Link>
+                                          {item.txHash ? (
+                                            <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" className="block text-sm underline mt-0.5">
+                                              <span>tx: {`${item.txHash.substr(0,4)}...${item.txHash.substr(-6,6)}`}</span>
+                                              <ExternalLinkIcon
+                                                className="inline ml-1 h-4 w-4 opacity-80"
+                                                aria-hidden="true"
+                                              />
+                                            </a>) : null
+                                          }
+                                          {item.eventName == "UserFollowed" && item.userFollower ? (
+                                            <a href={`${appUrls.fomoClient}/profile-info?userId=${item.userFollower.followerUserId}`} target="_self" className="block text-sm underline mt-0.5">
+                                              <span>view profile</span>
+                                              <ExternalLinkIcon
+                                                className="inline ml-1 h-4 w-4 opacity-80"
+                                                aria-hidden="true"
+                                              />
+                                            </a>) : null
+                                          }
+                                          <span className="text-xs">
+                                            {moment(
+                                              item.dateCreated
+                                            ).fromNow()}
+                                          </span>
+                                        </div>
+                                      </div>
+                  
+                                      {/* {notification.eventName.replace(
                                         /([A-Z])/g,
                                         " $1"
                                       )}
@@ -586,7 +687,7 @@ provider.on("connect",  (chainId)  => {
                                         {moment(
                                           notification.dateCreated
                                         ).fromNow()}
-                                      </span>
+                                      </span> */}
                                     </Menu.Item>
                                   ))
                                 ) : (
