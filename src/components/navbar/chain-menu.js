@@ -14,7 +14,7 @@ const menuItems = [
   { name: 'Ethereum', image: EthLogo, id: 1 }
 ]
 
-export default function ChainMenu() {
+export default function ChainMenu(props) {
   const userContext = useContext(UserContext);
 
   let blockchain = menuItems[userContext.state.blockchainId];
@@ -29,7 +29,8 @@ export default function ChainMenu() {
 
   function networkSelected(item) {
     setActiveNetwork(item);
-    goToMainPage()
+    props.disconnect();
+    // goToMainPage()
   }
 
   function goToMainPage(text){

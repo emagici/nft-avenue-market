@@ -295,13 +295,13 @@ export default function ItemDetail(props) {
       return;
     }
 
-    isLoading(true);
-    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
-    const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
-    const listingFee = await marketplaceContract.methods.listingFee().call();
-    const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
+    if(userContext.state.blockchainId == 0){
+        isLoading(true);
+        const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
+        const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
+        const listingFee = await marketplaceContract.methods.listingFee().call();
+        const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
-    // if(Number(currentAllowance) < Number(listingFee)){
         await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
@@ -313,9 +313,10 @@ export default function ItemDetail(props) {
         .catch(error => {
           isLoading(false);
         });
-    // }
-    // else
-    //   checkNftApprovalAndList();
+    }
+    else{
+      checkNftApprovalAndList();
+    }
   };
 
   const checkNftApprovalAndList = async () => {
@@ -1365,7 +1366,7 @@ export default function ItemDetail(props) {
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
                     <dt className="text-sm font-bold text-gray-800">Blockchain</dt>
-                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">BSC</dd>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">{userContext.state.blockchainId == 0 ? "BSC" : "ETH"}</dd>
                   </div>
                 </dl>
               </div>

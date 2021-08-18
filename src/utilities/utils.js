@@ -39,7 +39,7 @@ export const getTokenTypes = (blockchainId) => {
   }
   if(blockchainId === 1){
     return [
-      { name: "ETH", tokenAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" },
+      { name: "ETH", tokenAddress: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" },
       { name: "USDT", tokenAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7" }
     ]
   }
@@ -65,6 +65,7 @@ export const getPayTokenFromListing = async (
   blockchainId
 ) => {
   var contract = new web3.eth.Contract(MARKETPLACE_ABI, getMarketplaceContractAddress(blockchainId));
+
   const listingDetails = await contract.methods
     .listings(chkAddress, chkTokenId, chkOwnerAdd)
     .call();

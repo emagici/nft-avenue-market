@@ -112,18 +112,26 @@ export default function Navbar() {
   const [provider, setProvider] = useState();
 
   const disconnect = async () => {
-    if (!provider) return;
+    if (!provider){
+      web3Context.dispatch({
+        type: "RESET_ALL",
+      });
+      userContext.dispatch({
+        type: "RESET_ALL",
+      });
+      document.location.href = `/`;
+      return;
+    } 
 
     setMyAdd(null);
     web3Context.dispatch({
       type: "SET_USER_DISCONNECTED",
     });
-
     if (provider.close) {
       await provider.close();
     }
-
     setProvider(null);
+    handleSignOut();
   };
 
   const signMetamask = async () => {
@@ -251,7 +259,11 @@ export default function Navbar() {
       // };
 
       // if(!window.web3){
-      web3 = new Web3("https://bsc-dataseed.binance.org");
+
+      if(userContext.state.blockchainId == 0)
+        web3 = new Web3("https://bsc-dataseed.binance.org");
+      else if(userContext.state.blockchainId == 1)
+        web3 = new Web3("https://mainnet.infura.io/v3/77aa95711a704e63ba95d1061a9a08b4");
 
       web3Context.dispatch({
         type: "SET_WEB3_DATA",
@@ -300,17 +312,29 @@ export default function Navbar() {
   async function connectWallet(callback) {
     // if (connected) return;
 
-    const providerOptions = {
-      walletconnect: {
-        package: WalletConnectProvider,
-        options: {
-          rpc: {
-            56: "https://bsc-dataseed.binance.org",
+    let providerOptions;
+
+    if(userContext.state.blockchainId == 0)
+      providerOptions = {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            rpc: {
+              56: "https://bsc-dataseed.binance.org",
+            },
+            network: "binance",
           },
-          network: "binance",
         },
-      },
-    };
+      };
+    else if(userContext.state.blockchainId == 1)
+      providerOptions = {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "77aa95711a704e63ba95d1061a9a08b4"
+          },
+        },
+      };
 
     const web3Modal = new Web3Modal({
       providerOptions, // required
@@ -357,17 +381,17 @@ export default function Navbar() {
 
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
-      document.location.href = "/";
+      disconnect();
     });
 
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId) => {
-      document.location.href = "/";
+      disconnect();
     });
 
     // Subscribe to provider disconnection
     provider.on("disconnect", (error) => {
-      document.location.href = "/";
+      disconnect();
     });
   }
 
@@ -763,7 +787,7 @@ export default function Navbar() {
                     </button>
                   )}
                 </div>
-                <ChainMenu />
+                <ChainMenu disconnect={disconnect} />
               </div>
             </div>
           </div>
