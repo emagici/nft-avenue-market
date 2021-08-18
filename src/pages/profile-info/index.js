@@ -336,7 +336,7 @@ export default function ProfileInfo() {
             <div className="h-40 mt-5 shadow-xl w-full rounded-2xl object-cover md:h-60"></div>
           )}
           <div className="absolute top-3 left-3 right-3 z-10">
-            {loggedIn && userProfile ? (
+            {loggedIn && userProfile  && userContext.state.id != userProfile.id ? (
               <div className="flex justify-between sm:justify-end flex-row space-x-2">
                 <button
                   onClick={() => setRatingModalOpen(true)}

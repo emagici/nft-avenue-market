@@ -243,7 +243,7 @@ export default function ItemDetail(props) {
           creatorAddress: item.creatorAddress,
           pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether"),
           quantity: item.quantity,
-          creatorUsername: item.creatorUsername,
+          creatorUsername: item.creatorName,
           deadline: item.deadline,
           offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
         }
@@ -517,7 +517,7 @@ export default function ItemDetail(props) {
         creatorAddress: item.creator,
         pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
         quantity: item.quantity,
-        creatorUsername: myAdd,
+        creatorUsername: userContext.state.name,
         deadline: item.deadline,
         offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
     }
