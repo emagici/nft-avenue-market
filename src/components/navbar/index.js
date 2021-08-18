@@ -595,7 +595,7 @@ export default function Navbar() {
                 ) : null}
 
                 {loggedIn ? (
-                  <UserMenu />
+                  <UserMenu handleSignOut={handleSignOut} />
                 ) : (
                   <button
                     type="button"

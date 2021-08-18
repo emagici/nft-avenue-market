@@ -29,7 +29,7 @@ const appUrls = {
   fomoNodeAPI: AppUrls.fomoNodeAPI
 };
 
-export default function UserMenu() {
+export default function UserMenu(props) {
   const { addToast } = useToasts()
   const web3Context = useContext(Web3Context);
   const userContext = useContext(UserContext);
@@ -85,18 +85,7 @@ export default function UserMenu() {
   }, [web3Context.state.web3Data]);
 
   function handleSignOut() {
-    console.log('signing out');
-    web3Context.dispatch({
-      type: "RESET_ALL"
-    });
-    userContext.dispatch({
-      type: "RESET_PROFILE"
-    });
-    signout();
-  }
-
-  function goToUserPage(){
-    document.location.href = `/user`;
+    props.handleSignOut();
   }
 
   useEffect(() => {
@@ -139,27 +128,6 @@ export default function UserMenu() {
       if(userContext.state.accessToken)
         loadProfile(userContext.state.accessToken)
   }, [userContext.state.accessToken]);
-
-  const signout = () => {
-    axios({
-      method: "GET",
-      url: `${appUrls.fomoHostApi}/api/TokenAuth/LogOut`,
-      headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
-    })
-    .then(function (response) {
-        console.log("signout result", response);
-        goToUserPage();
-    })
-    .catch(function (response) {
-      console.log(response);
-      addToast("Error signing out.", {
-        appearance: 'error',
-        autoDismiss: true,
-      })
-    });
-  }
 
   return (
     <Popover className="sm:relative inline-flex">
