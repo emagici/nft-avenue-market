@@ -66,6 +66,10 @@ export default function MetamaskSignIn(props) {
           type: "SET_SIGN",
           payload: sign,
         });
+        userContext.dispatch({
+          type: "SET_SIGN_ADDRESS",
+          payload: myadd,
+        });
       });
   };
 
