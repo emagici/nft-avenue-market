@@ -100,18 +100,18 @@ export default function Navbar() {
   const [provider, setProvider] = useState();
 
   
+  const changeNetworkHandle = () => {
+    web3Context.dispatch({
+      type: "RESET_ALL",
+    });
+    userContext.dispatch({
+      type: "RESET_PROFILE",
+    });
+    document.location.href = `/`;
+  }
 
   const disconnect = async () => {
-    if (!provider){
-      web3Context.dispatch({
-        type: "RESET_ALL",
-      });
-      userContext.dispatch({
-        type: "RESET_PROFILE",
-      });
-      document.location.href = `/`;
-      return;
-    } 
+    if (!provider) return;
 
     setMyAdd(null);
     web3Context.dispatch({
@@ -299,8 +299,24 @@ export default function Navbar() {
 
     const provider = await web3Modal.connect();
 
-    console.log(provider)
     const web3 = new Web3(provider);
+
+    const chainId = await web3.eth.getChainId();
+
+    if(userContext.state.blockchainId == 0 && chainId != 56){
+        addToast("Please connect wallet to Binance Smart Chain Mainnet", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
+        return;
+    }
+    else if(userContext.state.blockchainId == 1 && chainId != 1){
+        addToast("Please connect wallet to Ethereum Mainnet", {
+          appearance: 'error',
+          autoDismiss: true,
+        })
+        return;
+    }
 
     web3Context.dispatch({
       type: "SET_WEB3_DATA",
@@ -341,21 +357,27 @@ export default function Navbar() {
 
     setProvider(provider);
 
+
     if (callback) callback();
 
     // Subscribe to accounts change
     provider.on("accountsChanged", (accounts) => {
-      disconnect();
+      changeNetworkHandle();
     });
 
     // Subscribe to chainId change
     provider.on("chainChanged", (chainId) => {
-      disconnect();
+      changeNetworkHandle();
     });
+
+    // Subscribe to provider connection
+provider.on("connect",  (chainId)  => {
+  console.log(chainId);
+});
 
     // Subscribe to provider disconnection
     provider.on("disconnect", (error) => {
-      disconnect();
+      changeNetworkHandle();
     });
   }
 
@@ -662,7 +684,7 @@ export default function Navbar() {
                     </button>
                   )}
                 </div>
-                <ChainMenu disconnect={disconnect} />
+                <ChainMenu disconnect={changeNetworkHandle} />
               </div>
             </div>
           </div>
