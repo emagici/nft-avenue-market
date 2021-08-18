@@ -7,7 +7,7 @@ import { UserIcon } from '@heroicons/react/solid'
 import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context'
 import {
-  fomoTokenAddress
+  getDefaultTokenAddress
 } from "../../utilities/utils";
 import axios from "axios";
 import AppUrls from '../../AppSettings';
@@ -35,8 +35,8 @@ export default function UserMenu(props) {
   const userContext = useContext(UserContext);
 
   const [userName, setUserName] = useState("User");
-  const [bnbBalance, setBnbBalance] = useState("0");
-  const [fomoBalance, setFomoBalance] = useState("0");
+  const [primaryTokenBalance, setPrimaryTokenBalance] = useState("0");
+  const [secondaryTokenBalance, setSecondaryTokenBalance] = useState("0");
   const [accessToken, setAccessToken] = useState();
 
   useEffect(async() => {
@@ -54,9 +54,9 @@ export default function UserMenu(props) {
         try {
           const balArr = web3Context.state.web3Data.utils.fromWei(result, "ether").split('.')
           let balStr = balArr[0]
-          setBnbBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,3)}`)
+          setPrimaryTokenBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,3)}`)
         } catch(e) {
-          setBnbBalance(0)
+          setPrimaryTokenBalance(0)
         }
       }
     })
@@ -71,15 +71,15 @@ export default function UserMenu(props) {
       },
     ];
 
-    const contract = new web3Context.state.web3Data.eth.Contract(minABI, fomoTokenAddress);
+    const contract = new web3Context.state.web3Data.eth.Contract(minABI, getDefaultTokenAddress(userContext.state.blockchainId));
     const result = await contract.methods.balanceOf(myadd).call();
 
     try {
       const balArr = web3Context.state.web3Data.utils.fromWei(result, "ether").split('.')
       let balStr = balArr[0]
-      setFomoBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,1)}`)
+      setSecondaryTokenBalance(balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,1)}`)
     } catch(e) {
-      setFomoBalance(0)
+      setSecondaryTokenBalance(0)
     }
 
   }, [web3Context.state.web3Data]);
@@ -173,12 +173,12 @@ export default function UserMenu(props) {
                     <h2 className="font-bold sm:font-extrabold text-lg sm:text-lg">{userName}</h2>
                   </div>
                   <div className="mb-3">
-                    <p className="text-sm font-bold text-gray-500">BNB Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{bnbBalance} BNB</p>
+                    <p className="text-sm font-bold text-gray-500">{userContext.state.blockchainId == 0 ? "BNB" : "ETH"} Balance</p>
+                    <p className="text-lg font-bold text-gray-800">{primaryTokenBalance} {userContext.state.blockchainId == 0 ? "BNB" : "ETH"}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-500">FOMO Balance</p>
-                    <p className="text-lg font-bold text-gray-800">{fomoBalance} FOMO</p>
+                    <p className="text-sm font-bold text-gray-500">{userContext.state.blockchainId == 0 ? "FOMO" : "USDT"} Balance</p>
+                    <p className="text-lg font-bold text-gray-800">{secondaryTokenBalance} {userContext.state.blockchainId == 0 ? "FOMO" : "USDT"}</p>
                   </div>
                   <div className="-mx-3 mt-3 -mb-2">
                     <a
