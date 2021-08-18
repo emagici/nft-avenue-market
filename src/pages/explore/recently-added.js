@@ -31,7 +31,7 @@ export default function RecentlyAddedSection() {
 
     await axios({
       method: "GET",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=&categoryFilter=&sorting=recent&blockchain=${userContext.state.blockchainId ?? 0}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=&categoryFilter=&sorting=recent&blockchain=${userContext.state.blockchainId ?? 0}&maxResultCount=10`
     })
     .then(async function (response) {
       const allItems = response.data.result;
