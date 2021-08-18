@@ -90,7 +90,7 @@ export default function UserMenu() {
       type: "RESET_ALL"
     });
     userContext.dispatch({
-      type: "RESET_ALL"
+      type: "RESET_PROFILE"
     });
     signout();
   }
@@ -113,8 +113,31 @@ export default function UserMenu() {
     }
   }
 
+  const loadProfile = async (accessToken) => {
+    await axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile?blockchain=${userContext.state.blockchainId}`,
+      headers: {
+        "Authorization": "Bearer " + accessToken + ""
+      }
+    })
+    .then(function (response) {
+
+      userContext.dispatch({
+        type: "UPDATE_DATA",
+        payload: response.data.result
+       })
+    })
+    .catch(function (response) {
+      console.log(response);
+    })
+  }
+
   useEffect(() => {
       setAccessToken(userContext.state.accessToken);
+
+      if(userContext.state.accessToken)
+        loadProfile(userContext.state.accessToken)
   }, [userContext.state.accessToken]);
 
   const signout = () => {
@@ -137,7 +160,6 @@ export default function UserMenu() {
       })
     });
   }
-
 
   return (
     <Popover className="sm:relative inline-flex">

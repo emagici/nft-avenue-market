@@ -99,13 +99,15 @@ export default function Navbar() {
 
   const [provider, setProvider] = useState();
 
+  
+
   const disconnect = async () => {
     if (!provider){
       web3Context.dispatch({
         type: "RESET_ALL",
       });
       userContext.dispatch({
-        type: "RESET_ALL",
+        type: "RESET_PROFILE",
       });
       document.location.href = `/`;
       return;
@@ -119,7 +121,6 @@ export default function Navbar() {
       await provider.close();
     }
     setProvider(null);
-    handleSignOut();
   };
 
   const signMetamask = async () => {
@@ -130,6 +131,10 @@ export default function Navbar() {
           type: "SET_SIGN",
           payload: sign,
         });
+        userContext.dispatch({
+          type: "SET_SIGN_ADDRESS",
+          payload: myAdd,
+        });
       });
   };
 
@@ -139,7 +144,7 @@ export default function Navbar() {
       type: "RESET_ALL",
     });
     userContext.dispatch({
-      type: "RESET_ALL",
+      type: "RESET_PROFILE",
     });
     signout();
   }
@@ -167,10 +172,12 @@ export default function Navbar() {
   };
 
   useEffect(() => {
+    console.log(userContext.state)
     loadMyOwnNfts();
   }, [userContext.state.sign]);
 
   const loadMyOwnNfts = () => {
+
     if (!userContext.state.sign) return;
 
     axios({
@@ -210,43 +217,6 @@ export default function Navbar() {
       });
 
       let web3;
-      // if (window.ethereum) {
-
-      //     web3 = new Web3(window.ethereum);
-      //     web3Context.dispatch({
-      //       type: "SET_WEB3_DATA",
-      //       payload: web3,
-      //     });
-
-      //     web3.eth.getAccounts()
-      //     .then(async (addr) => {
-      //       if(addr.toString()){
-      //         setMyAdd(addr.toString());
-      //         web3Context.dispatch({
-      //           type: "SET_USER_CONNECTED"
-      //         });
-      //       }
-      //     });
-      // } else if (window.web3) {
-
-      //     web3 = new Web3(window.web3.currentProvider);
-      //     web3Context.dispatch({
-      //       type: "SET_WEB3_DATA",
-      //       payload: web3,
-      //     });
-
-      //     web3.eth.getAccounts()
-      //     .then(async (addr) => {
-      //       if(addr.toString()){
-      //         setMyAdd(addr.toString());
-      //         web3Context.dispatch({
-      //           type: "SET_USER_CONNECTED"
-      //         });
-      //       }
-      //     });
-      // };
-
-      // if(!window.web3){
 
       if(userContext.state.blockchainId == 0)
         web3 = new Web3("https://bsc-dataseed.binance.org");
@@ -257,7 +227,6 @@ export default function Navbar() {
         type: "SET_WEB3_DATA",
         payload: web3,
       });
-      // }
     };
     checkConnection();
   }, []);
@@ -330,6 +299,7 @@ export default function Navbar() {
 
     const provider = await web3Modal.connect();
 
+    console.log(provider)
     const web3 = new Web3(provider);
 
     web3Context.dispatch({
@@ -343,6 +313,12 @@ export default function Navbar() {
     web3Context.dispatch({
       type: "SET_USER_CONNECTED",
     });
+
+    if(userContext.state.signAddress?.toLowerCase() != myadd?.toLowerCase()){
+      userContext.dispatch({
+        type: "RESET_PROFILE",
+      });
+    }
 
     const myContract = new web3.eth.Contract(
       MARKETPLACE_ABI,

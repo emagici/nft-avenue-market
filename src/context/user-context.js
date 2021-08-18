@@ -15,6 +15,7 @@ const initialState = {
   profilePictureUrl: null,
   accessToken: null,
   sign: null,
+  signAddress: null,
   ownNfts: [],
   id: null,
   registeredWalletAddress: null,
@@ -53,6 +54,12 @@ let reducer = (state, action) => {
           sign: action.payload
         };
 
+    case 'SET_SIGN_ADDRESS':
+        return {
+          ...state,
+          signAddress: action.payload
+        };
+
     case 'SET_OWN_NFTS':
       return {
         ...state,
@@ -63,6 +70,25 @@ let reducer = (state, action) => {
       return {
         ...state,
         blockchainId: action.payload
+      };
+
+    case 'RESET_PROFILE': //IGNORE BLOCKCHAINID
+      return {
+        ...state,
+        bannerPictureUrl: null,
+        description: null,
+        facebookUrl: null,
+        twitterUrl: null,
+        discordUrl: null,
+        instagramUrl: null,
+        name: null,
+        profilePictureUrl: null,
+        accessToken: null,
+        sign: null,
+        signAddress: null,
+        ownNfts: [],
+        id: null,
+        registeredWalletAddress: null
       };
 
     case 'RESET_ALL':
@@ -77,6 +103,7 @@ let reducer = (state, action) => {
         profilePictureUrl: null,
         accessToken: null,
         sign: null,
+        signAddress: null,
         ownNfts: [],
         id: null,
         registeredWalletAddress: null,
