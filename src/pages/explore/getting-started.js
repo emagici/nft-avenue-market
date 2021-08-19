@@ -23,6 +23,15 @@ export default function GettingStartedSection() {
   const graphQLClient = new GraphQLClient('https://api-eu-central-1.graphcms.com/v2/cksi1jg4i1pgs01xlc7859py8/master', {})
 
   useEffect(() => {
+
+    const articlesTmp = sharedContext.state.articles
+    if (articlesTmp && articlesTmp.length) {
+      // only load new articles on initial load - otherwise restore from state if available
+      setArticles(articlesTmp)
+      setLoading(false)
+      return;
+    }
+
     const fetchArticles = async () => {
       const { articles } = await graphQLClient.request(
         gql`

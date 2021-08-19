@@ -25,6 +25,7 @@ export default function VerifiedArtistsSection() {
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetVerifiedArtists`
     })
     .then(async function (response) {
+      console.log('VERIFIED')
       console.log(response.data.result)
       setItems(response.data.result)
     })

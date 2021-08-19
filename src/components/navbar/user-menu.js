@@ -158,7 +158,7 @@ export default function UserMenu(props) {
               static
               className="absolute z-10 right-0 left-0 sm:left-auto sm:top-auto sm:bottom-auto mt-14 w-screen sm:w-max sm:w-auto"
             >
-              <div className="relative rounded-lg w-60 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
+              <div className="relative rounded-lg w-full sm:w-72 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
                 <div className="border-b px-6 pt-5 pb-4">
                   <div className="flex items-center space-x-2 mb-3">
                     {userContext.state.profilePictureUrl ? (

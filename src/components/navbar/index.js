@@ -572,7 +572,7 @@ provider.on("connect",  (chainId)  => {
                       {({ open }) => (
                         <>
                           <div>
-                            <Menu.Button className="bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
+                            <Menu.Button className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
                               <span className="sr-only">
                                 View notifications
                               </span>
@@ -581,7 +581,13 @@ provider.on("connect",  (chainId)  => {
                                 aria-hidden="true"
                                 onClick={() => hideNewNotificationAnimation()}
                               />
-                              {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)}
+                              {/* {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)} */}
+                              {newNotificationCount && (
+                                <span class="absolute top-0 right-0 flex h-3 w-3">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                                </span>
+                              )}
                             </Menu.Button>
                           </div>
                           <Transition
