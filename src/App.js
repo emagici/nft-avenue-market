@@ -21,12 +21,14 @@ import { ToastProvider } from 'react-toast-notifications';
 import { UserProvider } from "./context/user-context";
 import { Web3Provider } from "./context/web3-context";
 import { SharedProvider } from "./context/shared-context";
+import { WalletProvider } from "./context/wallet-context"
 
 function App() {
   return (
     <SharedProvider>
       <Web3Provider>
         <UserProvider>
+          <WalletProvider>
           <ToastProvider
             autoDismiss
             autoDismissTimeout={4000}
@@ -65,6 +67,7 @@ function App() {
               We use cookies to improve users experience. By browsing our site you are agreeing to our <a href="/privacy-policy" className="font-medium underline">privacy policy</a>.
             </CookieConsent>
           </ToastProvider>
+          </WalletProvider>
         </UserProvider>
       </Web3Provider>
     </SharedProvider>

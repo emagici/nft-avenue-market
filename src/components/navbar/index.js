@@ -12,12 +12,13 @@ import { useWallet } from "use-wallet";
 import AvenueLogoGif from "../../assets/img/fomo/the-avenue-v2.gif";
 import Routes from "../../routes";
 import Web3 from "web3";
-import Web3Modal from "web3modal";
+import Web3Modal, { getProviderInfo } from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import SignInRegisterModal from "./SignInRegisterModal";
 
 import { UserContext, initialState } from "../../context/user-context";
 import { Web3Context } from "../../context/web3-context";
+import { WalletContext } from "../../context/wallet-context";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useAsync } from "react-async-hook";
 import useConstant from "use-constant";
@@ -93,6 +94,8 @@ const hub = setupSignalRConnection(userNotificationConnectionHub);
 export default function Navbar() {
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
+  const walletContext = useContext(WalletContext)
+
   const location = useLocation()
   const { addToast } = useToasts()
   
@@ -126,8 +129,8 @@ export default function Navbar() {
     if (!provider) return;
 
     setMyAdd(null);
-    web3Context.dispatch({
-      type: "SET_USER_DISCONNECTED",
+    walletContext.dispatch({
+      type: "RESET_ALL",
     });
     if (provider.close) {
       await provider.close();
@@ -224,21 +227,25 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkConnection = async () => {
-      web3Context.dispatch({
-        type: "SET_USER_DISCONNECTED",
-      });
-
-      let web3;
-
-      if(userContext.state.blockchainId == 0)
-        web3 = new Web3("https://bsc-dataseed.binance.org");
-      else if(userContext.state.blockchainId == 1)
-        web3 = new Web3("https://mainnet.infura.io/v3/77aa95711a704e63ba95d1061a9a08b4");
-
-      web3Context.dispatch({
-        type: "SET_WEB3_DATA",
-        payload: web3,
-      });
+      if(walletContext.state.userConnected){
+        connectWallet()
+      }else{
+        walletContext.dispatch({
+          type: "RESET_ALL",
+        });
+  
+        let web3;
+  
+        if(userContext.state.blockchainId == 0)
+          web3 = new Web3("https://bsc-dataseed.binance.org");
+        else if(userContext.state.blockchainId == 1)
+          web3 = new Web3("https://mainnet.infura.io/v3/77aa95711a704e63ba95d1061a9a08b4");
+  
+        web3Context.dispatch({
+          type: "SET_WEB3_DATA",
+          payload: web3,
+        });
+      }
     };
     checkConnection();
   }, []);
@@ -309,10 +316,16 @@ export default function Navbar() {
       providerOptions, // required
     });
 
-    const provider = await web3Modal.connect();
+    let provider;
+    if(walletContext.state.walletId){
+      provider = await web3Modal.connectTo(walletContext.state.walletId);
+    }
+    else{
+      provider = await web3Modal.connect();
+    }
 
     const web3 = new Web3(provider);
-
+    
     const chainId = await web3.eth.getChainId();
 
     if(userContext.state.blockchainId == 0 && chainId != 56){
@@ -335,11 +348,18 @@ export default function Navbar() {
       payload: web3,
     });
 
+    var providerInfo = getProviderInfo(provider);
+
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyAdd(myadd);
-    web3Context.dispatch({
+    walletContext.dispatch({
       type: "SET_USER_CONNECTED",
+    });
+
+    walletContext.dispatch({
+      type: "SET_WALLET_ID",
+      payload: providerInfo.id
     });
 
     if(userContext.state.signAddress?.toLowerCase() != myadd?.toLowerCase()){
@@ -381,11 +401,6 @@ export default function Navbar() {
     provider.on("chainChanged", (chainId) => {
       changeNetworkHandle();
     });
-
-    // Subscribe to provider connection
-provider.on("connect",  (chainId)  => {
-  console.log(chainId);
-});
 
     // Subscribe to provider disconnection
     provider.on("disconnect", (error) => {

@@ -1,24 +1,11 @@
 import React, { createContext, useReducer } from 'react';
 
 const initialState = {
-  userConnected: false,
   web3Data: null
 };
 
 let reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_USER_CONNECTED':
-      return {
-        ...state,
-        userConnected: true
-      };
-
-    case 'SET_USER_DISCONNECTED':
-      return {
-        ...state,
-        userConnected: false
-      };
-
     case 'SET_WEB3_DATA':
       return {
         ...state,
@@ -27,7 +14,6 @@ let reducer = (state, action) => {
 
     case 'RESET_ALL':
       return {
-        userConnected: false,
         web3Data: null
       };
 

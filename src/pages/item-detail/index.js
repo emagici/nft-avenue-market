@@ -18,6 +18,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import { SharedContext } from '../../context/shared-context';
 import { UserContext } from '../../context/user-context'
 import { Web3Context } from '../../context/web3-context'
+import { WalletContext } from '../../context/wallet-context'
 import {
   MARKETPLACE_ABI,
   getMarketplaceContractAddress,
@@ -80,7 +81,8 @@ export default function ItemDetail(props) {
   const sharedContext = useContext(SharedContext);
   const userContext = useContext(UserContext)
   const web3Context = useContext(Web3Context)
-
+  const walletContext = useContext(WalletContext)
+  
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
   const [tokenid, setTokenId] = useState("");
   const [nftAddress, setNftAddress] = useState("");
@@ -283,7 +285,7 @@ export default function ItemDetail(props) {
   }
 
   const listItem = async () => {
-    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
       addToast("Please connect wallet and sign in.", {
         appearance: 'error',
         autoDismiss: true,
@@ -371,7 +373,7 @@ export default function ItemDetail(props) {
   };
 
   const cancelListing = async () => {
-    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
       addToast("Please connect wallet and sign in.", {
         appearance: 'error',
         autoDismiss: true,
@@ -404,7 +406,7 @@ export default function ItemDetail(props) {
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
-    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
       addToast("Please connect wallet and sign in.", {
         appearance: 'error',
         autoDismiss: true,
@@ -438,7 +440,7 @@ export default function ItemDetail(props) {
   }
 
   const createOffer = async () => {
-    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
       addToast("Please connect wallet and sign in.", {
         appearance: 'error',
         autoDismiss: true,
@@ -536,7 +538,7 @@ export default function ItemDetail(props) {
   }
 
   const cancelOffer = async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !walletContext.state.userConnected) return;
 
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
@@ -544,7 +546,7 @@ export default function ItemDetail(props) {
   };
 
   const buyItem = async (obj) => {
-    if (!web3 || !userContext.state.sign || !web3Context.state.userConnected){
+    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
       addToast("Please connect wallet and sign in.", {
         appearance: 'error',
         autoDismiss: true,

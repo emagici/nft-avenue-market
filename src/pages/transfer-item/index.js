@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import qs from "qs";
-import { UserContext } from '../../context/user-context'
+import { WalletContext } from '../../context/wallet-context'
 import { Web3Context } from '../../context/web3-context'
 import axios from "axios";
 import AppUrls from '../../AppSettings';
@@ -32,12 +32,13 @@ export default function TransferItem(props) {
   const [myAdd, setMyadd] = useState();
 
   const web3Context = useContext(Web3Context)
+  const walletContext = useContext(WalletContext)
 
   const [qty, setQty] = useState(1);
   const [toAddress, setToAddress] = useState("");
 
   const transfer = async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !walletContext.state.userConnected) return;
 
     if(nftType === "1155"){
       const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
@@ -82,7 +83,7 @@ export default function TransferItem(props) {
   }
 
   useEffect(async () => {
-    if (!web3 || !web3Context.state.userConnected) return;
+    if (!web3 || !walletContext.state.userConnected) return;
     const accounts = await web3.eth.getAccounts();
     var myadd = accounts[0];
     setMyadd(myadd);
