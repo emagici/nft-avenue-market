@@ -116,6 +116,9 @@ export default function Navbar() {
 
   
   const changeNetworkHandle = () => {
+    walletContext.dispatch({
+      type: "RESET_ALL",
+    });
     web3Context.dispatch({
       type: "RESET_ALL",
     });
@@ -155,6 +158,9 @@ export default function Navbar() {
 
   function handleSignOut() {
     console.log("signing out");
+    walletContext.dispatch({
+      type: "RESET_ALL",
+    });
     web3Context.dispatch({
       type: "RESET_ALL",
     });
