@@ -418,7 +418,7 @@ export default function ProfileInfo() {
               </div>
 
               <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate sm:pl-1 inline-flex">
-                {userProfile ? displayName : "User"} {userProfile && userProfile.hasVerified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
+                {userProfile ? displayName : "User"} {userProfile && userProfile.verified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
               </h1>
 
               {userProfile ? (

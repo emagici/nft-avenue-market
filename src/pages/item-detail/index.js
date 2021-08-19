@@ -206,6 +206,7 @@ export default function ItemDetail(props) {
     .then(async function (nftListingResponse) {
       const nftListingResult = nftListingResponse.data.result;
 
+
       // console.log(nftListingResult)
 
       if(nftListingResult.length === 0) return;
@@ -228,7 +229,8 @@ export default function ItemDetail(props) {
           quantity: item.nft.quantity,
           sellerName: item.seller.name,
           sellerProfilePic: item.seller.profilePictureUrl,
-          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner, userContext.state.blockchainId)
+          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner, userContext.state.blockchainId),
+          verified: item.seller.verified
         }
       )));
 
@@ -246,7 +248,8 @@ export default function ItemDetail(props) {
           quantity: item.quantity,
           creatorUsername: item.creatorName,
           deadline: item.deadline,
-          offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
+          offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName,
+          verified: item.verified
         }
       ))
 

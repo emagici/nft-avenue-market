@@ -421,7 +421,7 @@ export default function Profile() {
               </div>
 
               <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate inline-flex">
-                {loggedIn && userProfile ? displayName : "Sign in required"} {loggedIn && userProfile && userProfile.hasVerified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
+                {loggedIn && userProfile ? displayName : "Sign in required"} {loggedIn && userProfile && userProfile.verified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
               </h1>
 
               {loggedIn && userProfile ? (
