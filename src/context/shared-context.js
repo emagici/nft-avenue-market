@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from 'react';
 
 const initialState = {
   appLoading: false,
+  articles: []
 };
 
 let reducer = (state, action) => {
@@ -12,10 +13,24 @@ let reducer = (state, action) => {
         appLoading: true
       };
 
-      case 'STOP_LOADING':
+    case 'STOP_LOADING':
       return {
         ...state,
         appLoading: false
+      };
+
+    case 'UPDATE_ARTICLES':
+      return {
+        ...state,
+        articles: action.payload
+      };
+    case 'ADD_ARTICLE':
+      return {
+        ...state,
+        articles: [
+          ...state.articles.filter(item => item.id !== action.payload.id),
+          action.payload
+        ]
       };
 
     default:

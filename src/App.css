@@ -18,3 +18,32 @@
 .react-toast-notifications__container {
   margin-top: 65px;
 }
+
+
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+    font-size: 38px;
+    font-weight: 700;
+    padding-top: 30px;
+}
+
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    font-size: 28px;
+    font-weight: 600;
+    padding-top: 30px;
+}
+
+.article-content p {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.article-content img {
+  max-width: 85%;
+  padding-top: 30px;
+  margin: 30px auto;
+}

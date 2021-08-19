@@ -14,6 +14,7 @@ import PrivacyPolicy from './pages/policies/privacy-policy';
 import TermsPage from './pages/policies/terms';
 import AGuideToNFTs from './pages/getting-started/a-guide-to-nfts';
 import RecentlyAddedPage from './pages/recently-added';
+import BlogPage from './pages/blog';
 
 export default [
 	{
@@ -108,6 +109,12 @@ export default [
 		title: "Terms",
 		component: TermsPage,
 		exact: true
+	},
+	{
+		path: "/blog/:slug",
+		title: "Blog",
+		component: BlogPage,
+		exact: false
 	},
 
 	// GETTING STARTED GUIDES
