@@ -51,7 +51,7 @@ export default function CardDefault(props) {
 
           {!props.nolink ? (
             <Link
-              to={`/item-detail?listed=${props.Listed}&tokenid=${props.TokenId}&nftaddress=${props.NftAddress}`}
+              to={`/item-detail?tokenid=${props.TokenId}&nftaddress=${props.NftAddress}`}
               className="absolute inset-0 focus:outline-none"
             >
               <span className="sr-only">View details for {props.TokenName}</span>

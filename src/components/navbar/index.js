@@ -647,7 +647,7 @@ export default function Navbar() {
 
                                       <div className="flex items-center py-5">
                                         <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
-                                          <Link to={`/item-detail?listed=false&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
+                                          <Link to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
                                             {item.nftDetails && item.nftDetails.imageUrl ? (
                                               <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover" />
                                             ) : null}
@@ -677,7 +677,7 @@ export default function Navbar() {
                                                 return <p className="text-md font-bold">{item.eventName.replace(/([A-Z])/g," $1")}</p>
                                             })()
                                           }
-                                          <Link to={`/item-detail?listed=false&tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="block text-xs hover:opacity-90 font-medium transition-opacity">
+                                          <Link to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="block text-xs hover:opacity-90 font-medium transition-opacity">
                                             <span>{item.nftDetails?.name}</span>
                                           </Link>
                                           {item.txHash ? (
