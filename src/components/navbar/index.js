@@ -582,12 +582,12 @@ export default function Navbar() {
               </div>
 
 
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 
                 <CommunityMenu/>
 
-                {loggedIn ? (
-                  <div className="hidden md:mr-2 md:flex-shrink-0 md:flex md:items-center">
+                {myAdd && loggedIn ? (
+                  <div className="hidden md:flex-shrink-0 md:flex md:items-center">
                     {/* Profile dropdown */}
                     <Menu as="div" className="relative">
                       {({ open }) => (
@@ -603,12 +603,12 @@ export default function Navbar() {
                                 onClick={() => hideNewNotificationAnimation()}
                               />
                               {/* {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)} */}
-                              {newNotificationCount && (
+                              {newNotificationCount ? (
                                 <span class="absolute top-0 right-0 flex h-3 w-3">
                                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
                                   <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
                                 </span>
-                              )}
+                              ) : null}
                             </Menu.Button>
                           </div>
                           <Transition
@@ -744,18 +744,22 @@ export default function Navbar() {
                   </div>
                 ) : null}
 
-                {loggedIn ? (
-                  <UserMenu handleSignOut={handleSignOut} />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setSignInModalOpen(true)}
-                    className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-bold rounded-full text-white shadow-sm focus:outline-none bg-gray-100 hover:bg-gray-200 text-gray-900"
-                  >
-                    <span className="md:hidden">Sign In</span>
-                    <span className="hidden md:inline">Sign In / Register</span>
-                  </button>
-                )}
+
+                {myAdd ? (
+                  loggedIn ? (
+                    <UserMenu handleSignOut={handleSignOut} />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setSignInModalOpen(true)}
+                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white shadow-sm focus:outline-none bg-gray-100 hover:bg-gray-200 text-gray-900"
+                    >
+                      <span className="">Sign In</span>
+                      {/* <span className="hidden md:inline">Sign In / Register</span> */}
+                    </button>
+                  )
+                ) : null}
+
                 <SignInRegisterModal
                   modalOpen={signInModalOpen}
                   setModalOpen={(v) => setSignInModalOpen(v)}
@@ -767,7 +771,7 @@ export default function Navbar() {
                       {({ open }) => (
                         <>
                           <div>
-                            <Menu.Button className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
+                            <Menu.Button className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
                               <span className="sr-only">Wallet</span>
                               {myAdd.substr(0, 6) + "..."}
                             </Menu.Button>
@@ -806,7 +810,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => connectWallet()}
-                      className="bg-indigo-600 hover:bg-indigo-700 relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
+                      className="bg-indigo-600 hover:bg-indigo-700 relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
                     >
                       <span>Connect Wallet</span>
                     </button>

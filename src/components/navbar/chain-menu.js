@@ -1,5 +1,5 @@
 import { Fragment, useState, useContext, useEffect } from 'react'
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, Popover, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { classNames } from '../../utilities/utils'
@@ -38,16 +38,16 @@ export default function ChainMenu(props) {
   }
 
   return (
-    <div className="ml-2 md:flex-shrink-0 flex md:items-center">
-      <Menu as="div" className="relative">
+    <div className="md:flex-shrink-0 flex md:items-center">
+      <Popover as="div" className="relative">
         {({ open }) => (
           <>
             <div className="flex items-center justify-center">
-              <Menu.Button className="relative inline-flex items-center text-sm font-bold rounded-full text-gray-900 shadow-sm focus:outline-none">
+              <Popover.Button className="relative inline-flex items-center text-sm font-bold rounded-full text-gray-900 shadow-sm focus:outline-none">
                 <span className="">
                   <img src={activeNetwork.image} className="h-9 w-9 rounded-full" />
                 </span>
-              </Menu.Button>
+              </Popover.Button>
             </div>
             <Transition
               show={open}
@@ -59,13 +59,13 @@ export default function ChainMenu(props) {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items
+              <Popover.Items
                 static
                 className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
                 <div className="px-2">
                   {menuItems.map((item) => (
-                    <Menu.Button
+                    <Popover.Button
                       // as="a"
                       key={item.name}
                       className={classNames(
@@ -87,14 +87,14 @@ export default function ChainMenu(props) {
                           ) : null}
                         </div>
                       </a>
-                    </Menu.Button>
+                    </Popover.Button>
                   ))}
                 </div>
-              </Menu.Items>
+              </Popover.Items>
             </Transition>
           </>
         )}
-      </Menu>
+      </Popover>
     </div>
   )
 }

@@ -62,7 +62,7 @@ export default function CommunityMenu() {
   
 
   return (
-    <div className="mr-2 md:flex-shrink-0 flex md:items-center">
+    <div className="md:flex-shrink-0 flex md:items-center">
       <Popover className="sm:relative inline-flex">
         {({ open }) => (
           <>
@@ -89,40 +89,42 @@ export default function CommunityMenu() {
                 className="absolute z-10 right-0 left-0 sm:left-auto sm:top-auto sm:bottom-auto mt-14 w-screen sm:w-max sm:w-auto"
               >
                 <div className="relative rounded-lg w-full sm:w-72 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
-                  {menuItems.map((item) => (
-                    item.target ? (
-                      <a
-                        key={item.name}
-                        href={item.href} target={item.target ? item.target : '_self'}
-                        rel={item.target && item.target === "_blank" ? "noreferrer" : ""}
-                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
-                      >
-                        <div className="sm:ml-4 flex-1">
-                          <p className="text-sm font-bold text-gray-900 text-center sm:text-left">{item.name}</p>
-                        </div>
-                      </a>
-                    ) : (
-                      <Popover.Button
-                        as={Link}
-                        key={item.name}
-                        to={item.href}
-                        className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
-                      >
-                        <div className="sm:ml-4 flex-1">
-                          <p className="text-sm font-bold text-gray-900 text-center sm:text-left">{item.name}</p>
-                        </div>
-                      </Popover.Button>
-                    )
-                  ))}
-                </div>
-                <div className="px-2 py-3">
-                  <div className="flex space-x-6 md:order-2 justify-center">
-                    {socials.map((item) => (
-                      <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
-                        <span className="sr-only">{item.name}</span>
-                        <item.icon className="h-5 w-5" aria-hidden="true" />
-                      </a>
+                  <div className="px-1">
+                    {menuItems.map((item) => (
+                      item.target ? (
+                        <a
+                          key={item.name}
+                          href={item.href} target={item.target ? item.target : '_self'}
+                          rel={item.target && item.target === "_blank" ? "noreferrer" : ""}
+                          className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                        >
+                          <div className="sm:ml-4 flex-1">
+                            <p className="text-sm font-bold text-gray-900 text-center sm:text-left">{item.name}</p>
+                          </div>
+                        </a>
+                      ) : (
+                        <Popover.Button
+                          as={Link}
+                          key={item.name}
+                          to={item.href}
+                          className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                        >
+                          <div className="sm:ml-4 flex-1">
+                            <p className="text-sm font-bold text-gray-900 text-center sm:text-left">{item.name}</p>
+                          </div>
+                        </Popover.Button>
+                      )
                     ))}
+                  </div>
+                  <div className="px-2 py-3 border-t">
+                    <div className="flex space-x-6 md:order-2 justify-center">
+                      {socials.map((item) => (
+                        <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
+                          <span className="sr-only">{item.name}</span>
+                          <item.icon className="h-5 w-5" aria-hidden="true" />
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </Popover.Panel>
