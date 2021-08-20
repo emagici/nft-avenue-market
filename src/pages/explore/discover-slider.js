@@ -88,9 +88,11 @@ export default function DiscoverSlider() {
   
   const [activeDropdown, setActiveDropdown] = useState('recent');
   const options = [
-    { id: 'recent', 'title': 'Recently added' },
-    { id: 'popular', 'title': 'Popular' },
-  ]
+    { id: 'random', 'title': 'Randomised' },
+    { id: 'popular', 'title': 'Popular (most likes)' },
+    { id: 'priceHightToLow', 'title': 'Price (high to low)' },
+    { id: 'priceLowToHigh', 'title': 'Price (low to high)' },
+  ];
 
   return (  
     <div className="">

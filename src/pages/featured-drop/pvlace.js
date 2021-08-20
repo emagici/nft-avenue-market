@@ -4,6 +4,7 @@ import CardList from '../../components/cards/card-list'
 import SectionHeader from '../../components/section-header'
 import SectionTitle from '../../components/section-title'
 import PageTitle from '../../components/page-title'
+import axios from "axios";
 
 import PvlaceImg from '../../assets/img/pvlace/pvlace-lg.jpeg'
 import CTLogo from '../../assets/img/logos/cointelegraph.png'
@@ -19,6 +20,13 @@ import ALPLogo from '../../assets/img/logos/alp-logo.png'
 import NewsbreakLogo from '../../assets/img/logos/newsbreak-logo.png'
 import DiscogsLogo from '../../assets/img/logos/discogs-logo.jpeg'
 import GeniusLogo from '../../assets/img/logos/genius-logo.jpeg'
+
+import AppUrls from '../../AppSettings';
+const appUrls = {
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient,
+};
 
 const collaborators = [
   {
@@ -178,6 +186,32 @@ const items = [
 ]
 
 export default function PvlaceDrop() {
+  const [floorPriceUsd, setFloorPriceUsd] = useState();
+  const [floorPriceBnb, setFloorPriceBnb] = useState();
+
+  useEffect(() => {
+    axios({
+      method: "get",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetFeaturedPageFloorPrice?page=PVLACE`
+    })
+    .then(function (response) {
+  
+      const item = response.data.result;
+
+      if(item){
+        const usdFloorPrice = item.floorPriceUsd.toString();
+        const bnbFloorPrice = item.floorPriceBnb.toString();
+
+        setFloorPriceUsd(usdFloorPrice.substring(0, usdFloorPrice.indexOf('.') + 2));
+        setFloorPriceBnb(bnbFloorPrice.substring(0, bnbFloorPrice.indexOf('.') + 2));
+      }
+    })
+    .catch(function (response) {
+    })
+  }, []);
+
+
+  
   return (
     <div className="p-6">
       <PageTitle title="PVLACE x 808 MAFIA x GUNBOI" />
@@ -211,7 +245,7 @@ export default function PvlaceDrop() {
                     </div>
                     <div className="flex flex-col border-t border-b border-gray-100 p-6 text-center sm:border-0 sm:border-l sm:border-r">
                       <dt className="order-2 mt-1 md:mt-2 text-lg leading-6 font-medium text-gray-500">Floor Price</dt>
-                      <dd className="order-1 text-2xl md:text-4xl lg:text-5xl font-extrabold text-indigo-600">3 BNB</dd>
+                      <dd className="order-1 text-2xl md:text-4xl lg:text-5xl font-extrabold text-indigo-600">{floorPriceBnb} BNB  <dd className="text-lg">({floorPriceUsd} USD)</dd></dd>
                     </div>
                     <div className="flex flex-col border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l">
                       <dt className="order-2 mt-1 md:mt-2 text-lg leading-6 font-medium text-gray-500">Volume Traded</dt>
