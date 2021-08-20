@@ -37,8 +37,10 @@ export default function Discover() {
   const [activeDropdown, setActiveDropdown] = useState('recent');
   const [listedItems, setListedItems] = useState([]);
   const options = [
-    { id: 'recent', 'title': 'Recently added' },
-    { id: 'popular', 'title': 'Popular' },
+    { id: 'random', 'title': 'Randomised' },
+    { id: 'popular', 'title': 'Popular (most likes)' },
+    { id: 'priceHightToLow', 'title': 'Price (high to low)' },
+    { id: 'priceLowToHigh', 'title': 'Price (low to high)' },
   ];
   const [loading, setLoading] = useState(true);
   const web3Context = useContext(Web3Context);
@@ -64,6 +66,8 @@ export default function Discover() {
 
       const allItems = response.data.result;
 
+      console.log(allItems)
+
       var items = await Promise.all(allItems.map(async (item) => (
          {
           Listed: true,
@@ -73,13 +77,13 @@ export default function Discover() {
           Image: item.imageUrl,
           Video: item.videoUrl,
           highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
-          price: Web3.utils.fromWei(item.price.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + (await getPayTokenFromListing(web3, item.nft, item.tokenId, item.ownerAddress, userContext.state.blockchainId)).payTokenName,
+          price: Web3.utils.fromWei(item.lowestValuePricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
           likes: item.numberOfLikes,
           sellers: item.sellers
         }
       )))
 
-      items = items.sort(function(a, b) {return b.likes - a.likes;});
+      // items = items.sort(function(a, b) {return b.likes - a.likes;});
 
       setListedItems(items);
     })
