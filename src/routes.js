@@ -15,6 +15,7 @@ import TermsPage from './pages/policies/terms';
 import AGuideToNFTs from './pages/getting-started/a-guide-to-nfts';
 import RecentlyAddedPage from './pages/recently-added';
 import BlogPage from './pages/blog';
+import CollectionPage from './pages/collection';
 
 export default [
 	{
@@ -109,6 +110,12 @@ export default [
 		title: "Terms",
 		component: TermsPage,
 		exact: true
+	},
+	{
+		path: "/collection/:id",
+		title: "Collection",
+		component: CollectionPage,
+		exact: false
 	},
 	{
 		path: "/blog/:slug",
