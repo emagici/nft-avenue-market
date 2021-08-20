@@ -34,13 +34,13 @@ export default function Discover() {
   ]
   
   const [filterText, setFilerText] = useState('');
-  const [activeDropdown, setActiveDropdown] = useState('recent');
+  const [activeDropdown, setActiveDropdown] = useState('random');
   const [listedItems, setListedItems] = useState([]);
   const options = [
-    { id: 'random', 'title': 'Randomised' },
-    { id: 'popular', 'title': 'Popular (most likes)' },
-    { id: 'priceHightToLow', 'title': 'Price (high to low)' },
-    { id: 'priceLowToHigh', 'title': 'Price (low to high)' },
+    { id: 'random', 'title': 'Inspire Me' },
+    { id: 'popular', 'title': 'Most Liked' },
+    { id: 'priceHightToLow', 'title': 'Price (High to Low)' },
+    { id: 'priceLowToHigh', 'title': 'Price (Low to High)' },
   ];
   const [loading, setLoading] = useState(true);
   const web3Context = useContext(Web3Context);
