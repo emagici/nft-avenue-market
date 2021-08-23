@@ -26,7 +26,7 @@ const collaborators = [
 const items = [
   {
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmcaU1u6HLT6gGCmNCnRhg67cB1YozxpChBr3UfaWhHF8S",
-    NftAddress: "QmV4m7vE2oHEXwWkM3uj8F2j6PayaFcKYPtVkP6baRGdsU",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Porsche 911",
     price: "735 BNB",
     TokenId: 1,
@@ -35,7 +35,7 @@ const items = [
   },
   {
     Image: "https://fomolabnft.mypinata.cloud/ipfs/QmTmhtQCWo4e9rw7HKiQz4n2UnnJG7hGTsatrj3n6F18NW",
-    NftAddress: "QmYdaGRJYGh2rKfpTiGKcqMM3Q25VeDDn7DGWRsDjUA7Zf",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Rocketship",
     price: "5 BNB",
     TokenId: 2,
@@ -44,7 +44,7 @@ const items = [
   },
   {
     Image: "https://fomolabnft.mypinata.cloud/ipfs/QmazJf4uRTCryUHWmgE2DWeQrSpNj3qogYqKLC5xfwLhv6",
-    NftAddress: "QmTTvLUSGAuhFinKBYxgxPaa4tCUZayWTCBZne5tpY8keT",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Xibot Miami",
     price: "35 BNB",
     TokenId: 3,
@@ -53,7 +53,7 @@ const items = [
   },
   {
     Video: "https://bafybeibyr5jynbtczhymbzfdzficc5tfvy7rxv6p7q3l57zkgde666mcje.ipfs.dweb.link/",
-    NftAddress: "QmeZ4q5kuBqpVqyKv63MvuHj67quyYAgkhxRtcJMbsd4EY",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Miami Gotchi Dreams",
     price: "1175 BNB",
     TokenId: 4,
@@ -62,7 +62,7 @@ const items = [
   },
   {
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmS6D2YD6YpNGHctB3TjXsAXe6bnEYeASZhBn665PhcKd7",
-    NftAddress: "QmR5gwF5tBaqDtugfoB2rdX5sKN8GmAUj5Cp5tvksSbCqG",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Miami Oasis",
     price: "5 BNB",
     TokenId: 5,
@@ -71,7 +71,7 @@ const items = [
   },
   {
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmfPeKqMgstznHTxVYX5kGUeN33i6HVwc2vS7aR7YQP49n",
-    NftAddress: "QmUCGbdbL9MLpiGNaqJ3ihbHVbQDBYJzk5wnxzqxfXANn7",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "MC PICASSO",
     price: "4 BNB",
     TokenId: 6,
@@ -80,7 +80,7 @@ const items = [
   },
   {
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmfBpxjV1RwnJPoHnH2WRjHchkFitADDev5UHQ6xhwULTo",
-    NftAddress: "QmSuACoTR7Pyx2C4rzKgFTxc5Moq289QE4fNLsv94d4Zrk",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Soil of my soul",
     price: "6 BNB",
     TokenId: 7,
@@ -89,7 +89,7 @@ const items = [
   },
   {
     Video: "https://bafybeiabtmut2sfregvylbgtfvsiczx5aiqprdp6sibgmfckdl7pqupxeu.ipfs.dweb.link/",
-    NftAddress: "QmQSgUYEX2ANhdW6QRTSGX3hiB53HBB29HYNTLSsTp7kB7",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "SBlum/Bitbang",
     price: "5 BNB",
     TokenId: 8,
@@ -98,7 +98,7 @@ const items = [
   },
   {
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmZe2TcfuuBR9Db4VuGWiMR4CWKg5YdsSfspAC9pFms5wJ",
-    NftAddress: "QmSX2PXYkTBenp5qcfjeqr6RNkjcFv8cXA4zhJwq93LDkd",
+    NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "1st Issue!",
     price: "10 BNB",
     TokenId: 9,
