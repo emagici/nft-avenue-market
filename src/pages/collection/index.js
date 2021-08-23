@@ -40,11 +40,12 @@ export default function CollectionPage() {
 
 
   async function getCollection(id){
+    if(!id) return;
     setLoading(true);
 
     await axios({
       method: "get",
-      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetListedNfts?nftNameFilter=&categoryFilter=&sorting=recent&blockchain=${userContext.state.blockchainId ?? 0}`
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetFeaturedPageInfo?page=${id}`
     })
     .then(async function (response) {
 
@@ -52,7 +53,6 @@ export default function CollectionPage() {
 
       var items = await Promise.all(allItems.map(async (item) => (
          {
-          Listed: true,
           TokenId: item.tokenId,
           NftAddress: item.nft,
           TokenName:  item.tokenName,
