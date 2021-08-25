@@ -371,7 +371,7 @@ export default function UserSettings() {
           {hasLoggedIn ? (
             <>
             <Wallet accessToken={accessToken}></Wallet>
-            <Security></Security>
+            {/* <Security></Security> */}
             </>
           ) : null}
         </div>

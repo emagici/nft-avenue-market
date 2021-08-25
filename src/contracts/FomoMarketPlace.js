@@ -1,9 +1,8 @@
-
 export const getMarketplaceContractAddress = (blockchainId) => {
-    if(blockchainId == 0)
-        return '0xe3fFAcafDCa644Fdc930C8BFe158464EeB3d05Ba';
-    if(blockchainId == 1)
-        return '0x652cE3f642b1Ea2179e30a42ec1B77E68a051382';
+    if (blockchainId == 0)
+        return '0x6e2ef327fD5E558ad842A2f34358674e61b3aC46';
+    if (blockchainId == 1)
+        return '0x50b2DC92413cCC580aC4Dc9C7E30a1F772d192DC';
 }
 
 export const MARKETPLACE_ABI = [{
@@ -102,6 +101,11 @@ export const MARKETPLACE_ABI = [{
         "indexed": true,
         "internalType": "address",
         "name": "buyer",
+        "type": "address"
+    }, {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payToken",
         "type": "address"
     }, {
         "indexed": true,

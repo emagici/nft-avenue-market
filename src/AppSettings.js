@@ -1,8 +1,8 @@
 export default class AppUrls {
     static fomoHost = "http://fomobo.workinjupiter.club";
-    static fomoHostApi = "https://fomoapi.workinjupiter.club";
-    static fomoClient = "https://fomofa.workinjupiter.club";
-    static fomoNodeAPI = "https://locker.workinjupiter.club";
+    static fomoHostApi = "https://api.theavenue.market";
+    static fomoClient = "https://staging2.theavenue.market";
+    static fomoNodeAPI = "";
 
     // static fomoHost = "http://localhost:4200";
     // static fomoHostApi = "https://localhost:44301";

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from "axios";
 import AppUrls  from '../../AppSettings';
+import { UserContext } from '../../context/user-context';
 
 const appUrls = {
 	fomoHost: AppUrls.fomoHost,
@@ -10,6 +11,8 @@ const appUrls = {
 
 export default function Wallet(props) {
 	const [walletAddresses, setWalletAddresses] = useState([]);
+	const userContext = useContext(UserContext);
+
 	console.log(props);
 
 	useEffect(() => {
@@ -21,24 +24,37 @@ export default function Wallet(props) {
 	}
 
 	const getAllUserWalletAddresses = () => {
-		console.log(props.accessToken);
-
 		axios({
-		  method: "GET",
-		  url: `${appUrls.fomoHostApi}/api/services/app/Wallets/GetAllWalletAddressForCurrentUser`,
-		  headers: {
-			"Authorization": "Bearer " + props.accessToken + ""
-		  }
-		})
-		.then(function (response) {
-			console.log(response);
-			if(response.data.result){
-			   setWalletAddresses(response.data.result.walletAddresses);
+			method: "GET",
+			url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyWalletAddress`,
+			headers: {
+			"Authorization": "Bearer " +  props.accessToken + ""
 			}
-		})
-		.catch(function (response) {
-		  console.log(response);
-		});
+		  })
+		  .then(function (response) {
+			console.log(response)
+			setWalletAddresses([response.data.result]);
+		  })
+		  .catch(function (response) {
+			console.log(response);
+		  });
+
+		// axios({
+		//   method: "GET",
+		//   url: `${appUrls.fomoHostApi}/api/services/app/Wallets/GetAllWalletAddressForCurrentUser`,
+		//   headers: {
+		// 	"Authorization": "Bearer " + props.accessToken + ""
+		//   }
+		// })
+		// .then(function (response) {
+		// 	console.log(response);
+		// 	if(response.data.result){
+		// 	   setWalletAddresses(response.data.result.walletAddresses);
+		// 	}
+		// })
+		// .catch(function (response) {
+		//   console.log(response);
+		// });
 	}
 
 	return (  
