@@ -775,9 +775,14 @@ export default function ItemDetail(props) {
 
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
     if (!params.tokenid) return
-
-    const url = `https://staging.theavenue.market${location.search}`;
-    const urlTmp = await generateShortUrl(url)
+    
+    const hostname = window.location.hostname
+    let urlTmp = null
+    if (hostname.includes('staging') || hostname.includes('localhost')) {
+      urlTmp = await generateShortUrl(`https://staging.theavenue.market${location.pathname}${location.search}`)
+    } else {
+      urlTmp = await generateShortUrl(`https://theavenue.market${location.pathname}${location.search}`)
+    }
     
     setShareUrl(urlTmp ? urlTmp : null)
 
