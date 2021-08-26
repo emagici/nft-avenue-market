@@ -235,21 +235,21 @@ export default function PvlaceDrop() {
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <div className="mt-10 pb-12 bg-white sm:pb-16">
             <div className="relative">
-              <div className="hidden sm:block absolute inset-0 h-4 bg-indigo-600 rounded-md top-1/2 transform -translate-y-1/2" />
               <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto">
-                  <dl className="rounded-lg bg-white shadow-xl border-4 border-indigo-700 sm:grid sm:grid-cols-3">
-                    <div className="flex flex-col border-b border-gray-100 p-6 text-center sm:border-0 sm:border-r">
-                      <dt className="order-2 mt-1 md:mt-2 text-lg leading-6 font-medium text-gray-500">Items</dt>
-                      <dd className="order-1 text-2xl md:text-4xl lg:text-5xl font-extrabold text-indigo-600">367</dd>
+                  <dl className="rounded-lg bg-white shadow-xl border-4 border-gray-700 sm:grid sm:grid-cols-3">
+                    <div className="flex flex-col justify-center border-b border-gray-100 p-6 text-center sm:border-0 sm:border-r">
+                      <dd className="text-2xl md:text-3xl lg:text-4xl mt-2 font-extrabold text-gray-900">367</dd>
+                      <dt className="mt-1 md:mt-0.5 text-lg leading-6 font-medium text-gray-700">Items</dt>
                     </div>
-                    <div className="flex flex-col border-t border-b border-gray-100 p-6 text-center sm:border-0 sm:border-l sm:border-r">
-                      <dt className="order-2 mt-1 md:mt-2 text-lg leading-6 font-medium text-gray-500">Floor Price</dt>
-                      <dd className="order-1 text-2xl md:text-4xl lg:text-5xl font-extrabold text-indigo-600">{floorPriceBnb} BNB  <dd className="text-lg">({floorPriceUsd} USD)</dd></dd>
+                    <div className="flex flex-col relative justify-center border-t border-b border-gray-500 p-6 text-center sm:border-0 sm:border-l sm:border-r">
+                      <dd className="text-2xl md:text-3xl lg:text-4xl mt-2 font-extrabold text-gray-900">{floorPriceBnb} BNB</dd>
+                      <dt className="mt-1 md:mt-0.5 text-lg leading-6 font-medium text-gray-700">Floor Price</dt>
+                      <dd className="absolute left-1/2 top-1 transform -translate-x-1/2 font-medium text-sm sm:text-base text-gray-700">{floorPriceUsd} USD</dd>
                     </div>
-                    <div className="flex flex-col border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l">
-                      <dt className="order-2 mt-1 md:mt-2 text-lg leading-6 font-medium text-gray-500">Volume Traded</dt>
-                      <dd className="order-1 text-2xl md:text-4xl lg:text-5xl font-extrabold text-indigo-600">1.1k BNB</dd>
+                    <div className="flex flex-col justify-center border-t border-gray-100 p-6 text-center sm:border-0 sm:border-l">
+                      <dd className="text-2xl md:text-3xl lg:text-4xl mt-2 font-extrabold text-gray-900">1.1k BNB</dd>
+                      <dt className="mt-1 md:mt-0.5 text-lg leading-6 font-medium text-gray-700">Volume Traded</dt>
                     </div>
                   </dl>
                 </div>
@@ -273,8 +273,7 @@ export default function PvlaceDrop() {
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
           <SectionTitle title="About The Drop" />
-          <p className="mb-3 font-medium">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nibh tellus molestie nunc non. Massa tincidunt dui ut ornare. Platea dictumst quisque sagittis purus. Lacus laoreet non curabitur gravida. Leo vel orci porta non pulvinar neque laoreet suspendisse interdum. Tempus egestas sed sed risus pretium quam.</p>
-          <p className="mb-3 font-medium">Dolor morbi non arcu risus quis varius quam. Volutpat est velit egestas dui. Enim neque volutpat ac tincidunt. Est pellentesque elit ullamcorper dignissim.</p>
+          <p className="mb-3 font-medium">Fomo Lab partners with PVLACE of 808 MAFIA and GUNBOI to drop their “FOR THE CULTURE” collection on Fomo Lab’s own NFT platform, The Avenue. This collection will contain 387 intrinsically rare collectibles of music in the form of “mystery boxes”, by PVLACE and GUNBOI, multi-platinum, billboard chart topping, industry leading producers who have made music for some of the biggest names in hip-hop history, including; Wiz Khalifa, Migos, Future, and many more.</p>
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">
