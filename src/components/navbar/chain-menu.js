@@ -59,7 +59,7 @@ export default function ChainMenu(props) {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Popover.Items
+              <Popover.Panel
                 static
                 className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
               >
@@ -90,7 +90,7 @@ export default function ChainMenu(props) {
                     </Popover.Button>
                   ))}
                 </div>
-              </Popover.Items>
+              </Popover.Panel>
             </Transition>
           </>
         )}
