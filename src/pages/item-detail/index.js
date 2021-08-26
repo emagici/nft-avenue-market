@@ -96,6 +96,7 @@ export default function ItemDetail(props) {
   const [myAdd, setMyadd] = useState();
   const [activeTab, setActiveTab] = useState("Info");
   const [isOwner, setIsOwner] = useState(false);
+  const [isUserListedNft, setIsUserListedNft] = useState(false);
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
@@ -239,6 +240,11 @@ export default function ItemDetail(props) {
       const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
       setLowestSellerItem(sortedlistingItems[0])
 
+      const listedCurrentNft = listingItems.find(o => o.owner.toLowerCase() === myAdd.toLowerCase());
+      if(listedCurrentNft){
+        setIsUserListedNft(true);
+      }
+
       setListings(listingItems);
 
       const offerItems = nftListingResult[0].offers.map((item) => (
@@ -310,7 +316,7 @@ export default function ItemDetail(props) {
 
         await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
-          from: myAdd, gasPrice: await getTotalGasPrice()
+          from: myAdd
         })
         .then( async function (result) {
           isLoading(false);
@@ -333,7 +339,7 @@ export default function ItemDetail(props) {
     if(!isApprovedForAll){
         await genericNftContract.methods.setApprovalForAll(marketplaceContractAddress, true)
         .send({
-          from: myAdd, gasPrice: await getTotalGasPrice()
+          from: myAdd
         })
         .then( async function (result) {
           isLoading(false);
@@ -355,7 +361,7 @@ export default function ItemDetail(props) {
     isLoading(true);
     await marketplaceContract.methods
       .listItem(nftAddress, tokenid, ListingToken, ListQuantity, toFixed(listPriceToSend), timestampInSeconds, "0x0000000000000000000000000000000000000000")
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .send({ from: myAdd })
       .then( async function (result) {
         // console.log(result.events.ItemListed.returnValues)
         addNewListing(result.events.ItemListed.returnValues)
@@ -369,7 +375,7 @@ export default function ItemDetail(props) {
   const updateListing = async (newPricePerItem) => {
     await marketplaceContract.methods
       .updateListing(nftAddress, tokenid, 200)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
+      .send({ from: myAdd });
   };
 
   const cancelListing = async () => {
@@ -384,7 +390,7 @@ export default function ItemDetail(props) {
     isLoading(true)
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .send({ from: myAdd })
       .then( async function (result) {
         // console.log(result.events.ItemCanceled.returnValues)
         const canceledItem = result.events.ItemCanceled.returnValues;
@@ -418,7 +424,7 @@ export default function ItemDetail(props) {
 
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .send({ from: myAdd })
       .then( async function (result) {
         // console.log(result)
         isLoading(false);
@@ -432,12 +438,6 @@ export default function ItemDetail(props) {
         isLoading(false);
       });
   };
-
-  const getTotalGasPrice = async () => {
-    var gasPrice = await web3.eth.getGasPrice();
-    var totalGasPrice =  Number(gasPrice) + Number(Web3.utils.toWei("5", "gwei"));
-    return totalGasPrice
-  }
 
   const createOffer = async () => {
     if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
@@ -460,7 +460,7 @@ export default function ItemDetail(props) {
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
         await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
-          from: myAdd, gasPrice: await getTotalGasPrice()
+          from: myAdd
         })
         .then( async function (result) {
           isLoading(false);
@@ -493,7 +493,7 @@ export default function ItemDetail(props) {
     isLoading(true);
     await marketplaceContract.methods
       .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, toFixed(offerPricePerItemToSend), seconds)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .send({ from: myAdd })
       .then( async function (result) {
         // console.log(result.events.OfferCreated.returnValues)
         addNewOffer(result.events.OfferCreated.returnValues)
@@ -537,9 +537,17 @@ export default function ItemDetail(props) {
   const cancelOffer = async () => {
     if (!web3 || !walletContext.state.userConnected) return;
 
+    isLoading(true);
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() });
+      .send({ from: myAdd })
+      .then( async function (result) {
+          const canceledItem = result.events.OfferCanceled.returnValues;
+          setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== canceledItem.creator.toLowerCase()));
+      })
+      .catch(error => {
+        isLoading(false);
+      });
   };
 
   const buyItem = async (obj) => {
@@ -561,7 +569,7 @@ export default function ItemDetail(props) {
 
     // if(Number(currentAllowance) < Number(amountToSend)){
         await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
-        .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+        .send({ from: myAdd })
         .then( async function (result) {
             isLoading(false);
             buyItemConfirm(obj);
@@ -581,7 +589,7 @@ export default function ItemDetail(props) {
 
     isLoading(true);
     await marketplaceContract.methods.buyItem(nftAddress, tokenid, toFixed(amountToSend), nftOwnerAdd)
-      .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
+      .send({ from: myAdd })
       .then( async function (result) {
         isLoading(false);
         setShowPurchasedModal(true)
@@ -1084,10 +1092,15 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {isOwner && item.creatorAddress.toLowerCase() != myAdd?.toLowerCase() ? (
+                                    {isUserListedNft && item.creatorAddress.toLowerCase() != myAdd?.toLowerCase() ? (
                                         <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
                                         Accept
                                       </a>
+                                    ) : null}
+                                    {item.creatorAddress.toLowerCase() == myAdd?.toLowerCase() ? (
+                                        <a onClick={() => cancelOffer()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        Cancel Offer
+                                       </a>
                                     ) : null}
                                     </td>
                                   </tr>
