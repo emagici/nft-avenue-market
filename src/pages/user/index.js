@@ -599,10 +599,10 @@ export default function Profile() {
                               <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
                                 <Link to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
                                   {item.nftDetails && item.nftDetails.imageUrl ? (
-                                    <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover" />
+                                    <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover rounded-xl" />
                                   ) : null}
                                   {item.nftDetails && item.nftDetails.videoUrl ? (
-                                    <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+                                    <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover rounded-xl" autoPlay muted loop playsInline />
                                   ) : null}
                                   {!item.nftDetails ? (
                                     <div className="h-full w-full flex items-center justify-center">

@@ -629,13 +629,13 @@ export default function Navbar() {
                                 <h1 className="font-bold mb-2 px-4">
                                   Notifications
                                 </h1>
-                                {notifications && notifications.length && 
+                                {notifications && notifications.length ? (
                                   <a className="block mb-2 mt-0.5 px-4 text-sm underline" 
                                      href="#"
                                      onClick={() => markNotificationsAsRead()}
                                     >Mark all as read
                                   </a>
-                                }
+                                ) : null}
                                 {notifications && notifications.length ? (
                                   notifications.map((item, index) => (
                                     <Menu.Item
@@ -719,7 +719,7 @@ export default function Navbar() {
                                   ))
                                 ) : (
                                   <div className="">
-                                    <p className="text-sm font-medium">
+                                    <p className="text-sm font-medium px-4 pb-2">
                                       No notifications to display.
                                     </p>
                                   </div>
@@ -833,7 +833,7 @@ export default function Navbar() {
                     item.path == location.pathname
                       ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                       : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
-                    "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6"
+                    "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6 appearance-none"
                   )}
                 >
                   {item.title}

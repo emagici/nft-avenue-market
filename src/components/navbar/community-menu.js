@@ -107,7 +107,7 @@ export default function CommunityMenu() {
                           as={Link}
                           key={item.name}
                           to={item.href}
-                          className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150"
+                          className="py-2 my-1 flex items-start rounded-lg hover:bg-gray-50 transition ease-in-out duration-150 appearance-none"
                         >
                           <div className="sm:ml-4 flex-1">
                             <p className="text-sm font-bold text-gray-900 text-center sm:text-left">{item.name}</p>

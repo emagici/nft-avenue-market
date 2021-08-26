@@ -13,9 +13,9 @@ export default function CardDefault(props) {
         <div className="relative group block w-full aspect-w-10 aspect-h-10 rounded-lg bg-gray-100 focus:outline-none overflow-hidden mb-4 shadow-lg">
       
           {props.Video ? (
-            <video muted playsInline autoPlay loop src={props.Video} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity" />
+            <video muted playsInline autoPlay loop src={props.Video} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity rounded-lg" />
           ) : (
-            <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity" />
+            <img src={props.Image} alt="" className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity rounded-lg" />
           )}
 
           {props.likes? (

@@ -13,7 +13,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { HeartIcon } from "@heroicons/react/solid";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons'
 
 import { SharedContext } from '../../context/shared-context';
 import { UserContext } from '../../context/user-context'
@@ -802,13 +802,13 @@ export default function ItemDetail(props) {
                     onContextMenu={e => e.preventDefault()}
                     controlsList="nodownload"
                     src={nftVideoSrc}
-                    className="object-cover group-hover:opacity-90 transition-opacity"
+                    className="object-cover group-hover:opacity-90 transition-opacity rounded-lg"
                   />
                 ) : (
                   <img
                     src={nftImageSrc}
                     alt="nft"
-                    className="object-cover group-hover:opacity-90 transition-opacity"
+                    className="object-cover group-hover:opacity-90 transition-opacity rounded-lg"
                   />
                 )}
               </div>
@@ -940,13 +940,24 @@ export default function ItemDetail(props) {
             <div className="py-3">
               <div className="flex -space-x-1 relative z-0 justify-center md:justify-start">
                 {listings &&
-                    listings.map((item) => (
-                        <img
-                          className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                          src={item.sellerProfilePic}
-                          alt=""
-                        />
-                    ))
+                  listings.map((item) => (
+                    <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
+                      <img
+                        className="relative z-1 inline-block h-6 w-6 rounded-full ring-2 ring-white"
+                        src={item.sellerProfilePic}
+                        alt=""
+                      />
+                      <span className="absolute -bottom-7 px-2 py-1 shadow-lg block rounded-lg bg-gray-900 text-white text-sm flex justify-center items-center font-bold transition-all opacity-0 group-hover:opacity-100 pointer-events-none">
+                        <span className="text-white text-xs">{item.sellerName}</span>
+                      </span>
+
+                      {item.verified ? (
+                        <span className="absolute -top-0 -right-0.5 shadow-lg block h-3 w-3 rounded-full ring-1 ring-white bg-green-600 border-0 text-white text-sm flex justify-center items-center font-bold">
+                          <FontAwesomeIcon icon={faCheck} className="h-2 w-2" />
+                        </span>
+                      ) : null}
+                    </Link>
+                  ))
                 }
               </div>
             </div>
@@ -1029,7 +1040,7 @@ export default function ItemDetail(props) {
                                     {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     {item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
-                                        <a onClick={() => cancelListing()} href="#" className="text-indigo-600 hover:text-indigo-900">
+                                        <a onClick={() => cancelListing()} href="#" className="font-bold text-red-600 hover:text-ref-700">
                                         Cancel Listing
                                       </a>
                                     ) : (
