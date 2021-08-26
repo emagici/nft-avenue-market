@@ -240,9 +240,11 @@ export default function ItemDetail(props) {
       const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
       setLowestSellerItem(sortedlistingItems[0])
 
-      const listedCurrentNft = listingItems.find(o => o.owner.toLowerCase() === myAdd.toLowerCase());
-      if(listedCurrentNft){
-        setIsUserListedNft(true);
+      if(myAdd){
+        const listedCurrentNft = listingItems.find(o => o.owner.toLowerCase() === myAdd.toLowerCase());
+        if(listedCurrentNft){
+          setIsUserListedNft(true);
+        }
       }
 
       setListings(listingItems);
@@ -301,6 +303,14 @@ export default function ItemDetail(props) {
 
     if(ListPrice <= 0 || ListQuantity <= 0){
       addToast("Invalid quantity or price.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      return;
+    }
+
+    if(ListQuantity > nftQuantityOwned){
+      addToast(`Listing quantity cannot be more than available (${nftQuantityOwned})`, {
         appearance: 'error',
         autoDismiss: true,
       })

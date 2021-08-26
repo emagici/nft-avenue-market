@@ -78,9 +78,9 @@ export default function CardDefault(props) {
          ) : null} 
 
         <div className="flex justify-between">
-          {/* {props.Quantity ? (
+          {props.Quantity ? (
             <p className="mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none"><span className="font-light">Quantity </span>{props.Quantity}</p>
-          ) : null} */}
+          ) : null}
         </div>
       </li>
 

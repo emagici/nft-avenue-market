@@ -48,21 +48,22 @@ export default function HottestBidsSection() {
     .then(async function (response) {
       var allItems = response.data.result;
 
+      console.log(allItems)
+
       var items = await Promise.all(allItems.map(async (item) => (
         {
          Listed: true,
          TokenId: item.tokenId,
-         NftAddress: item.contractAddress,
+         NftAddress: item.nft,
          TokenName:  item.tokenName,
          Image: item.imageUrl,
          Video: item.videoUrl,
-         highestbidValue: item.highestBid,
-         highestbid: item.highestBid ? Web3.utils.fromWei(toFixed(item.highestBid), "ether") + " " + getPayTokenDetailByAddress(item.highestBidPayTokenAddress, userContext.state.blockchainId).payTokenName : "",
-         price: item.buyNowPrice ? Web3.utils.fromWei(toFixed(item.buyNowPrice), "ether") + " " + (await getPayTokenFromListing(web3, item.contractAddress, item.tokenId, item.buyNowOwnerAddress, userContext.state.blockchainId)).payTokenName : "",
+         highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
+         price: Web3.utils.fromWei(toFixed(item.lowestValuePricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
        }
      )))
 
-     items = items.sort(function(a, b) {return b.highestbidValue - a.highestbidValue;});
+    //  items = items.sort(function(a, b) {return b.highestbidValue - a.highestbidValue;});
 
      setItems(items)
     })
