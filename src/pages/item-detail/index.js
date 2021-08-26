@@ -35,6 +35,7 @@ import {
   getPayTokenFromListing,
   getPayTokenDetailByAddress,
   listingFeeTokenBsc,
+  toFixed
 } from "../../utilities/utils";
 
 import {
@@ -132,10 +133,9 @@ export default function ItemDetail(props) {
         url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
       })
       .then(async function (response) {
-        setHistory(response.data.result)
+        setHistory(response.data.result.filter(item => item.eventName.toLowerCase() !== "itemliked"));
       })
       .catch(function (response) {
-        // console.log(response);
       });
   }
 
@@ -163,7 +163,7 @@ export default function ItemDetail(props) {
       NftAddress: item.nft,
       owner: item.owner,
       ownerUserId: userContext.state.id,
-      pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
+      pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
       quantity: item.quantity,
       sellerName: userContext.state.name,
       payToken: null
@@ -227,7 +227,7 @@ export default function ItemDetail(props) {
           TokenName:  item.nft.tokenName,
           owner: item.nft.owner,
           ownerUserId: item.nft.ownerId,
-          pricePerItem:  Web3.utils.fromWei(item.nft.pricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether"),
+          pricePerItem:  Web3.utils.fromWei(toFixed(item.nft.pricePerItem), "ether"),
           quantity: item.nft.quantity,
           sellerName: item.seller.name,
           sellerProfilePic: item.seller.profilePictureUrl,
@@ -246,7 +246,7 @@ export default function ItemDetail(props) {
           TokenId: item.tokenId,
           NftAddress: item.nftAddress,
           creatorAddress: item.creatorAddress,
-          pricePerItem:  Web3.utils.fromWei(item.pricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether"),
+          pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
           quantity: item.quantity,
           creatorUsername: item.creatorName,
           deadline: item.deadline,
@@ -308,7 +308,7 @@ export default function ItemDetail(props) {
         const listingFee = await marketplaceContract.methods.listingFee().call();
         const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
 
-        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -350,11 +350,11 @@ export default function ItemDetail(props) {
   const listItemConfirm = async () => {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
-    const listPriceToSend = Web3.utils.toWei(ListPrice, "ether");
+    const listPriceToSend = Web3.utils.toWei(toFixed(ListPrice), "ether");
 
     isLoading(true);
     await marketplaceContract.methods
-      .listItem(nftAddress, tokenid, ListingToken, ListQuantity, listPriceToSend, timestampInSeconds, "0x0000000000000000000000000000000000000000")
+      .listItem(nftAddress, tokenid, ListingToken, ListQuantity, toFixed(listPriceToSend), timestampInSeconds, "0x0000000000000000000000000000000000000000")
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
         // console.log(result.events.ItemListed.returnValues)
@@ -453,15 +453,12 @@ export default function ItemDetail(props) {
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalAmount = offerQuantity * offerPricePerItem;
-    const totalAmountToSend =  Web3.utils.toWei(totalAmount.toString(), "ether");
+    const totalAmountToSend =  Web3.utils.toWei(toFixed(totalAmount), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
-
-    // console.log(totalAllowanceRequierd)
-
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
           from: myAdd, gasPrice: await getTotalGasPrice()
         })
@@ -495,7 +492,7 @@ export default function ItemDetail(props) {
 
     isLoading(true);
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, offerPricePerItemToSend, seconds)
+      .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, toFixed(offerPricePerItemToSend), seconds)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
         // console.log(result.events.OfferCreated.returnValues)
@@ -521,7 +518,7 @@ export default function ItemDetail(props) {
         TokenId: item.tokenId,
         NftAddress: item.nft,
         creatorAddress: item.creator,
-        pricePerItem:  Web3.utils.fromWei(item.pricePerItem, "ether"),
+        pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
         quantity: item.quantity,
         creatorUsername: userContext.state.name,
         deadline: item.deadline,
@@ -557,13 +554,13 @@ export default function ItemDetail(props) {
     const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
     let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
     const totalPrice = obj.pricePerItem * obj.quantity;
-    const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
 
     isLoading(true);
 
     // if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(marketplaceContractAddress, totalAllowanceRequierd.toString())
+        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
         .then( async function (result) {
             isLoading(false);
@@ -580,10 +577,10 @@ export default function ItemDetail(props) {
   const buyItemConfirm = async (obj) => {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const nftOwnerAdd = obj.owner;
-    const amountToSend = Web3.utils.toWei(totalPrice.toString(), "ether");
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether");
 
     isLoading(true);
-    await marketplaceContract.methods.buyItem(nftAddress, tokenid, amountToSend, nftOwnerAdd)
+    await marketplaceContract.methods.buyItem(nftAddress, tokenid, toFixed(amountToSend), nftOwnerAdd)
       .send({ from: myAdd, gasPrice: await getTotalGasPrice() })
       .then( async function (result) {
         isLoading(false);

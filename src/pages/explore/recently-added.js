@@ -8,7 +8,7 @@ import Web3 from "web3";
 import { Web3Context } from '../../context/web3-context'
 import { UserContext } from '../../context/user-context';
 import {
-  getPayTokenFromListing, getPayTokenDetailByAddress
+  getPayTokenFromListing, getPayTokenDetailByAddress, toFixed
 } from "../../utilities/utils";
 
 const appUrls = {
@@ -45,7 +45,7 @@ export default function RecentlyAddedSection() {
           Image: item.imageUrl,
           Video: item.videoUrl,
           highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
-          price: Web3.utils.fromWei(item.lowestValuePricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
+          price: Web3.utils.fromWei(toFixed(item.lowestValuePricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
           likes: item.numberOfLikes
         }
       )))

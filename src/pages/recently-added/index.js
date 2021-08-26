@@ -7,7 +7,7 @@ import CardList from '../../components/cards/card-list'
 import PageTitle from '../../components/page-title'
 import axios from "axios";
 import Web3 from "web3";
-import { getPayTokenFromListing, getPayTokenDetailByAddress } from "../../utilities/utils";
+import { getPayTokenFromListing, getPayTokenDetailByAddress, toFixed } from "../../utilities/utils";
 
 import AppUrls from '../../AppSettings';
 const appUrls = {
@@ -56,7 +56,7 @@ export default function RecentlyAddedPage() {
           Image: item.imageUrl,
           Video: item.videoUrl,
           highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
-          price: Web3.utils.fromWei(item.lowestValuePricePerItem.toLocaleString("en-GB").replaceAll(',',''), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
+          price: Web3.utils.fromWei(toFixed(item.lowestValuePricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
           likes: item.numberOfLikes
         }
       )))

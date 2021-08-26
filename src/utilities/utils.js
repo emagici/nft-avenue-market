@@ -29,6 +29,10 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
+export function toFixed(x) {
+  return x.toLocaleString("en-GB").replaceAll(',','');
+}
+
 export const getTokenTypes = (blockchainId) => {
   if(blockchainId === 0){
     return [

@@ -202,8 +202,8 @@ export default function PvlaceDrop() {
         const usdFloorPrice = item.floorPriceUsd.toString();
         const bnbFloorPrice = item.floorPriceBnb.toString();
 
-        setFloorPriceUsd(usdFloorPrice.substring(0, usdFloorPrice.indexOf('.') + 2));
-        setFloorPriceBnb(bnbFloorPrice.substring(0, bnbFloorPrice.indexOf('.') + 2));
+        setFloorPriceUsd(usdFloorPrice.indexOf('.') < 0 ? usdFloorPrice : usdFloorPrice.substring(0, usdFloorPrice.indexOf('.') + 2));
+        setFloorPriceBnb(bnbFloorPrice.indexOf('.') < 0 ? bnbFloorPrice : bnbFloorPrice.substring(0, bnbFloorPrice.indexOf('.') + 2));
       }
     })
     .catch(function (response) {
