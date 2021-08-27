@@ -35,7 +35,8 @@ import {
   getPayTokenFromListing,
   getPayTokenDetailByAddress,
   listingFeeTokenBsc,
-  toFixed
+  toFixed,
+  getUserFomoBalance
 } from "../../utilities/utils";
 
 import {
@@ -318,11 +319,23 @@ export default function ItemDetail(props) {
     }
 
     if(userContext.state.blockchainId == 0){
-        isLoading(true);
+
         const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
         const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
         const listingFee = await marketplaceContract.methods.listingFee().call();
         const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
+        const fomoTokenBalance = await getUserFomoBalance(myAdd, web3);
+        const FomoListingFee =  Number(Web3.utils.fromWei(toFixed(listingFee), "ether"));
+        
+        if(fomoTokenBalance > FomoListingFee){
+          addToast(`Low token balance, ${FomoListingFee} FOMO required for listing`, {
+            appearance: 'error',
+            autoDismiss: true,
+          })
+          return;
+        }
+
+        isLoading(true);
 
         await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
