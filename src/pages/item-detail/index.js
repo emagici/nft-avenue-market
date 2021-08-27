@@ -987,8 +987,8 @@ export default function ItemDetail(props) {
             {/* IF ITEM HAS SELLERS NEED TO LOOP THROUGH AND DISPLAY HERE - MAX 12 AVATARS */}
             <div className="py-3">
               <div className="flex -space-x-1 relative z-0 justify-center md:justify-start">
-                {listings &&
-                  listings.map((item) => (
+                {listings && listings.length &&
+                  listings.filter((item, i) => i < 12).map((item) => (
                     <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
                       <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
                         <img
