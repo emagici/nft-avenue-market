@@ -26,7 +26,7 @@ export default function ItemCardSlider(props) {
               src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
               alt=""
             />
-            <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p>
+            {/* <p className="hidden sm:block text-xs ml-1.5 font-bold">CryptoChown</p> */}
           </div>
         ) : (
           <Link to="/user">
@@ -36,7 +36,7 @@ export default function ItemCardSlider(props) {
                 src="https://images.unsplash.com/photo-1554188248-986adbb73be4?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
                 alt=""
               />
-              <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p>
+              {/* <p className="hidden sm:block text-xs ml-1.5 font-bold mt-1">CryptoChown</p> */}
             </div>
           </Link>
         )}

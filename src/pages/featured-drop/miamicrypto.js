@@ -28,7 +28,6 @@ const items = [
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmcaU1u6HLT6gGCmNCnRhg67cB1YozxpChBr3UfaWhHF8S",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Porsche 911",
-    price: "735 BNB",
     TokenId: 1,
     Listed: false,
     sold: true
@@ -37,7 +36,6 @@ const items = [
     Image: "https://fomolabnft.mypinata.cloud/ipfs/QmTmhtQCWo4e9rw7HKiQz4n2UnnJG7hGTsatrj3n6F18NW",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Rocketship",
-    price: "5 BNB",
     TokenId: 2,
     Listed: false,
     sold: true
@@ -46,7 +44,6 @@ const items = [
     Image: "https://fomolabnft.mypinata.cloud/ipfs/QmazJf4uRTCryUHWmgE2DWeQrSpNj3qogYqKLC5xfwLhv6",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Xibot Miami",
-    price: "35 BNB",
     TokenId: 3,
     Listed: false,
     sold: true
@@ -55,7 +52,6 @@ const items = [
     Video: "https://bafybeibyr5jynbtczhymbzfdzficc5tfvy7rxv6p7q3l57zkgde666mcje.ipfs.dweb.link/",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Miami Gotchi Dreams",
-    price: "1175 BNB",
     TokenId: 4,
     Listed: false,
     sold: true
@@ -64,7 +60,6 @@ const items = [
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmS6D2YD6YpNGHctB3TjXsAXe6bnEYeASZhBn665PhcKd7",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Miami Oasis",
-    price: "5 BNB",
     TokenId: 5,
     Listed: false,
     sold: true
@@ -73,7 +68,6 @@ const items = [
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmfPeKqMgstznHTxVYX5kGUeN33i6HVwc2vS7aR7YQP49n",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "MC PICASSO",
-    price: "4 BNB",
     TokenId: 6,
     Listed: false,
     sold: true
@@ -82,7 +76,6 @@ const items = [
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmfBpxjV1RwnJPoHnH2WRjHchkFitADDev5UHQ6xhwULTo",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Soil of my soul",
-    price: "6 BNB",
     TokenId: 7,
     Listed: false,
     sold: true
@@ -91,7 +84,6 @@ const items = [
     Video: "https://bafybeiabtmut2sfregvylbgtfvsiczx5aiqprdp6sibgmfckdl7pqupxeu.ipfs.dweb.link/",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "SBlum/Bitbang",
-    price: "5 BNB",
     TokenId: 8,
     Listed: false,
     sold: true
@@ -100,7 +92,6 @@ const items = [
     Video: "https://fomolabnft.mypinata.cloud/ipfs/QmZe2TcfuuBR9Db4VuGWiMR4CWKg5YdsSfspAC9pFms5wJ",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "1st Issue!",
-    price: "10 BNB",
     TokenId: 9,
     Listed: false,
     sold: true
@@ -109,7 +100,7 @@ const items = [
 
 export default function MiamiDrop() {
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="Miami Crypto" />
       <div className="max-w-screen-2xl mx-auto">
 

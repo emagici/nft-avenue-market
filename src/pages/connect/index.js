@@ -21,7 +21,7 @@ const people = [
 export default function Connect() {
   const { addToast } = useToasts()
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <div className="max-w-screen-2xl mx-auto py-10 px-4 sm:px-6">
         <SectionHeader title="Connect Wallet">
           <div className="flex justify-between">

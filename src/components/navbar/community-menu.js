@@ -13,11 +13,13 @@ import {
 import { faCommentDots, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 const menuItems = [
+  { name: 'Blog', href: '/blog' },
   { name: 'Discussion', href: 'https://www.reddit.com/r/Fomo_Lab/', target: "_blank" },
   // { name: 'Subscribe', href: '/#subscribe' },
   { name: 'Suggest Feature', href: 'https://forms.gle/TYgFzj6rxfiDdrMt9', target: "_blank" },
-  { name: 'Voting (Coming Soon)', href: '#' },
+  { name: 'Apply For Verification', href: 'https://forms.gle/rrKs57QTfdGA1mJB8', target: "_blank" },
   { name: 'FAQ', href: '/faq' },
+  { name: 'Voting (Coming Soon)', href: '#' },
 ]
 
 const socials = [

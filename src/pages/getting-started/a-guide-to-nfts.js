@@ -58,7 +58,7 @@ const sections = [
 
 export default function AGuideToNFTs() {
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="A Guide To NFTs" />
       <div className="max-w-screen-2xl mx-auto">
         <div className="bg-white">

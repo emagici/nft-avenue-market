@@ -90,7 +90,9 @@ export default function CollectionPage() {
             ) : (
               results && results.length ? (
                 <div>
-                  <h1 className="text-4xl font-bold text-center capitalize mb-10">{"Collection Name"}</h1>
+                  {collectionId ? (
+                    <h1 className="text-4xl font-bold text-center capitalize mb-10">{collectionId}</h1>
+                  ) : null}
                   <div>
                     <CardList items={results} />
                   </div>
@@ -98,7 +100,7 @@ export default function CollectionPage() {
               ) : (
                 <div>
                   <div className="pb-10">
-                    <h1 className="text-4xl font-bold text-center capitalize">No items found in this collection</h1>
+                    <h1 className="text-4xl font-bold text-center capitalize">No items found</h1>
                   </div>
                 </div>
               )

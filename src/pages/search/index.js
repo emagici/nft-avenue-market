@@ -127,7 +127,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="Search" />
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         {loading ? (

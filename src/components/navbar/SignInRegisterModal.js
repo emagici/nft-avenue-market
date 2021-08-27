@@ -2,6 +2,7 @@ import React, { useState, Fragment } from "react";
 import Modal from "../../components/modal";
 import { MailIcon, PencilAltIcon } from '@heroicons/react/solid'
 import MMLogo from '../../assets/img/logos/mm-logo.png'
+import WalletIcon from '../../assets/img/wallet.svg'
 
 import Register from "./register";
 import MetamaskSignIn from "./MetamaskSignIn";
@@ -53,13 +54,12 @@ export default function SignInRegisterModal(props) {
                 </button>
                 <button
                   onClick={() => optionSelected('metamask')}
-                  className="flex md:flex-col justify-center items-center mb-3 px-4 py-2 w-full mx-1.5 md:w-32 md:h-40 shadow-lg text-sm font-bold rounded-2xl border border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                  className="flex md:flex-col justify-center items-center mb-3 px-4 py-1 w-full mx-1.5 md:w-32 md:h-40 shadow-lg text-sm font-bold rounded-2xl border border-gray-200 text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
                 >
                   <div className="flex justify-center mb-1">
-                    <img src={MMLogo} className="h-10 w-10 object-contain mx-auto -mt-3" />
-                    {/* <ClockIcon className="h-5 w-5 md:h-7 md:w-7 mr-1 md:mr-0 text-gray-700" aria-hidden="true" /> */}
+                    <img src={WalletIcon} className="h-7 w-7 md:h-10 md:w-10 object-contain mr-1 md:mx-auto mt-0 md:-mt-4" style={{ fill: 'blue' }} />
                   </div>
-                  <p>Sign In With MetaMask</p>
+                  <p>Sign In With Wallet</p>
                 </button>
                 <button
                   // onClick={() => optionSelected('register')}

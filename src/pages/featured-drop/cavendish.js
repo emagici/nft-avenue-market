@@ -39,7 +39,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "30 STAGE WINS (1 OF 1)",
     TokenId: 100,
-    price: "182.2",
+    price: "182.2 BNB",
     Listed: false,
   },
   {
@@ -47,7 +47,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "30 STAGE WINS (30x)",
     TokenId: 1,
-    price: "3.66",
+    price: "3.66 BNB",
     Listed: false,
   },
   {
@@ -55,7 +55,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "FOUR IN A ROW (100x)",
     TokenId: 101,
-    price: "0.9",
+    price: "0.9 BNB",
     Listed: false,
   },
   {
@@ -63,7 +63,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "2016 UTAH BEACH (100x)",
     TokenId: 102,
-    price: "0.9",
+    price: "0.9 BNB",
     Listed: false,
   },
   {
@@ -71,7 +71,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "2008 Breakthrough Tour Victory (100x)",
     TokenId: 103,
-    price: "0.9",
+    price: "0.9 BNB",
     Listed: false,
   },
   {
@@ -79,7 +79,7 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "The Sprint King Prevails In Brive (100x)",
     TokenId: 104,
-    price: "0.9",
+    price: "0.9 BNB",
     Listed: false,
   },
   {
@@ -87,14 +87,14 @@ const items = [
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "Wins In Style In La Grand-Motte (100x)",
     TokenId: 105,
-    price: "0.9",
+    price: "0.9 BNB",
     Listed: false,
   },
 ]
 
 export default function CavendishDrop() {
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="Mark Cavendish" />
       <div className="max-w-screen-2xl mx-auto">
 

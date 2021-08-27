@@ -25,7 +25,7 @@ export default function GettingStartedSection() {
   useEffect(() => {
 
     const articlesTmp = sharedContext.state.articles
-    if (articlesTmp && articlesTmp.length) {
+    if (articlesTmp && articlesTmp.length && articlesTmp.length > 1) {
       // only load new articles on initial load - otherwise restore from state if available
       setArticles(articlesTmp)
       setLoading(false)
@@ -76,18 +76,18 @@ export default function GettingStartedSection() {
       articles && articles.length ? (
         <div className="py-10">
           <div className="max-w-screen-2xl mx-auto">
-            <SectionHeader title="Articles" />
-            <ul className="grid grid-cols-1 gap-6 lg:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <SectionHeader title="Blog" />
+            <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {articles.map((item) => (
                 <li key={item.id} className="col-span-1">
                   <Link to={`/blog/${item.slug}`}>
-                    <div className="w-full h-72 flex items-center justify-between bg-gray-100 rounded-xl shadow-lg mb-5">
+                    <div className="w-full h-40 md:h-72 flex items-center justify-between bg-gray-100 rounded-xl shadow-lg mb-2 md:mb-5">
                       {item.featured_image && item.featured_image.url ? (
                         <img src={item.featured_image.url} className="w-full h-full object-cover rounded-xl" />
                       ) : null}
                     </div>
                     <div>
-                      <p className="text-xl font-bold">{item.title}</p>
+                      <p className="text-base md:text-xl font-bold">{item.title}</p>
                     </div>
                   </Link>
                 </li>

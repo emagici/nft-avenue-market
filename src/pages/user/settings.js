@@ -157,7 +157,7 @@ export default function UserSettings() {
               </div>
             </div>
 
-            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:py-5">
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 py-5">
               <label htmlFor="photo" className="block text-sm font-bold text-gray-700">
                 Profile Photo
               </label>
@@ -380,13 +380,13 @@ export default function UserSettings() {
           <div className="flex justify-end">
             <Link
               to="/user"
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none "
+              className="bg-white py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none "
             >
               Cancel
             </Link>
             <button
               type="submit"
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none "
+              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none "
             >
               Save
             </button>
