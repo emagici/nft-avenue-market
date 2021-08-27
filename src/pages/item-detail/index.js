@@ -327,7 +327,7 @@ export default function ItemDetail(props) {
         const fomoTokenBalance = await getUserFomoBalance(myAdd, web3);
         const FomoListingFee =  Number(Web3.utils.fromWei(toFixed(listingFee), "ether"));
         
-        if(fomoTokenBalance > FomoListingFee){
+        if(Number(fomoTokenBalance) < FomoListingFee){
           addToast(`Low token balance, ${FomoListingFee} FOMO required for listing`, {
             appearance: 'error',
             autoDismiss: true,
