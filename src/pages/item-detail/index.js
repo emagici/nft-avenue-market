@@ -990,11 +990,13 @@ export default function ItemDetail(props) {
                 {listings &&
                   listings.map((item) => (
                     <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
-                      <img
-                        className="relative z-1 inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                        src={item.sellerProfilePic}
-                        alt=""
-                      />
+                      <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
+                        <img
+                          className="h-6 w-6 rounded-full"
+                          src={item.sellerProfilePic}
+                          alt=""
+                        />
+                      </div>
                       <span className="absolute -bottom-7 px-2 py-1 shadow-lg block rounded-lg bg-gray-900 text-white text-sm flex justify-center items-center font-bold transition-all opacity-0 group-hover:opacity-100 pointer-events-none">
                         <span className="text-white text-xs">{item.sellerName}</span>
                       </span>

@@ -38,11 +38,13 @@ export default function CardDefault(props) {
 
               {props.sellers &&
                   props.sellers.slice(0, 3).map((item) => (
+                    <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
                       <img
-                        className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white"
+                        className="h-6 w-6 rounded-full"
                         src={item.profilePictureUrl}
                         alt=""
                       />
+                    </div>
                   ))
               }
 
