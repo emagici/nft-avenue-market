@@ -36,7 +36,8 @@ import {
   getPayTokenDetailByAddress,
   listingFeeTokenBsc,
   toFixed,
-  getUserFomoBalance
+  getUserFomoBalance,
+  getTokenBalance,
 } from "../../utilities/utils";
 
 import {
@@ -250,8 +251,14 @@ export default function ItemDetail(props) {
 
       setListings(listingItems);
 
-      const offerItems = nftListingResult[0].offers.map((item) => (
-        {
+      const offerItems = await Promise.all(nftListingResult[0].offers.map( async (item) => {
+
+        var balance = await getTokenBalance(item.creatorAddress, item.payToken, web3)
+        if(Number(balance) < Number(item.quantity) * Number(Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"))){
+          return 
+        }
+
+        var obj = {
           TokenId: item.tokenId,
           NftAddress: item.nftAddress,
           creatorAddress: item.creatorAddress,
@@ -262,9 +269,12 @@ export default function ItemDetail(props) {
           offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName,
           verified: item.verified
         }
-      ))
+        return obj;
+      }));
 
-      setOffers(offerItems.filter(item => item.deadline > getCurrentTimeInSeconds()));
+      console.log(offerItems)
+
+      setOffers(offerItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
       // console.log(response);
@@ -478,6 +488,15 @@ export default function ItemDetail(props) {
     const totalAmount = offerQuantity * offerPricePerItem;
     const totalAmountToSend =  Web3.utils.toWei(toFixed(totalAmount), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
+    const offerTokenBalance = await getTokenBalance(myAdd, offerToken, web3)
+
+    if(Number( Web3.utils.toWei(toFixed(offerTokenBalance), "ether")) < Number(totalAmountToSend)){
+      addToast(`Insufficient balance to make this offer`, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      return;
+    }
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
@@ -587,6 +606,16 @@ export default function ItemDetail(props) {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether");
     const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
+
+    const tokenBalance = await getTokenBalance(myAdd, obj.payToken.payTokenAddress, web3)
+
+    if(Number( Web3.utils.toWei(toFixed(tokenBalance), "ether")) < Number(amountToSend)){
+      addToast(`Insufficient balance to make this purchase`, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+      return;
+    }
 
     isLoading(true);
 
@@ -958,14 +987,16 @@ export default function ItemDetail(props) {
             {/* IF ITEM HAS SELLERS NEED TO LOOP THROUGH AND DISPLAY HERE - MAX 12 AVATARS */}
             <div className="py-3">
               <div className="flex -space-x-1 relative z-0 justify-center md:justify-start">
-                {listings &&
-                  listings.map((item) => (
+                {listings && listings.length &&
+                  listings.filter((item, i) => i < 12).map((item) => (
                     <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
-                      <img
-                        className="relative z-1 inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                        src={item.sellerProfilePic}
-                        alt=""
-                      />
+                      <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
+                        <img
+                          className="h-6 w-6 rounded-full"
+                          src={item.sellerProfilePic}
+                          alt=""
+                        />
+                      </div>
                       <span className="absolute -bottom-7 px-2 py-1 shadow-lg block rounded-lg bg-gray-900 text-white text-sm flex justify-center items-center font-bold transition-all opacity-0 group-hover:opacity-100 pointer-events-none">
                         <span className="text-white text-xs">{item.sellerName}</span>
                       </span>

@@ -42,7 +42,7 @@ export const getTokenTypes = (blockchainId) => {
         tokenAddress: "0x5EEF8c4320e2Bf8D1e6231A31500FD7a87D02985"
       },
       {
-        name: "BNB",
+        name: "WBNB",
         tokenAddress: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"
       },
       {
@@ -133,6 +133,34 @@ export const getUserFomoBalance = async (myadd, web) => {
   }, ];
 
   const contract = new web.eth.Contract(minABI, fomoTokenAddress);
+  const result = await contract.methods.balanceOf(myadd).call();
+
+  try {
+    const balArr = web.utils.fromWei(result, "ether").split('.')
+    let balStr = balArr[0]
+    return (balArr.length == 1 ? balStr : `${balStr}.${balArr[1].substr(0,1)}`)
+  } catch (e) {
+    return (0)
+  }
+}
+
+export const getTokenBalance = async (myadd, tokenAddress, web) => {
+
+  const minABI = [{
+    constant: true,
+    inputs: [{
+      name: "_owner",
+      type: "address"
+    }],
+    name: "balanceOf",
+    outputs: [{
+      name: "balance",
+      type: "uint256"
+    }],
+    type: "function",
+  }, ];
+
+  const contract = new web.eth.Contract(minABI, tokenAddress);
   const result = await contract.methods.balanceOf(myadd).call();
 
   try {

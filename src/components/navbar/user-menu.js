@@ -187,6 +187,12 @@ export default function UserMenu(props) {
                       >
                         <p className="flex-1 text-sm font-bold text-white text-center">Buy $FOMO</p>
                       </a>
+                      <a
+                        href="https://pancakeswap.finance/swap?outputCurrency=0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" target="_blank"
+                        className="py-2 my-1 mt-2 flex items-center rounded-lg bg-yellow-400 hover:bg-yellow-500 transition ease-in-out duration-150"
+                      >
+                        <p className="flex-1 text-sm font-bold text-black text-center">Wrap BNB</p>
+                      </a>
                     </div>
                   ) : null}
                 </div>
