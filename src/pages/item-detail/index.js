@@ -817,6 +817,7 @@ export default function ItemDetail(props) {
                     muted
                     controls
                     loop
+                    playsInline
                     onContextMenu={e => e.preventDefault()}
                     controlsList="nodownload"
                     src={nftVideoSrc}

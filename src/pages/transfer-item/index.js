@@ -112,7 +112,10 @@ export default function TransferItem(props) {
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
                 {nftVideoSrc ? (
                   <video
-                    autoPlay muted
+                    autoPlay
+                    muted
+                    playsInline
+                    loop
                     src={nftVideoSrc}
                     className="object-cover pointer-events-none group-hover:opacity-90 transition-opacity"
                   />

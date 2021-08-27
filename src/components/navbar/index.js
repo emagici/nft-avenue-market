@@ -110,8 +110,6 @@ export default function Navbar() {
   const [accessToken, setAccessToken] = useState()
   const [notifications, setNotifications] = useState([])
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-  const [hasBellIconAnimate, setHasBellIconAnimate] = useState(false);
-
   const [provider, setProvider] = useState();
 
   
@@ -484,13 +482,6 @@ export default function Navbar() {
       });
   };
 
-  function showNewNotificationAnimation(){
-    setHasBellIconAnimate(true);
-  }
-
-  function hideNewNotificationAnimation(){
-    setHasBellIconAnimate(false);
-  }
 
   //need to remove previous event handler on component re-render
   hub.off('ReceiveMessage');
@@ -501,7 +492,6 @@ export default function Navbar() {
         appearance: 'info',
         autoDismiss: true,
       });
-      showNewNotificationAnimation();
       getNotifications();
     }
   });
@@ -598,9 +588,8 @@ export default function Navbar() {
                                 View notifications
                               </span>
                               <BellIcon
-                                className={hasBellIconAnimate ? "h-6 w-6 align-text-top animate-swing origin-top" : "h-6 w-6"}
+                                className={newNotificationCount ? "h-6 w-6 align-text-top animate-swing origin-top" : "h-6 w-6"}
                                 aria-hidden="true"
-                                onClick={() => hideNewNotificationAnimation()}
                               />
                               {/* {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)} */}
                               {newNotificationCount ? (
