@@ -1,67 +1,63 @@
 import React, { useEffect, useContext, useState } from 'react'
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import SectionHeader from '../../components/section-header'
 import Spinner from '../../components/loading-spinner/spinner';
 import { SharedContext } from '../../context/shared-context'
 import { GraphQLClient, gql } from 'graphql-request'
 
-export default function BlogPage() {
-  const params = useParams()
+export default function BlogListPage() {
   const sharedContext = useContext(SharedContext)
   const [loading, setLoading] = useState(true)
-  const [article, setArticle] = useState(null)
+  const [articles, setArticles] = useState(null)
 
   const graphQLClient = new GraphQLClient('https://api-eu-central-1.graphcms.com/v2/cksi1jg4i1pgs01xlc7859py8/master', {})
 
   useEffect(() => {
-    if (!params || !params.slug) {
-      setLoading(false)
-    } else {
-      // check context for article first
-      const { slug } = params;
-      const { articles } = sharedContext.state
-      if (articles && articles.filter(item => item.slug === slug).length) {
-        setArticle(articles.filter(item => item.slug === slug)[0])
-        setLoading(false)
-      } else {
-        // try downloading article from CMS API
-        getArticle()
-      }
-    }
-  }, [])
 
-  async function getArticle() {
-    const { slug } = params
-    const { article } = await graphQLClient.request(
-      gql`
-        {
-          article(where: { slug: "${slug}" }) {
-            id
-            publishedAt
-            title
-            slug
-            body {
-              html
-            }
-            featured_image {
-              url
+    const articlesTmp = sharedContext.state.articles
+    if (articlesTmp && articlesTmp.length && articlesTmp.length > 1) {
+      // only load new articles on initial load - otherwise restore from state if available
+      setArticles(articlesTmp)
+      setLoading(false)
+      return;
+    }
+
+    const fetchArticles = async () => {
+      const { articles } = await graphQLClient.request(
+        gql`
+          {
+            articles(orderBy: updatedAt_DESC, first: 12) {
+              id
+              publishedAt
+              title
+              slug
+              body {
+                html
+              }
+              featured_image {
+                url
+              }
             }
           }
-        }
-      `
-    );
-    if (article) {
-      sharedContext.dispatch({
-        type: "ADD_ARTICLE",
-        payload: article
-      })
-      setArticle(article)
-    }
-    setLoading(false)
-  }
+        `
+      );
+      if (articles && articles.length) {
+        sharedContext.dispatch({
+          type: "UPDATE_ARTICLES",
+          payload: articles
+        })
+        setArticles(articles)
+      }
+      setLoading(false)
+    };
+
+    fetchArticles()
+  }, [])
+
 
   return (
     <div>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div className="max-w-screen-2xl mx-auto">
           {loading ? (
             <div className="flex items-center justify-center">
@@ -69,28 +65,31 @@ export default function BlogPage() {
               <Spinner className="h-6 w-6 ml-2" />
             </div>
           ) : (
-            article ? (
-              <div>
-                <div className="relative md:mb-10">
-                  <div className="h-40 md:h-60 shadow-xl w-full rounded-2xl bg-gray-100">
-                    {article.featured_image && article.featured_image.url ? (
-                      <img
-                        className="h-full w-full rounded-2xl object-cover"
-                        src={article.featured_image.url}
-                        alt=""
-                      />
-                    ) : null}
-                  </div>
-                  <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center">
-                    <h2 className="text-2xl md:text-5xl font-extrabold text-gray-900">{article.title}</h2>
-                  </div>
-                </div>
-                <div className="max-w-screen-xl mx-auto article-content" dangerouslySetInnerHTML={{ __html: article.body.html }}>
+            articles && articles.length ? (
+              <div className="py-10">
+                <div className="max-w-screen-2xl mx-auto">
+                  <SectionHeader title="Blog" />
+                  <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {articles.map((item) => (
+                      <li key={item.id} className="col-span-1">
+                        <Link to={`/blog/${item.slug}`}>
+                          <div className="w-full h-40 md:h-72 flex items-center justify-between bg-gray-100 rounded-xl shadow-lg mb-2 md:mb-5">
+                            {item.featured_image && item.featured_image.url ? (
+                              <img src={item.featured_image.url} className="w-full h-full object-cover rounded-xl" />
+                            ) : null}
+                          </div>
+                          <div>
+                            <p className="text-base md:text-xl font-bold">{item.title}</p>
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ) : (
               <div>
-                <h2 className="text-xl md:text-3xl text-center font-extrabold text-gray-900 mt-5">Oops - This page does not exist</h2>
+                <h2 className="text-lg md:text-2xl text-center font-bold text-gray-900 mt-5">Unable to load the blog at the moment</h2>
               </div>
             )
           )}

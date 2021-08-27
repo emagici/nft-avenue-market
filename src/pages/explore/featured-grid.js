@@ -37,7 +37,7 @@ export default function FeaturedGrid() {
             />
             <div className="p-2 md:p-6 flex items-end sm:absolute sm:inset-0">
               <div>
-                <h3 className="font-bold text-white text-2xl">
+                <h3 className="font-bold text-white text-lg md:text-2xl">
                   <Link to="/featured-drop?id=fegtcg">
                     <span className="absolute inset-0" />
                     FEG TCG
@@ -61,7 +61,7 @@ export default function FeaturedGrid() {
             />
             <div className="p-2 md:p-6 flex items-end sm:absolute sm:inset-0">
               <div>
-                <h3 className="font-bold text-white text-2xl">
+                <h3 className="font-bold text-white text-lg md:text-2xl">
                   <Link to="/featured-drop?id=cavendish">
                     <span className="absolute inset-0" />
                     Mark Cavendish
@@ -85,7 +85,7 @@ export default function FeaturedGrid() {
             />
             <div className="p-2 md:p-6 flex items-end sm:absolute sm:inset-0">
               <div>
-                <h3 className="font-bold text-white text-2xl">
+                <h3 className="font-bold text-white text-lg md:text-2xl">
                   <Link to="/featured-drop?id=pvlace">
                     <span className="absolute inset-0" />
                     PVLACE x 808 MAFIA x GUNBOI
@@ -109,7 +109,7 @@ export default function FeaturedGrid() {
             />
             <div className="p-2 md:p-6 flex items-end sm:absolute sm:inset-0">
               <div>
-                <h3 className="font-bold text-white text-2xl">
+                <h3 className="font-bold text-white text-lg md:text-2xl">
                   <Link to="/featured-drop?id=miamicrypto">
                     <span className="absolute inset-0" />
                     Miami Crypto
@@ -133,7 +133,7 @@ export default function FeaturedGrid() {
             />
             <div className="p-2 md:p-6 flex items-end sm:absolute sm:inset-0">
               <div>
-                <h3 className="font-bold text-white text-2xl">
+                <h3 className="font-bold text-white text-lg md:text-2xl">
                   <span className="absolute inset-0" />
                   Next Featured Drop Coming Soon
                 </h3>

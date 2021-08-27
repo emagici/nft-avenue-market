@@ -27,7 +27,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/Qmc2bDxHWUS24PKHEABbjNWovUQ1mWfRGQ6ovZQvt5qnbQ",
     NftAddress: "0x429b37477dfAD86369503567994b2e548E2F0e0d",
     TokenName: "FEG NFP",
-    price: "75 FOMO",
     TokenId: 1000,
     Listed: false,
     sold: true
@@ -36,7 +35,7 @@ const items = [
 
 export default function FegTcgDrop() {
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="FEG Trading Card Game" />
 
       <div className="max-w-screen-2xl mx-auto">

@@ -97,7 +97,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmVsR6hEmS6WSUqepvoH9bJQy1UuRA6ZNzhBUWrid3yavC",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Drake",
-    price: "3 BNB",
     TokenId: 472,
     Listed: false,
     sold: true
@@ -106,7 +105,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmVLeB2EttdHTstNe8MSKCRBQzimrVAtU6ftns6VF8PMCB",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Jay Z",
-    price: "3 BNB",
     TokenId: 473,
     Listed: false,
     sold: true
@@ -115,7 +113,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmWqgJADysfjVnbsjER4sy4tRKMYVJbNn8RcksnzeNehj8",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Kanye West",
-    price: "3 BNB",
     TokenId: 474,
     Listed: false,
     sold: true
@@ -124,7 +121,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmeFVDUav3smNQV5ReDovxRUCX795sy4pes3STfYkEug8o",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Kendrick Lamar",
-    price: "3 BNB",
     TokenId: 457,
     Listed: false,
     sold: true
@@ -133,7 +129,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmNeRSeSf8mbRgDXTChMkLgqMLcvUUwEXdpc1sn2cWRQcv",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Lauryn Hill",
-    price: "3 BNB",
     TokenId: 70,
     Listed: false,
     sold: true
@@ -142,7 +137,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmdGa3QU4dZqWWfXiTrJQrMMrSqno3DZce3HrkXDgisJV2",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "21 Savage",
-    price: "3 BNB",
     TokenId: 71,
     Listed: false,
     sold: true
@@ -151,7 +145,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmdWQxqbhjz5bxcnchefJyogujMD2eQrv9qP85qmhG4tWh",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "ASAP Rocky",
-    price: "3 BNB",
     TokenId: 72,
     Listed: false,
     sold: true
@@ -160,7 +153,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmSFPabdmdnzRCSopLAErb3dQzWWHLXjjVvfSQWXVpS2Vu",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Cardi B",
-    price: "3 BNB",
     TokenId: 458,
     Listed: false,
     sold: true
@@ -169,7 +161,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmQUEsJedoPTHXxzCesZWGJrrx1Dir2k1Di4fw69KJ9iQU",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Chief Keef",
-    price: "3 BNB",
     TokenId: 470,
     Listed: false,
     sold: true
@@ -178,7 +169,6 @@ const items = [
     Video: "https://pvlacenftcollection.art/ipfs/QmcLRTyTdkYMvHckPAD4uL6qojS18ZXKxdLLSEJBk5m3S9",
     NftAddress: "0xec6b1abf83f184cdb390c8f95c0d568a6a4dbd80",
     TokenName: "Chris Brown",
-    price: "3 BNB",
     TokenId: 73,
     Listed: false,
     sold: true
@@ -213,7 +203,7 @@ export default function PvlaceDrop() {
 
   
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       <PageTitle title="PVLACE x 808 MAFIA x GUNBOI" />
 
       <div className="max-w-screen-2xl mx-auto">
@@ -285,6 +275,15 @@ export default function PvlaceDrop() {
         <div className="mb-20 sm:mb-28">
           <SectionHeader title="In The Collection" titleClasses="text-center" />
           <CardList items={items} />
+          <div className="flex justify-center mt-4">
+            <Link
+              as="button"
+              to='/collection/pvlace'
+              className="inline-flex items-center px-6 py-2 border-4 border-indigo-600 rounded-full text-md font-bold text-indigo-600 hover:text-white bg-white hover:bg-indigo-600 focus:outline-none transition-all"
+            >
+              View Collection
+            </Link>
+          </div>
         </div>
 
         <div className="text-center max-w-7xl mx-auto mb-20 sm:mb-28">

@@ -984,7 +984,7 @@ export default function ItemDetail(props) {
             {nftDescription ? (
               <div className="pt-2">
                 <p className="mb-1 text-center md:text-left font-bold">Description</p>
-                <p className="mb-6 text-center md:text-left">{nftDescription}</p>
+                <p className="mb-6 text-sm md:text-base text-center md:text-left">{nftDescription}</p>
               </div>
             ) : null}
 
@@ -1446,9 +1446,8 @@ export default function ItemDetail(props) {
 
             {activeTab === 'Creator' ? (
               <div className="pt-3">
-                <h1 className="font-bold text-xl mb-3 text-center md:text-left">About CryptoChown</h1>
-                <p className="mb-3 text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <p className="text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <h1 className="font-bold text-xl mb-3 text-center md:text-left">About Creator</h1>
+                <p className="mb-3 text-center md:text-left"></p>
               </div>
             ) : null}
 
@@ -1456,7 +1455,7 @@ export default function ItemDetail(props) {
               <div>
                 {history && history.length ? (
                   <ul className="">
-                    {history.filter((item, i) => i < 10).map((item) => (
+                    {history.filter((item, i) => i < 20).map((item) => (
                       <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
                     ))}
                   </ul>

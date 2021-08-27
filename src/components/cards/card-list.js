@@ -33,8 +33,8 @@ export default function CardList(props) {
             {props.items.filter((item, i) => i < displayCount).map((item, i) => <CardDefault key={i} {...item} /> )}
           </ul>
         ) : (
-          <div>
-            <h1 className="font-bold text-2xl mb-1 -mt-2">{props.emptyTitle ? props.emptyTitle : "No items found"}</h1>
+          <div className="text-center md:text-left text-gray-600">
+            <h1 className="font-bold text-xl md:text-2xl mb-1 -mt-2">{props.emptyTitle ? props.emptyTitle : "No items found"}</h1>
             {props.emptyMsg ? <p className="text-lg mb-20 sm:mb-40">{props.emptyMsg}</p> : null}
           </div>
         )

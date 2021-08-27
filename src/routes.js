@@ -14,7 +14,8 @@ import PrivacyPolicy from './pages/policies/privacy-policy';
 import TermsPage from './pages/policies/terms';
 import AGuideToNFTs from './pages/getting-started/a-guide-to-nfts';
 import RecentlyAddedPage from './pages/recently-added';
-import BlogPage from './pages/blog';
+import BlogPage from './pages/blog/single';
+import BlogListPage from './pages/blog';
 import CollectionPage from './pages/collection';
 
 export default [
@@ -116,6 +117,12 @@ export default [
 		title: "Collection",
 		component: CollectionPage,
 		exact: false
+	},
+	{
+		path: "/blog",
+		title: "Blog",
+		component: BlogListPage,
+		exact: true
 	},
 	{
 		path: "/blog/:slug",

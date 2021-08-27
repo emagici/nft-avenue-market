@@ -593,7 +593,7 @@ export default function Profile() {
                 myActivies && myActivies.length ? (
                   <div className="-mt-10 md:-mt-5">
                      <ul className="max-w-xl mx-auto">
-                        {myActivies.map((item, index) => (
+                        {myActivies.filter((item, i) => i < 20).map((item, index) => (
                           <li key={index} className="border-b border-gray-200">
                             <div className="flex items-center py-5">
                               <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">

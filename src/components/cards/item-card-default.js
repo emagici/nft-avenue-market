@@ -61,13 +61,13 @@ export default function CardDefault(props) {
         <div className="grid gap-2">
           <p className="block text-md font-bold text-gray-900 truncate">{props.TokenName}</p>
 
-          {props.highestbid ? (
-            <p className="block text-sm font-medium text-gray-900"><span className="font-light">Highest bid: </span>{props.highestbid}</p>
-          ) : null}
-
           {props.price ? (
             <p className="block text-sm uppercase font-bold text-green-500">{props.price}</p>
           ) : null} 
+
+          {props.highestbid ? (
+            <p className="block text-sm font-medium text-gray-900"><span className="font-light">Highest bid: </span>{props.highestbid}</p>
+          ) : null}
 
         </div>
 
