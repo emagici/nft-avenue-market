@@ -90,6 +90,7 @@ export default function SearchPage() {
 
       if(response.data.result && response.data.result.length > 0)
       {
+          console.log('response.data.result')
           console.log(response.data.result)
         
           const allItems = response.data.result;
@@ -102,8 +103,9 @@ export default function SearchPage() {
               TokenName:  item.tokenName,
               Image: item.imageUrl,
               Video: item.videoUrl,
-              highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") : "",
-              price: item.latestOffer ? Web3.utils.fromWei(item.price.toString(), "ether") + " BNB": "",
+              listings: item.sellers ? item.sellers.length : null
+              // highestbid: item.latestOffer && item.latestOffer.pricePerItem ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toLocaleString('fullwide', {useGrouping:false}), "ether") : "",
+              // price: item.price ? Web3.utils.fromWei(item.price.toLocaleString('fullwide', {useGrouping:false}), "ether") + " BNB": "",
             }
           ));
           
@@ -115,7 +117,7 @@ export default function SearchPage() {
       }
     })
     .catch(function (response) {
-      // console.log(response);
+      console.log(response);
       addToast("Error while searching.", {
         appearance: 'error',
         autoDismiss: true,

@@ -63,6 +63,10 @@ export default function CardDefault(props) {
         <div className="grid gap-2">
           <p className="block text-md font-bold text-gray-900 truncate">{props.TokenName}</p>
 
+          {props.listings ? (
+            <p className="block text-xs uppercase font-bold text-gray-700">{props.listings} Listings</p>
+          ) : null} 
+
           {props.price ? (
             <p className="block text-sm uppercase font-bold text-green-500">{props.price}</p>
           ) : null} 

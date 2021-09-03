@@ -136,6 +136,7 @@ export default function ItemDetail(props) {
         url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
       })
       .then(async function (response) {
+        console.log(response.data)
         setHistory(response.data.result.filter(item => item.eventName.toLowerCase() !== "itemliked"));
       })
       .catch(function (response) {
@@ -987,7 +988,7 @@ export default function ItemDetail(props) {
             {/* IF ITEM HAS SELLERS NEED TO LOOP THROUGH AND DISPLAY HERE - MAX 12 AVATARS */}
             <div className="py-3">
               <div className="flex -space-x-1 relative z-0 justify-center md:justify-start">
-                {listings && listings.length &&
+                {listings && listings.length ? (
                   listings.filter((item, i) => i < 12).map((item) => (
                     <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
                       <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
@@ -1008,7 +1009,7 @@ export default function ItemDetail(props) {
                       ) : null}
                     </Link>
                   ))
-                }
+                ) : null}
               </div>
             </div>
 
@@ -1086,7 +1087,11 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}>{item.sellerName}</Link></td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      <Link to={`/profile-info?userId=${item.ownerUserId}`}>
+                                        {item.sellerName.length > 12 ? `${item.sellerName.substr(0,12)}...` : item.sellerName}
+                                      </Link>
+                                    </td>
                                     {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     {item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
@@ -1161,7 +1166,15 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.creatorUsername}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      {item.creatorUserId ? (
+                                        <Link to={`/profile-info?userId=${item.creatorUserId}`}>
+                                          {item.creatorUsername.length > 12 ? `${item.creatorUsername.substr(0,12)}...` : item.creatorUsername}
+                                        </Link>
+                                      ) : (
+                                        item.creatorUsername.length > 12 ? `${item.creatorUsername.substr(0,12)}...` : item.creatorUsername
+                                      )}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     {isUserListedNft && item.creatorAddress.toLowerCase() != myAdd?.toLowerCase() ? (
                                         <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
@@ -1487,7 +1500,7 @@ export default function ItemDetail(props) {
                 {history && history.length ? (
                   <ul className="">
                     {history.filter((item, i) => i < 20).map((item) => (
-                      <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={item.address1OwnerId} date={item.blockNumber} />
+                      <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={`${item.address1.substr(0,6)}`} date={`${item.txHash}`} />
                     ))}
                   </ul>
                 ) : (

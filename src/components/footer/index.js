@@ -18,11 +18,11 @@ const navigation = {
     { name: 'Explore', href: '/explore' },
     { name: 'Featured', href: '/featured' },
     { name: 'My Profile', href: '/user' },
-    { name: 'FAQ', href: '/faq' },
   ],
   contactus: [
     { name: 'Email Us', href: 'mailto:contactus@fomolab.io' },
     { name: 'Apply For Verification', href: 'https://forms.gle/rrKs57QTfdGA1mJB8', target: "_blank" },
+    { name: 'FAQ', href: '/faq' },
   ],
   legal: [
     { name: 'Privacy', href: '/privacy-policy' },
@@ -162,9 +162,15 @@ export default function Footer() {
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
-                  <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} rel={item.target === "_blank" ? "noreferrer" : ""} className="text-base text-gray-500 hover:text-gray-900">
-                    {item.name}
-                  </a>
+                  {item.target ? (
+                    <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} rel={item.target === "_blank" ? "noreferrer" : ""} className="text-base text-gray-500 hover:text-gray-900">
+                      {item.name}
+                    </a>
+                  ) : (
+                    <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                      {item.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
