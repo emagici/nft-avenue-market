@@ -991,7 +991,7 @@ export default function ItemDetail(props) {
                 {listings && listings.length ? (
                   listings.filter((item, i) => i < 12).map((item) => (
                     <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
-                      <div className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
+                      <div className="relative inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
                         <img
                           className="h-6 w-6 rounded-full"
                           src={item.sellerProfilePic}
