@@ -52,7 +52,7 @@ export default function Explore() {
       <Following/> */}
       <HottestBidsSection/>
       <RecentlyAddedSection/>
-      <GettingStartedSection/>
+      {/* <GettingStartedSection/> */}
     </div>
   )
 }
