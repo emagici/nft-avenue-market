@@ -43,8 +43,8 @@ export default function Explore() {
       <div className="mb-5">
         {/* <VideoBanner /> */}
       </div>
-      {/* <FeaturedGrid/>
-      <Discover/> */}
+      <FeaturedGrid/>
+      <Discover/>
       {/* <DiscoverSlider/> */}
       <TopSellers/>
       <VerifiedArtistsSection/>
@@ -52,7 +52,7 @@ export default function Explore() {
       <Following/> */}
       <HottestBidsSection/>
       <RecentlyAddedSection/>
-      <GettingStartedSection/>
+      {/* <GettingStartedSection/> */}
     </div>
   )
 }
