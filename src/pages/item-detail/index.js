@@ -212,8 +212,7 @@ export default function ItemDetail(props) {
     .then(async function (nftListingResponse) {
       const nftListingResult = nftListingResponse.data.result;
 
-
-      // console.log(nftListingResult)
+      console.log(nftListingResult)
 
       if(nftListingResult.length === 0) return;
 
@@ -232,6 +231,7 @@ export default function ItemDetail(props) {
           owner: item.nft.owner,
           ownerUserId: item.nft.ownerId,
           pricePerItem:  Web3.utils.fromWei(toFixed(item.nft.pricePerItem), "ether"),
+          pricePerItemUsd:  item.nft.pricePerItemUsd,
           quantity: item.nft.quantity,
           sellerName: item.seller.name,
           sellerProfilePic: item.seller.profilePictureUrl,
@@ -240,7 +240,7 @@ export default function ItemDetail(props) {
         }
       )));
 
-      const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItem - b.pricePerItem;});
+      const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
       setLowestSellerItem(sortedlistingItems[0])
 
       if(myAdd){
@@ -250,7 +250,7 @@ export default function ItemDetail(props) {
         }
       }
 
-      setListings(listingItems);
+      setListings(sortedlistingItems);
 
       const offerItems = await Promise.all(nftListingResult[0].offers.map( async (item) => {
 
@@ -264,6 +264,7 @@ export default function ItemDetail(props) {
           NftAddress: item.nftAddress,
           creatorAddress: item.creatorAddress,
           pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
+          pricePerItemUsd: item.pricePerItemUsd,
           quantity: item.quantity,
           creatorUsername: item.creatorName,
           deadline: item.deadline,
@@ -273,9 +274,8 @@ export default function ItemDetail(props) {
         return obj;
       }));
 
-      console.log(offerItems)
-
-      setOffers(offerItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
+      const sortedOfferItems = offerItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
+      setOffers(sortedOfferItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
       // console.log(response);
