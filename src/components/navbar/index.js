@@ -85,9 +85,10 @@ const appUrls = {
   fomoHostApi: AppUrls.fomoHostApi,
   fomoClient: AppUrls.fomoClient,
   fomoNodeAPI: AppUrls.fomoNodeAPI,
+  fomoHubHostApi: AppUrls.fomoHubHostApi
 };
 
-const userNotificationConnectionHub = `${appUrls.fomoHostApi}/signalr-user-notification`;
+const userNotificationConnectionHub = `${appUrls.fomoHubHostApi}/signalr-user-notification`;
 
 const hub = setupSignalRConnection(userNotificationConnectionHub);
 
