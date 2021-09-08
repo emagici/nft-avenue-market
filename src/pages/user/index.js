@@ -60,6 +60,7 @@ export default function Profile() {
   const tabs = [
     "On Sale",
     "Owned",
+    // "Offers",
     // "Created",
     "Liked",
     "Following",

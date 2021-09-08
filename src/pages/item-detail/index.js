@@ -288,6 +288,8 @@ export default function ItemDetail(props) {
           }
         }
 
+        console.log("sortedlistingItems")
+        console.log(sortedlistingItems)
         setListings(sortedlistingItems)
 
         const offerItems = await Promise.all(
@@ -1310,7 +1312,7 @@ export default function ItemDetail(props) {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {nftMetadata.Special_Move ? (
+                          {/* {nftMetadata.Special_Move ? (
                             <tr>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                 Special Move
@@ -1363,7 +1365,7 @@ export default function ItemDetail(props) {
                                 {nftMetadata.Rarity}
                               </td>
                             </tr>
-                          ) : null}
+                          ) : null} */}
 
                           {nftMetadata.Edition ? (
                             <tr>
