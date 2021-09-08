@@ -270,12 +270,12 @@ export default function ItemDetail(props) {
           deadline: item.deadline,
           offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName,
           verified: item.verified,
-          creatorUserId: item.CreatorId
+          creatorUserId: item.creatorId
         }
         return obj;
       }));
 
-      const sortedOfferItems = offerItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
+      const sortedOfferItems = offerItems.sort(function(a, b) {return b.pricePerItemUsd - a.pricePerItemUsd;});
       setOffers(sortedOfferItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
