@@ -504,7 +504,7 @@ export default function Navbar() {
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex">
-                <div className="-ml-2 mr-2 flex items-center md:hidden">
+                <div className="-ml-2 mr-2 flex items-center md:hidden z-10">
                   {/* Mobile menu button */}
                   <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
                     <span className="sr-only">Open main menu</span>
@@ -546,6 +546,7 @@ export default function Navbar() {
                   ))}
                 </div>
               </div>
+              
               <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 hidden xl:flex">
                 <div className="max-w-lg w-full lg:max-w-xs">
                   <label htmlFor="search" className="sr-only">
@@ -576,6 +577,17 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 
                 <CommunityMenu/>
+
+                <div className="flex-1 flex items-center justify-center hidden md:flex xl:hidden">
+                  <Link
+                    as="a"
+                    to="/search"
+                    className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm"
+                  >
+                    <SearchIcon className="h-6 w-6" />
+                    <span className="sr-only">Search</span>
+                  </Link>
+                </div>
 
                 {myAdd && loggedIn ? (
                   <div className="hidden md:flex-shrink-0 md:flex md:items-center">
@@ -660,7 +672,13 @@ export default function Navbar() {
                                         <div className="max-w-lg">
                                           {(() => {
                                               if(item.eventName == "UserFollowed" && item.userFollower)
-                                                return <p className="text-md font-bold">{item.userFollower.followerUserFk.name} is following you</p>
+                                                return (
+                                                  <p className="text-md font-bold">
+                                                    {item.userFollower.followerUserFk.name.length > 12 
+                                                      ? item.userFollower.followerUserFk.name.substr(0,10) + "..."
+                                                      : item.userFollower.followerUserFk.name} is following you
+                                                  </p>
+                                                )
                                               else if (item.eventName == "ItemLiked" && item.userLike)
                                                 return <p className="text-md font-bold">{item.userLike.userFk.name} liked your NFT</p>
                                               else
@@ -813,6 +831,18 @@ export default function Navbar() {
 
           <Disclosure.Panel className="md:hidden">
             <div className="border-t">
+              <Disclosure.Button
+                as={Link}
+                to="/search"
+                className={classNames(
+                  location.pathname == "/search"
+                    ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
+                  "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6 appearance-none"
+                )}
+              >
+                Search
+              </Disclosure.Button>
               {Routes.filter((item) => item.nav).map((item, index) => (
                 <Disclosure.Button
                   as={Link}

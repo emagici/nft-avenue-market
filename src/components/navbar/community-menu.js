@@ -68,10 +68,8 @@ export default function CommunityMenu() {
       <Popover className="sm:relative inline-flex">
         {({ open }) => (
           <>
-            <Popover.Button className="bg-gray-100 hover:bg-gray-200 relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-gray-900 shadow-sm focus:outline-none">
-              <span className="lg:hidden">
-                <FontAwesomeIcon icon={faEllipsisH} />
-              </span>
+            <Popover.Button className="bg-gray-100 hover:bg-gray-200 relative inline-flex items-center justify-center p-2 px-3 border border-transparent text-sm font-bold rounded-full text-gray-900 shadow-sm focus:outline-none">
+              <FontAwesomeIcon icon={faEllipsisH} className="h-6 w-6 lg:hidden" />
               <span className="hidden lg:inline">Community</span>
             </Popover.Button>
 

@@ -276,6 +276,8 @@ export default function ItemDetail(props) {
       }));
 
       const sortedOfferItems = offerItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
+      console.log('sortedOfferItems')
+      console.log(sortedOfferItems)
       setOffers(sortedOfferItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
@@ -1196,13 +1198,13 @@ export default function ItemDetail(props) {
                         ) : (
                           <div>
                             <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
-                            {/* <button
+                            <button
                               type="button"
                               onClick={() => setMakeOfferModalOpen(true)}
                               className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none"
                             >
                               <span>Make Offer</span>
-                            </button> */}
+                            </button>
                           </div>
                         )}
                       </div>
@@ -1423,6 +1425,12 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
                         </div>
+                      </div>
+
+                      <div>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500 mt-3">
+                          Please note there is a listing fee of 25 FOMO and a 5% tax on sales
+                        </p>
                       </div>
 
                       <div className="flex gap-2 justify-start mt-5">
