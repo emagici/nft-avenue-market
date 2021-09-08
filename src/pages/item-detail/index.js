@@ -274,7 +274,7 @@ export default function ItemDetail(props) {
         return obj;
       }));
 
-      const sortedOfferItems = offerItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
+      const sortedOfferItems = offerItems.sort(function(a, b) {return b.pricePerItemUsd - a.pricePerItemUsd;});
       setOffers(sortedOfferItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
     })
     .catch(function (response) {
