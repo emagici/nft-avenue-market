@@ -1,34 +1,34 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useToasts } from 'react-toast-notifications'
-import qs from "qs";
-import { Accordion, AccordionItem, AccordionPanel } from '../../components/accordion'
-import Web3 from "web3";
-import axios from "axios";
-import Modal from "../../components/modal";
-import PageTitle from "../../components/page-title";
-import ItemHistoryRow from "./item-history-row";
-import PurchasedModal from "./purchased-modal";
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useToasts } from 'react-toast-notifications';
+import qs from 'qs';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+} from '../../components/accordion';
+import Web3 from 'web3';
+import axios from 'axios';
+import Modal from '../../components/modal';
+import PageTitle from '../../components/page-title';
+import ItemHistoryRow from './item-history-row';
+import PurchasedModal from './purchased-modal';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import { HeartIcon } from "@heroicons/react/solid";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { HeartIcon } from '@heroicons/react/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 import { SharedContext } from '../../context/shared-context';
-import { UserContext } from '../../context/user-context'
-import { Web3Context } from '../../context/web3-context'
-import { WalletContext } from '../../context/wallet-context'
+import { UserContext } from '../../context/user-context';
+import { Web3Context } from '../../context/web3-context';
+import { WalletContext } from '../../context/wallet-context';
 import {
   MARKETPLACE_ABI,
   getMarketplaceContractAddress,
-} from "../../contracts/FomoMarketPlace";
-import {
-  GENERICNFT_ABI
-} from "../../contracts/GenericNFT";
-import {
-  GENERIC_TOKEN_ABI
-} from "../../contracts/GenericToken";
+} from '../../contracts/FomoMarketPlace';
+import { GENERICNFT_ABI } from '../../contracts/GenericNFT';
+import { GENERIC_TOKEN_ABI } from '../../contracts/GenericToken';
 import {
   getTokenTypes,
   getDefaultTokenAddress,
@@ -38,7 +38,7 @@ import {
   toFixed,
   getUserFomoBalance,
   getTokenBalance,
-} from "../../utilities/utils";
+} from '../../utilities/utils';
 
 import {
   TelegramShareButton,
@@ -47,10 +47,10 @@ import {
   TelegramIcon,
   TwitterIcon,
   WhatsappIcon,
-} from "react-share";
+} from 'react-share';
 
 import AppUrls from '../../AppSettings';
-import { Fragment } from "react";
+import { Fragment } from 'react';
 
 const tabs = [
   { name: 'Info', href: '#', current: true },
@@ -60,60 +60,64 @@ const tabs = [
 ];
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
-const listingTypes = ["Fixed Price"];
+const listingTypes = ['Fixed Price'];
 const listingLengths = [3, 7, 14, 30];
 
 const user = {
-  name: "",
-  profilePictureUrl: "",
+  name: '',
+  profilePictureUrl: '',
 };
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
   fomoHostApi: AppUrls.fomoHostApi,
-  fomoClient: AppUrls.fomoClient
+  fomoClient: AppUrls.fomoClient,
 };
 
 export default function ItemDetail(props) {
   const location = useLocation();
-  const { addToast } = useToasts()
+  const { addToast } = useToasts();
   const sharedContext = useContext(SharedContext);
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
-  const walletContext = useContext(WalletContext)
-  
+  const userContext = useContext(UserContext);
+  const web3Context = useContext(Web3Context);
+  const walletContext = useContext(WalletContext);
+
   const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
-  const [tokenid, setTokenId] = useState("");
-  const [nftAddress, setNftAddress] = useState("");
-  const [nftName, setNftName] = useState("");
-  const [nftDescription, setNftDescription] = useState("");
-  const [nftVideoSrc, setVideoNftSrc] = useState("");
-  const [nftImageSrc, setImageNftSrc] = useState("");
+  const [tokenid, setTokenId] = useState('');
+  const [nftAddress, setNftAddress] = useState('');
+  const [nftName, setNftName] = useState('');
+  const [nftDescription, setNftDescription] = useState('');
+  const [nftVideoSrc, setVideoNftSrc] = useState('');
+  const [nftImageSrc, setImageNftSrc] = useState('');
   const [web3, setWeb3] = useState();
   const [marketplaceContract, setMarketplaceContract] = useState();
   const [myAdd, setMyadd] = useState();
-  const [activeTab, setActiveTab] = useState("Info");
+  const [activeTab, setActiveTab] = useState('Info');
   const [isOwner, setIsOwner] = useState(false);
   const [isUserListedNft, setIsUserListedNft] = useState(false);
   const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
   const [ListPrice, setListPrice] = useState(0);
   const [ListQuantity, setListQuantity] = useState(0);
-  const [ListingToken, setListingToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
+  const [ListingToken, setListingToken] = useState(
+    getDefaultTokenAddress(userContext.state.blockchainId)
+  );
   const [isItemListed, setIsItemListed] = useState(false);
-  const [listingType, setListingType] = useState("Fixed Price");
+  const [listingType, setListingType] = useState('Fixed Price');
   const [listingLength, setListingLength] = useState(7);
   const [shareUrl, setShareUrl] = useState(null);
 
-  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
+  const [showPurchasedModal, setShowPurchasedModal] = useState(false);
 
   const [offerLength, setOfferLength] = useState(7);
   const [offerQuantity, setOfferQuantity] = useState(1);
   const [offerPricePerItem, setOfferPricePerItem] = useState(0);
-  const [offerToken, setOfferToken] = useState(getDefaultTokenAddress(userContext.state.blockchainId));
+  const [offerToken, setOfferToken] = useState(
+    getDefaultTokenAddress(userContext.state.blockchainId)
+  );
 
   const [listings, setListings] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -123,181 +127,228 @@ export default function ItemDetail(props) {
 
   const [hasLiked, setHasLiked] = useState(false);
   const [tokenTypes, setTokenTypes] = useState([]);
-  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState();
+  const [marketplaceContractAddress, setMarketplaceContractAddress] =
+    useState();
 
   useEffect(() => {
     setTokenTypes(getTokenTypes(userContext.state.blockchainId));
-    setMarketplaceContractAddress(getMarketplaceContractAddress(userContext.state.blockchainId));
-  }, [userContext.state.blockchainId])
+    setMarketplaceContractAddress(
+      getMarketplaceContractAddress(userContext.state.blockchainId)
+    );
+  }, [userContext.state.blockchainId]);
 
-  const getEvent = () =>{
-      axios({
-        method: "get",
-        url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
-      })
+  const getEvent = () => {
+    axios({
+      method: 'get',
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
+    })
       .then(async function (response) {
-        console.log(response.data)
-        setHistory(response.data.result.filter(item => item.eventName.toLowerCase() !== "itemliked"));
+        console.log(response.data);
+        setHistory(
+          response.data.result.filter(
+            (item) => item.eventName.toLowerCase() !== 'itemliked'
+          )
+        );
       })
-      .catch(function (response) {
-      });
-  }
+      .catch(function (response) {});
+  };
 
   const getTokenURI = async () => {
+    const ownCurrentNft = userContext.state.ownNfts.find(
+      (o) =>
+        o.TokenId === tokenid &&
+        o.NftAddress.toLowerCase() === nftAddress.toLowerCase()
+    );
 
-    const ownCurrentNft = userContext.state.ownNfts.find(o => o.TokenId === tokenid && o.NftAddress.toLowerCase() === nftAddress.toLowerCase());
-
-    if(ownCurrentNft){
-      setNftQuantityOwned(ownCurrentNft.OwnedNftQuantity)
+    if (ownCurrentNft) {
+      setNftQuantityOwned(ownCurrentNft.OwnedNftQuantity);
       setIsOwner(true);
     }
 
-    if(isItemListed){
-      getListedNftInfo()
-    }
-    else{
-      getExternalNftInfo()
+    if (isItemListed) {
+      getListedNftInfo();
+    } else {
+      getExternalNftInfo();
     }
   };
 
   const addNewListing = async (item) => {
-
     const newItem = {
       TokenId: item.tokenId,
       NftAddress: item.nft,
       owner: item.owner,
       ownerUserId: userContext.state.id,
-      pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
+      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'),
       quantity: item.quantity,
       sellerName: userContext.state.name,
-      payToken: null
+      payToken: null,
     };
-    newItem.payToken = await getPayTokenFromListing(web3, item.nft, item.tokenId, myAdd, userContext.state.blockchainId);
+    newItem.payToken = await getPayTokenFromListing(
+      web3,
+      item.nft,
+      item.tokenId,
+      myAdd,
+      userContext.state.blockchainId
+    );
 
-    setListings(prevState => {
+    setListings((prevState) => {
       return [
-        ...prevState.filter(item => item.owner.toLowerCase() !== newItem.owner.toLowerCase()),
-        newItem
-      ]
-    })
+        ...prevState.filter(
+          (item) => item.owner.toLowerCase() !== newItem.owner.toLowerCase()
+        ),
+        newItem,
+      ];
+    });
 
-    addToast("Item listed successfully!", {
+    addToast('Item listed successfully!', {
       appearance: 'success',
       autoDismiss: true,
-    })
+    });
 
     // reset listing form
     try {
-      setListPrice(0)
-      setListQuantity(0)
-      setNftQuantityOwned(prevState => prevState - 1)
-    } catch(err) {
+      setListPrice(0);
+      setListQuantity(0);
+      setNftQuantityOwned((prevState) => prevState - 1);
+    } catch (err) {
       // console.log(err)
     }
-  }
+  };
 
   const getListedNftInfo = () => {
     getEvent();
 
     let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}&blockchain=${userContext.state.blockchainId}`;
 
-    if(userContext.state.id){
-      url += `&loggedInUserId=${userContext.state.id}`
+    if (userContext.state.id) {
+      url += `&loggedInUserId=${userContext.state.id}`;
     }
 
     axios({
-      method: "get",
+      method: 'get',
       url: url,
     })
-    .then(async function (nftListingResponse) {
-      const nftListingResult = nftListingResponse.data.result;
+      .then(async function (nftListingResponse) {
+        const nftListingResult = nftListingResponse.data.result;
 
-      console.log(nftListingResult)
+        console.log(nftListingResult);
 
-      if(nftListingResult.length === 0) return;
+        if (nftListingResult.length === 0) return;
 
-      setHasLiked(nftListingResult[0].nft.hasLiked);
-      setNftDescription(nftListingResult[0].nft.description);
-      setNftName(nftListingResult[0].nft.tokenName)
-      setImageNftSrc(nftListingResult[0].nft.imageUrl)
-      setVideoNftSrc(nftListingResult[0].nft.videoUrl)
+        setHasLiked(nftListingResult[0].nft.hasLiked);
+        setNftDescription(nftListingResult[0].nft.description);
+        setNftName(nftListingResult[0].nft.tokenName);
+        setImageNftSrc(nftListingResult[0].nft.imageUrl);
+        setVideoNftSrc(nftListingResult[0].nft.videoUrl);
 
-      const listingItems = await Promise.all(nftListingResult.map( async (item) => (
-        {
-          id: item.nft.id,
-          TokenId: item.nft.tokenId,
-          NftAddress: item.nft.nft,
-          TokenName:  item.nft.tokenName,
-          owner: item.nft.owner,
-          ownerUserId: item.nft.ownerId,
-          pricePerItem:  Web3.utils.fromWei(toFixed(item.nft.pricePerItem), "ether"),
-          pricePerItemUsd:  item.nft.pricePerItemUsd,
-          quantity: item.nft.quantity,
-          sellerName: item.seller.name,
-          sellerProfilePic: item.seller.profilePictureUrl,
-          payToken: await getPayTokenFromListing(web3, item.nft.nft, item.nft.tokenId, item.nft.owner, userContext.state.blockchainId),
-          verified: item.seller.verified
+        const listingItems = await Promise.all(
+          nftListingResult.map(async (item) => ({
+            id: item.nft.id,
+            TokenId: item.nft.tokenId,
+            NftAddress: item.nft.nft,
+            TokenName: item.nft.tokenName,
+            owner: item.nft.owner,
+            ownerUserId: item.nft.ownerId,
+            pricePerItem: Web3.utils.fromWei(
+              toFixed(item.nft.pricePerItem),
+              'ether'
+            ),
+            pricePerItemUsd: item.nft.pricePerItemUsd,
+            quantity: item.nft.quantity,
+            sellerName: item.seller.name,
+            sellerProfilePic: item.seller.profilePictureUrl,
+            payToken: await getPayTokenFromListing(
+              web3,
+              item.nft.nft,
+              item.nft.tokenId,
+              item.nft.owner,
+              userContext.state.blockchainId
+            ),
+            verified: item.seller.verified,
+          }))
+        );
+
+        const sortedlistingItems = listingItems.sort(function (a, b) {
+          return a.pricePerItemUsd - b.pricePerItemUsd;
+        });
+        setLowestSellerItem(sortedlistingItems[0]);
+
+        if (myAdd) {
+          const listedCurrentNft = listingItems.find(
+            (o) => o.owner.toLowerCase() === myAdd.toLowerCase()
+          );
+          if (listedCurrentNft) {
+            setIsUserListedNft(true);
+          }
         }
-      )));
 
-      const sortedlistingItems = listingItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
-      setLowestSellerItem(sortedlistingItems[0])
+        setListings(sortedlistingItems);
 
-      if(myAdd){
-        const listedCurrentNft = listingItems.find(o => o.owner.toLowerCase() === myAdd.toLowerCase());
-        if(listedCurrentNft){
-          setIsUserListedNft(true);
-        }
-      }
+        const offerItems = await Promise.all(
+          nftListingResult[0].offers.map(async (item) => {
+            var balance = await getTokenBalance(
+              item.creatorAddress,
+              item.payToken,
+              web3
+            );
+            if (
+              Number(balance) <
+              Number(item.quantity) *
+                Number(Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'))
+            ) {
+              return;
+            }
 
-      setListings(sortedlistingItems);
+            var obj = {
+              TokenId: item.tokenId,
+              NftAddress: item.nftAddress,
+              creatorAddress: item.creatorAddress,
+              pricePerItem: Web3.utils.fromWei(
+                toFixed(item.pricePerItem),
+                'ether'
+              ),
+              pricePerItemUsd: item.pricePerItemUsd,
+              quantity: item.quantity,
+              creatorUsername: item.creatorName,
+              deadline: item.deadline,
+              offerTokenName: getPayTokenDetailByAddress(
+                item.payToken,
+                userContext.state.blockchainId
+              ).payTokenName,
+              verified: item.verified,
+              creatorUserId: item.creatorId,
+            };
+            return obj;
+          })
+        );
 
-      const offerItems = await Promise.all(nftListingResult[0].offers.map( async (item) => {
-
-        var balance = await getTokenBalance(item.creatorAddress, item.payToken, web3)
-        if(Number(balance) < Number(item.quantity) * Number(Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"))){
-          return 
-        }
-
-        var obj = {
-          TokenId: item.tokenId,
-          NftAddress: item.nftAddress,
-          creatorAddress: item.creatorAddress,
-          pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
-          pricePerItemUsd: item.pricePerItemUsd,
-          quantity: item.quantity,
-          creatorUsername: item.creatorName,
-          deadline: item.deadline,
-          offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName,
-          verified: item.verified,
-          creatorUserId: item.CreatorId
-        }
-        return obj;
-      }));
-
-      const sortedOfferItems = offerItems.sort(function(a, b) {return a.pricePerItemUsd - b.pricePerItemUsd;});
-      console.log('sortedOfferItems')
-      console.log(sortedOfferItems)
-      setOffers(sortedOfferItems.filter(item => item && item.deadline > getCurrentTimeInSeconds()));
-    })
-    .catch(function (response) {
-      // console.log(response);
-    });
-  }
+        const sortedOfferItems = offerItems.sort(function (a, b) {
+          return b.pricePerItemUsd - a.pricePerItemUsd;
+        });
+        setOffers(
+          sortedOfferItems.filter(
+            (item) => item && item.deadline > getCurrentTimeInSeconds()
+          )
+        );
+      })
+      .catch(function (response) {
+        // console.log(response);
+      });
+  };
 
   const getExternalNftInfo = () => {
     axios({
-      method: "get",
+      method: 'get',
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
     })
       .then(function (response) {
         const nftDetails = response.data.result;
         // console.log(nftDetails)
-        setVideoNftSrc(nftDetails.videoUrl)
-        setImageNftSrc(nftDetails.imageUrl)
-        setNftDescription(nftDetails.description)
-        setNftName(nftDetails.tokenName)
-        if(nftDetails.hasAnyListing){
+        setVideoNftSrc(nftDetails.videoUrl);
+        setImageNftSrc(nftDetails.imageUrl);
+        setNftDescription(nftDetails.description);
+        setNftName(nftDetails.tokenName);
+        if (nftDetails.hasAnyListing) {
           setIsItemListed(true);
           getListedNftInfo();
         }
@@ -305,109 +356,138 @@ export default function ItemDetail(props) {
       .catch(function (response) {
         // console.log(response);
       });
-  }
+  };
 
   const listItem = async () => {
-    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
-      addToast("Please connect wallet and sign in.", {
+    if (
+      !web3 ||
+      !userContext.state.sign ||
+      !walletContext.state.userConnected
+    ) {
+      addToast('Please connect wallet and sign in.', {
         appearance: 'error',
         autoDismiss: true,
-      })
-      return;
-    } 
-
-    if(ListPrice <= 0 || ListQuantity <= 0){
-      addToast("Invalid quantity or price.", {
-        appearance: 'error',
-        autoDismiss: true,
-      })
+      });
       return;
     }
 
-    if(ListQuantity > nftQuantityOwned){
-      addToast(`Listing quantity cannot be more than available (${nftQuantityOwned})`, {
+    if (ListPrice <= 0 || ListQuantity <= 0) {
+      addToast('Invalid quantity or price.', {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
     }
 
-    if(userContext.state.blockchainId == 0){
+    if (ListQuantity > nftQuantityOwned) {
+      addToast(
+        `Listing quantity cannot be more than available (${nftQuantityOwned})`,
+        {
+          appearance: 'error',
+          autoDismiss: true,
+        }
+      );
+      return;
+    }
 
-        const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, listingFeeTokenBsc);
-        const currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
-        const listingFee = await marketplaceContract.methods.listingFee().call();
-        const totalAllowanceRequierd = Number(currentAllowance) + Number(listingFee);
-        const fomoTokenBalance = await getUserFomoBalance(myAdd, web3);
-        const FomoListingFee =  Number(Web3.utils.fromWei(toFixed(listingFee), "ether"));
-        
-        if(Number(fomoTokenBalance) < FomoListingFee){
-          addToast(`Low token balance, ${FomoListingFee} FOMO required for listing`, {
+    if (userContext.state.blockchainId == 0) {
+      const genericTokenContract = new web3.eth.Contract(
+        GENERIC_TOKEN_ABI,
+        listingFeeTokenBsc
+      );
+      const currentAllowance = await genericTokenContract.methods
+        .allowance(myAdd, marketplaceContractAddress)
+        .call();
+      const listingFee = await marketplaceContract.methods.listingFee().call();
+      const totalAllowanceRequierd =
+        Number(currentAllowance) + Number(listingFee);
+      const fomoTokenBalance = await getUserFomoBalance(myAdd, web3);
+      const FomoListingFee = Number(
+        Web3.utils.fromWei(toFixed(listingFee), 'ether')
+      );
+
+      if (Number(fomoTokenBalance) < FomoListingFee) {
+        addToast(
+          `Low token balance, ${FomoListingFee} FOMO required for listing`,
+          {
             appearance: 'error',
             autoDismiss: true,
-          })
-          return;
-        }
+          }
+        );
+        return;
+      }
 
-        isLoading(true);
+      isLoading(true);
 
-        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
+      await genericTokenContract.methods
+        .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
         .send({
-          from: myAdd
+          from: myAdd,
         })
-        .then( async function (result) {
+        .then(async function (result) {
           isLoading(false);
           checkNftApprovalAndList();
         })
-        .catch(error => {
+        .catch((error) => {
           isLoading(false);
         });
-    }
-    else{
+    } else {
       checkNftApprovalAndList();
     }
   };
 
   const checkNftApprovalAndList = async () => {
-    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
-    const isApprovedForAll = await genericNftContract.methods.isApprovedForAll(myAdd, marketplaceContractAddress).call();
+    const genericNftContract = new web3.eth.Contract(
+      GENERICNFT_ABI,
+      nftAddress
+    );
+    const isApprovedForAll = await genericNftContract.methods
+      .isApprovedForAll(myAdd, marketplaceContractAddress)
+      .call();
 
     isLoading(true);
-    if(!isApprovedForAll){
-        await genericNftContract.methods.setApprovalForAll(marketplaceContractAddress, true)
+    if (!isApprovedForAll) {
+      await genericNftContract.methods
+        .setApprovalForAll(marketplaceContractAddress, true)
         .send({
-          from: myAdd
+          from: myAdd,
         })
-        .then( async function (result) {
+        .then(async function (result) {
           isLoading(false);
           listItemConfirm();
         })
-        .catch(error => {
+        .catch((error) => {
           isLoading(false);
         });
-    }
-    else
-      listItemConfirm();
-  }
+    } else listItemConfirm();
+  };
 
   const listItemConfirm = async () => {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
-    const listPriceToSend = Web3.utils.toWei(toFixed(ListPrice), "ether");
+    const listPriceToSend = Web3.utils.toWei(toFixed(ListPrice), 'ether');
 
     isLoading(true);
     await marketplaceContract.methods
-      .listItem(nftAddress, tokenid, ListingToken, ListQuantity, toFixed(listPriceToSend), timestampInSeconds, "0x0000000000000000000000000000000000000000")
+      .listItem(
+        nftAddress,
+        tokenid,
+        ListingToken,
+        ListQuantity,
+        toFixed(listPriceToSend),
+        timestampInSeconds,
+        '0x0000000000000000000000000000000000000000'
+      )
       .send({ from: myAdd })
-      .then( async function (result) {
+      .then(async function (result) {
         // console.log(result.events.ItemListed.returnValues)
-        addNewListing(result.events.ItemListed.returnValues)
+        addNewListing(result.events.ItemListed.returnValues);
         isLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         isLoading(false);
       });
-  }
+  };
 
   const updateListing = async (newPricePerItem) => {
     await marketplaceContract.methods
@@ -416,109 +496,146 @@ export default function ItemDetail(props) {
   };
 
   const cancelListing = async () => {
-    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
-      addToast("Please connect wallet and sign in.", {
+    if (
+      !web3 ||
+      !userContext.state.sign ||
+      !walletContext.state.userConnected
+    ) {
+      addToast('Please connect wallet and sign in.', {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
-    } 
+    }
 
-    isLoading(true)
+    isLoading(true);
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd })
-      .then( async function (result) {
+      .then(async function (result) {
         // console.log(result.events.ItemCanceled.returnValues)
         const canceledItem = result.events.ItemCanceled.returnValues;
-        setListings(listings.filter(item => item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()));
+        setListings(
+          listings.filter(
+            (item) =>
+              item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()
+          )
+        );
         isLoading(false);
 
-        addToast("Listing cancelled successfully.", {
+        addToast('Listing cancelled successfully.', {
           appearance: 'success',
           autoDismiss: true,
-        })
-
+        });
       })
-      .catch(error => {
-        addToast("Error cancelling listing.", {
+      .catch((error) => {
+        addToast('Error cancelling listing.', {
           appearance: 'error',
           autoDismiss: true,
-        })
+        });
       });
   };
 
   const acceptOffer = async (offerOwnerAdd) => {
-    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
-      addToast("Please connect wallet and sign in.", {
+    if (
+      !web3 ||
+      !userContext.state.sign ||
+      !walletContext.state.userConnected
+    ) {
+      addToast('Please connect wallet and sign in.', {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
-    } 
+    }
 
     isLoading(true);
 
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd })
-      .then( async function (result) {
+      .then(async function (result) {
         // console.log(result)
         isLoading(false);
 
         const soldItem = result.events.ItemSold.returnValues;
-        setListings(listings.filter(item => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()));
-        setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()));
-        setNftQuantityOwned(prevState => prevState - Number(soldItem.quantity));
+        setListings(
+          listings.filter(
+            (item) => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()
+          )
+        );
+        setOffers(
+          offers.filter(
+            (item) =>
+              item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()
+          )
+        );
+        setNftQuantityOwned(
+          (prevState) => prevState - Number(soldItem.quantity)
+        );
       })
-      .catch(error => {
+      .catch((error) => {
         isLoading(false);
       });
   };
 
   const createOffer = async () => {
-    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
-      addToast("Please connect wallet and sign in.", {
+    if (
+      !web3 ||
+      !userContext.state.sign ||
+      !walletContext.state.userConnected
+    ) {
+      addToast('Please connect wallet and sign in.', {
         appearance: 'error',
         autoDismiss: true,
-      })
-      return
-    } 
+      });
+      return;
+    }
 
-    setMakeOfferModalOpen(false)
+    setMakeOfferModalOpen(false);
 
-    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, offerToken);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
+    const genericTokenContract = new web3.eth.Contract(
+      GENERIC_TOKEN_ABI,
+      offerToken
+    );
+    let currentAllowance = await genericTokenContract.methods
+      .allowance(myAdd, marketplaceContractAddress)
+      .call();
     const totalAmount = offerQuantity * offerPricePerItem;
-    const totalAmountToSend =  Web3.utils.toWei(toFixed(totalAmount), "ether");
-    const totalAllowanceRequierd = Number(currentAllowance) + Number(totalAmountToSend);
-    const offerTokenBalance = await getTokenBalance(myAdd, offerToken, web3)
+    const totalAmountToSend = Web3.utils.toWei(toFixed(totalAmount), 'ether');
+    const totalAllowanceRequierd =
+      Number(currentAllowance) + Number(totalAmountToSend);
+    const offerTokenBalance = await getTokenBalance(myAdd, offerToken, web3);
 
-    if(Number( Web3.utils.toWei(toFixed(offerTokenBalance), "ether")) < Number(totalAmountToSend)){
+    if (
+      Number(Web3.utils.toWei(toFixed(offerTokenBalance), 'ether')) <
+      Number(totalAmountToSend)
+    ) {
       addToast(`Insufficient balance to make this offer`, {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
     }
 
     isLoading(true);
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
-        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
-        .send({
-          from: myAdd
-        })
-        .then( async function (result) {
-          isLoading(false);
-          createOfferConfirm();
-        })
-        .catch(error => {
-          addToast("Error creating offer.", {
-            appearance: 'error',
-            autoDismiss: true,
-          })
-          isLoading(false);
+    await genericTokenContract.methods
+      .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
+      .send({
+        from: myAdd,
+      })
+      .then(async function (result) {
+        isLoading(false);
+        createOfferConfirm();
+      })
+      .catch((error) => {
+        addToast('Error creating offer.', {
+          appearance: 'error',
+          autoDismiss: true,
         });
+        isLoading(false);
+      });
     // }
     // else
     //   createOfferConfirm();
@@ -528,57 +645,73 @@ export default function ItemDetail(props) {
     const timestamp = new Date().getTime();
     const timestampInSeconds = Math.trunc(timestamp / 1000);
     return Number(timestampInSeconds);
-  }
+  };
 
   const createOfferConfirm = async () => {
-    const seconds = getCurrentTimeInSeconds() + (offerLength * 24 * 60 * 60);
-    const offerPricePerItemToSend = Web3.utils.toWei(offerPricePerItem.toString(), "ether");
+    const seconds = getCurrentTimeInSeconds() + offerLength * 24 * 60 * 60;
+    const offerPricePerItemToSend = Web3.utils.toWei(
+      offerPricePerItem.toString(),
+      'ether'
+    );
 
     // console.log(seconds)
 
     isLoading(true);
     await marketplaceContract.methods
-      .createOffer(nftAddress, tokenid, offerToken ,offerQuantity, toFixed(offerPricePerItemToSend), seconds)
+      .createOffer(
+        nftAddress,
+        tokenid,
+        offerToken,
+        offerQuantity,
+        toFixed(offerPricePerItemToSend),
+        seconds
+      )
       .send({ from: myAdd })
-      .then( async function (result) {
+      .then(async function (result) {
         // console.log(result.events.OfferCreated.returnValues)
-        addNewOffer(result.events.OfferCreated.returnValues)
-        addToast("Your offer has been sent!.", {
+        addNewOffer(result.events.OfferCreated.returnValues);
+        addToast('Your offer has been sent!.', {
           appearance: 'success',
           autoDismiss: true,
-        })
+        });
         isLoading(false);
       })
-      .catch(error => {
-        addToast("Error making offer.", {
+      .catch((error) => {
+        addToast('Error making offer.', {
           appearance: 'error',
           autoDismiss: true,
-        })
+        });
         isLoading(false);
       });
   };
 
   const addNewOffer = async (item) => {
-
     const newItem = {
-        TokenId: item.tokenId,
-        NftAddress: item.nft,
-        creatorAddress: item.creator,
-        pricePerItem:  Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
-        quantity: item.quantity,
-        creatorUsername: userContext.state.name,
-        deadline: item.deadline,
-        offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName
-    }
+      TokenId: item.tokenId,
+      NftAddress: item.nft,
+      creatorAddress: item.creator,
+      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'),
+      quantity: item.quantity,
+      creatorUsername: userContext.state.name,
+      deadline: item.deadline,
+      offerTokenName: getPayTokenDetailByAddress(
+        item.payToken,
+        userContext.state.blockchainId
+      ).payTokenName,
+    };
 
     // console.log(offers)
-    setOffers(prevState => {
+    setOffers((prevState) => {
       return [
-        ...prevState.filter(item => item.creatorAddress.toLowerCase() !== newItem.creatorAddress.toLowerCase()),
-        newItem
-      ]
-    })
-  }
+        ...prevState.filter(
+          (item) =>
+            item.creatorAddress.toLowerCase() !==
+            newItem.creatorAddress.toLowerCase()
+        ),
+        newItem,
+      ];
+    });
+  };
 
   const cancelOffer = async () => {
     if (!web3 || !walletContext.state.userConnected) return;
@@ -587,52 +720,76 @@ export default function ItemDetail(props) {
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
       .send({ from: myAdd })
-      .then( async function (result) {
-          const canceledItem = result.events.OfferCanceled.returnValues;
-          setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== canceledItem.creator.toLowerCase()));
+      .then(async function (result) {
+        const canceledItem = result.events.OfferCanceled.returnValues;
+        setOffers(
+          offers.filter(
+            (item) =>
+              item.creatorAddress.toLowerCase() !==
+              canceledItem.creator.toLowerCase()
+          )
+        );
       })
-      .catch(error => {
+      .catch((error) => {
         isLoading(false);
       });
   };
 
   const buyItem = async (obj) => {
-    if (!web3 || !userContext.state.sign || !walletContext.state.userConnected){
-      addToast("Please connect wallet and sign in.", {
+    if (
+      !web3 ||
+      !userContext.state.sign ||
+      !walletContext.state.userConnected
+    ) {
+      addToast('Please connect wallet and sign in.', {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
-    } 
+    }
 
-    const genericTokenContract = new web3.eth.Contract(GENERIC_TOKEN_ABI, obj.payToken.payTokenAddress);
-    let currentAllowance = await genericTokenContract.methods.allowance(myAdd, marketplaceContractAddress).call();
+    const genericTokenContract = new web3.eth.Contract(
+      GENERIC_TOKEN_ABI,
+      obj.payToken.payTokenAddress
+    );
+    let currentAllowance = await genericTokenContract.methods
+      .allowance(myAdd, marketplaceContractAddress)
+      .call();
     const totalPrice = obj.pricePerItem * obj.quantity;
-    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether");
-    const totalAllowanceRequierd = Number(currentAllowance) + Number(amountToSend);
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), 'ether');
+    const totalAllowanceRequierd =
+      Number(currentAllowance) + Number(amountToSend);
 
-    const tokenBalance = await getTokenBalance(myAdd, obj.payToken.payTokenAddress, web3)
+    const tokenBalance = await getTokenBalance(
+      myAdd,
+      obj.payToken.payTokenAddress,
+      web3
+    );
 
-    if(Number( Web3.utils.toWei(toFixed(tokenBalance), "ether")) < Number(amountToSend)){
+    if (
+      Number(Web3.utils.toWei(toFixed(tokenBalance), 'ether')) <
+      Number(amountToSend)
+    ) {
       addToast(`Insufficient balance to make this purchase`, {
         appearance: 'error',
         autoDismiss: true,
-      })
+      });
       return;
     }
 
     isLoading(true);
 
     // if(Number(currentAllowance) < Number(amountToSend)){
-        await genericTokenContract.methods.approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
-        .send({ from: myAdd })
-        .then( async function (result) {
-            isLoading(false);
-            buyItemConfirm(obj);
-        })
-        .catch(error => {
-          isLoading(false);
-        });
+    await genericTokenContract.methods
+      .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
+      .send({ from: myAdd })
+      .then(async function (result) {
+        isLoading(false);
+        buyItemConfirm(obj);
+      })
+      .catch((error) => {
+        isLoading(false);
+      });
     // }
     // else
     //   buyItemConfirm(obj);
@@ -641,21 +798,33 @@ export default function ItemDetail(props) {
   const buyItemConfirm = async (obj) => {
     const totalPrice = obj.pricePerItem * obj.quantity;
     const nftOwnerAdd = obj.owner;
-    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether");
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), 'ether');
 
     isLoading(true);
-    await marketplaceContract.methods.buyItem(nftAddress, tokenid, toFixed(amountToSend), nftOwnerAdd)
+    await marketplaceContract.methods
+      .buyItem(nftAddress, tokenid, toFixed(amountToSend), nftOwnerAdd)
       .send({ from: myAdd })
-      .then( async function (result) {
+      .then(async function (result) {
         isLoading(false);
-        setShowPurchasedModal(true)
+        setShowPurchasedModal(true);
         const soldItem = result.events.ItemSold.returnValues;
-        setListings(listings.filter(item => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()));
-        setOffers(offers.filter(item => item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()));
-        setNftQuantityOwned(prevState => prevState + Number(soldItem.quantity));
+        setListings(
+          listings.filter(
+            (item) => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()
+          )
+        );
+        setOffers(
+          offers.filter(
+            (item) =>
+              item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()
+          )
+        );
+        setNftQuantityOwned(
+          (prevState) => prevState + Number(soldItem.quantity)
+        );
       })
-      .catch(error => {
-          isLoading(false);
+      .catch((error) => {
+        isLoading(false);
       });
   };
 
@@ -683,167 +852,162 @@ export default function ItemDetail(props) {
 
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
 
-    if(params.listed === "true")
-      setIsItemListed(true)
-    else
-      setIsItemListed(false)
+    if (params.listed === 'true') setIsItemListed(true);
+    else setIsItemListed(false);
 
-    if(params.tokenid)
-      setTokenId(params.tokenid)
+    if (params.tokenid) setTokenId(params.tokenid);
 
-    if(params.nftaddress)
-      setNftAddress(params.nftaddress);
-  
-    }, []);
+    if (params.nftaddress) setNftAddress(params.nftaddress);
+  }, []);
 
-    const like = () => {
-      isLoading(true);
-  
-      axios({
-        method: "POST",
-        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
-        headers: {
-          "Authorization": "Bearer " + userContext.state.accessToken + ""
-        }
-      })
+  const like = () => {
+    isLoading(true);
+
+    axios({
+      method: 'POST',
+      url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
+      headers: {
+        Authorization: 'Bearer ' + userContext.state.accessToken + '',
+      },
+    })
       .then(function (response) {
         setHasLiked(true);
-        addToast("Liked item!", {
+        addToast('Liked item!', {
           appearance: 'success',
           autoDismiss: true,
-        })
+        });
       })
       .catch(function (response) {
         // console.log(response);
-        addToast("Error processing request.", {
+        addToast('Error processing request.', {
           appearance: 'error',
           autoDismiss: true,
-        })
+        });
       })
-      .finally(function(){
+      .finally(function () {
         isLoading(false);
       });
-    }
-  
-    const unLike = () => {
-      isLoading(true);
-  
-      axios({
-        method: "POST",
-        url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
-        headers: {
-          "Authorization": "Bearer " + userContext.state.accessToken + ""
-        }
-      })
+  };
+
+  const unLike = () => {
+    isLoading(true);
+
+    axios({
+      method: 'POST',
+      url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
+      headers: {
+        Authorization: 'Bearer ' + userContext.state.accessToken + '',
+      },
+    })
       .then(function (response) {
         setHasLiked(false);
-        addToast("Unliked item.", {
+        addToast('Unliked item.', {
           appearance: 'success',
           autoDismiss: true,
-        })
+        });
       })
       .catch(function (response) {
         // console.log(response);
-        addToast("Error processing request.", {
+        addToast('Error processing request.', {
           appearance: 'error',
           autoDismiss: true,
-        })
+        });
       })
-      .finally(function(){
+      .finally(function () {
         isLoading(false);
       });
-    }
-  
-    function onLike(e){
-      e.preventDefault();
-  
-      if(!userContext.state.accessToken)
-      {
-        return;
-      }
+  };
 
-      like();
-    }
-  
-    function onUnLike(e){
-      e.preventDefault();
-  
-      if(!userContext.state.accessToken)
-      {
-        return;
-      }
-      
-      unLike();
+  function onLike(e) {
+    e.preventDefault();
+
+    if (!userContext.state.accessToken) {
+      return;
     }
 
-    function isLoading(state){
-      if(state){
-        sharedContext.dispatch({
-          type: "START_LOADING"
-        })
-      }
-      else{
-        sharedContext.dispatch({
-          type: "STOP_LOADING"
-        })
-      }
+    like();
+  }
+
+  function onUnLike(e) {
+    e.preventDefault();
+
+    if (!userContext.state.accessToken) {
+      return;
     }
 
-    const generateShortUrl = async (url) => {
-      // console.log('getting short url')
+    unLike();
+  }
 
-      const resp = await axios({
-        method: "GET",
-        url: `${appUrls.fomoHostApi}/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(url)}`
-      })
+  function isLoading(state) {
+    if (state) {
+      sharedContext.dispatch({
+        type: 'START_LOADING',
+      });
+    } else {
+      sharedContext.dispatch({
+        type: 'STOP_LOADING',
+      });
+    }
+  }
+
+  const generateShortUrl = async (url) => {
+    // console.log('getting short url')
+
+    const resp = await axios({
+      method: 'GET',
+      url: `${
+        appUrls.fomoHostApi
+      }/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(url)}`,
+    })
       .then(function (response) {
-        return response.data.result
+        return response.data.result;
       })
       .catch(function (response) {
         // console.log('short URL resp');
         // console.log(response);
-        return null
-      })
+        return null;
+      });
 
-      return resp
-    }
-    
-    function handleCopyNotification() {
-      addToast("Link copied to clipboard!", {
-        appearance: 'success',
-        autoDismiss: true,
-      })
-    }
-  
+    return resp;
+  };
+
+  function handleCopyNotification() {
+    addToast('Link copied to clipboard!', {
+      appearance: 'success',
+      autoDismiss: true,
+    });
+  }
+
   // generate shortened share link
   useEffect(async () => {
-    if (!web3) return
+    if (!web3) return;
 
     const params = qs.parse(location.search, { ignoreQueryPrefix: true });
-    if (!params.tokenid) return
-    
-    const hostname = window.location.hostname
-    let urlTmp = null
+    if (!params.tokenid) return;
+
+    const hostname = window.location.hostname;
+    let urlTmp = null;
     if (hostname.includes('staging') || hostname.includes('localhost')) {
-      urlTmp = await generateShortUrl(`https://staging.theavenue.market${location.pathname}${location.search}`)
+      urlTmp = await generateShortUrl(
+        `https://staging.theavenue.market${location.pathname}${location.search}`
+      );
     } else {
-      urlTmp = await generateShortUrl(`https://theavenue.market${location.pathname}${location.search}`)
+      urlTmp = await generateShortUrl(
+        `https://theavenue.market${location.pathname}${location.search}`
+      );
     }
-    
-    setShareUrl(urlTmp ? urlTmp : null)
 
-  }, [web3])
-
+    setShareUrl(urlTmp ? urlTmp : null);
+  }, [web3]);
 
   return (
     <div className="">
-      {nftName ? <PageTitle title={nftName} /> : null }
+      {nftName ? <PageTitle title={nftName} /> : null}
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className=" mt-4 md:mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
             <div className="flex-1 max-w-sm">
               <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
-
                 {nftVideoSrc ? (
                   <video
                     autoPlay
@@ -851,7 +1015,7 @@ export default function ItemDetail(props) {
                     controls
                     loop
                     playsInline
-                    onContextMenu={e => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
                     controlsList="nodownload"
                     src={nftVideoSrc}
                     className="object-cover group-hover:opacity-90 transition-opacity rounded-lg"
@@ -870,55 +1034,79 @@ export default function ItemDetail(props) {
                   {userContext.state.accessToken ? (
                     <button
                       type="button"
-                      onClick={(e) => hasLiked ? onUnLike(e) : onLike(e)}
+                      onClick={(e) => (hasLiked ? onUnLike(e) : onLike(e))}
                       className={classNames(
                         hasLiked
-                         ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-900",
-                         "relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none"
+                          ? 'bg-red-500 hover:bg-red-600 text-white'
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-900',
+                        'relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none'
                       )}
                     >
-                      <span>{hasLiked ? "Liked" : "Like"}</span>
+                      <span>{hasLiked ? 'Liked' : 'Like'}</span>
                       <HeartIcon className="h-5 w-5 ml-1 -mr-1 relative bottom-0.5" />
                     </button>
-                  ) : null }
+                  ) : null}
                 </div>
                 {shareUrl ? (
                   <div className="flex justify-center items-center gap-2">
                     {shareUrl ? (
-                      <CopyToClipboard text={shareUrl} onCopy={() => handleCopyNotification()}>
+                      <CopyToClipboard
+                        text={shareUrl}
+                        onCopy={() => handleCopyNotification()}
+                      >
                         <div className="bg-gray-200 rounded-full shadow-lg flex items-center justify-center h-8 w-8 ring-1 ring-white hover:opacity-80 transition-opacity cursor-pointer">
-                          <FontAwesomeIcon icon={faCopy} className="text-gray-700" />
+                          <FontAwesomeIcon
+                            icon={faCopy}
+                            className="text-gray-700"
+                          />
                         </div>
                       </CopyToClipboard>
                     ) : null}
-                    <TwitterShareButton url={`Check out this item on The Avenue! ${shareUrl}`} hashtags={['TheAvenue','FomoLab','NFT','Crypto']} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <TwitterShareButton
+                      url={`Check out this item on The Avenue! ${shareUrl}`}
+                      hashtags={['TheAvenue', 'FomoLab', 'NFT', 'Crypto']}
+                      className="hover:opacity-80 transition-opacity shadow-lg rounded-full"
+                    >
                       <TwitterIcon size={32} round={true} />
                     </TwitterShareButton>
-                    <TelegramShareButton title="Check out this item on The Avenue!" url={shareUrl} className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <TelegramShareButton
+                      title="Check out this item on The Avenue!"
+                      url={shareUrl}
+                      className="hover:opacity-80 transition-opacity shadow-lg rounded-full"
+                    >
                       <TelegramIcon size={32} round={true} />
                     </TelegramShareButton>
-                    <WhatsappShareButton title="Check out this item on The Avenue!" url={shareUrl} separator=" - " className="hover:opacity-80 transition-opacity shadow-lg rounded-full">
+                    <WhatsappShareButton
+                      title="Check out this item on The Avenue!"
+                      url={shareUrl}
+                      separator=" - "
+                      className="hover:opacity-80 transition-opacity shadow-lg rounded-full"
+                    >
                       <WhatsappIcon size={32} round={true} />
                     </WhatsappShareButton>
                   </div>
                 ) : null}
               </div>
-              
             </div>
           </div>
           <div className="col-span-2">
-            <h1 className="font-bold text-3xl text-center md:text-left mb-4">{nftName}</h1>
+            <h1 className="font-bold text-3xl text-center md:text-left mb-4">
+              {nftName}
+            </h1>
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
             {isItemListed ? (
               <div className="mt-0 mb-4">
                 {lowestSellerItem ? (
-                    // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                    //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
-                    // </div>
-                    <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
-                      <p className="mt-2 block text-3xl inline font-extrabold text-green-500 pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
-                    </div>
+                  // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                  //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
+                  // </div>
+                  <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
+                    <p className="mt-2 block text-3xl inline font-extrabold text-green-500 pointer-events-none">
+                      {lowestSellerItem.pricePerItem}{' '}
+                      {lowestSellerItem.payToken?.payTokenName}
+                    </p>
+                  </div>
                 ) : null}
                 <div className="flex justify-center md:justify-start gap-2">
                   {lowestSellerItem ? (
@@ -947,86 +1135,125 @@ export default function ItemDetail(props) {
                       >
                         <span>Make Offer</span>
                       </button>
-                  </div>
+                    </div>
                   ) : null}
                 </div>
               </div>
             ) : null}
 
             {false ? (
-                <div className="flex justify-center md:justify-start space-x-8">
+              <div className="flex justify-center md:justify-start space-x-8">
                 <div>
-                  <p className="mb-2 text-center md:text-left font-bold">Created By</p>
+                  <p className="mb-2 text-center md:text-left font-bold">
+                    Created By
+                  </p>
                   <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.imageUrl}
+                        alt=""
+                      />
                     </div>
                     <div className="min-w-0">
-                      <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                      <Link
+                        to={`/user?id=${user.id}`}
+                        className="focus:outline-none"
+                      >
                         <span className="absolute inset-0" aria-hidden="true" />
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {user.role}
+                        </p>
                       </Link>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <p className="mb-2 text-center md:text-left font-bold">Owned By</p>
+                  <p className="mb-2 text-center md:text-left font-bold">
+                    Owned By
+                  </p>
                   <div className="relative flex items-center gap-x-2 mb-5 justify-center md:justify-start">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.imageUrl}
+                        alt=""
+                      />
                     </div>
                     <div className="min-w-0">
-                      <Link to={`/user?id=${user.id}`} className="focus:outline-none">
+                      <Link
+                        to={`/user?id=${user.id}`}
+                        className="focus:outline-none"
+                      >
                         <span className="absolute inset-0" aria-hidden="true" />
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500 truncate">{user.role}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.name}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {user.role}
+                        </p>
                       </Link>
                     </div>
                   </div>
                 </div>
-                </div>
+              </div>
             ) : null}
 
             {/* IF ITEM HAS SELLERS NEED TO LOOP THROUGH AND DISPLAY HERE - MAX 12 AVATARS */}
             <div className="py-3">
               <div className="flex -space-x-1 relative z-0 justify-center md:justify-start">
-                {listings && listings.length ? (
-                  listings.filter((item, i) => i < 12).map((item) => (
-                    <Link as='span' to={'/profile-info?userId='+ item.ownerUserId} className="group relative">
-                      <div className="relative inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
-                        <img
-                          className="h-6 w-6 rounded-full"
-                          src={item.sellerProfilePic}
-                          alt=""
-                        />
-                      </div>
-                      <span className="absolute -bottom-7 px-2 py-1 shadow-lg block rounded-lg bg-gray-900 text-white text-sm flex justify-center items-center font-bold transition-all opacity-0 group-hover:opacity-100 pointer-events-none">
-                        <span className="text-white text-xs">{item.sellerName}</span>
-                      </span>
+                {listings && listings.length
+                  ? listings
+                      .filter((item, i) => i < 12)
+                      .map((item) => (
+                        <Link
+                          as="span"
+                          to={'/profile-info?userId=' + item.ownerUserId}
+                          className="group relative"
+                        >
+                          <div className="relative inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
+                            <img
+                              className="h-6 w-6 rounded-full"
+                              src={item.sellerProfilePic}
+                              alt=""
+                            />
+                          </div>
+                          <span className="absolute -bottom-7 px-2 py-1 shadow-lg block rounded-lg bg-gray-900 text-white text-sm flex justify-center items-center font-bold transition-all opacity-0 group-hover:opacity-100 pointer-events-none">
+                            <span className="text-white text-xs">
+                              {item.sellerName}
+                            </span>
+                          </span>
 
-                      {item.verified ? (
-                        <span className="absolute -top-0 -right-0.5 shadow-lg block h-3 w-3 rounded-full ring-1 ring-white bg-green-600 border-0 text-white text-sm flex justify-center items-center font-bold">
-                          <FontAwesomeIcon icon={faCheck} className="h-2 w-2" />
-                        </span>
-                      ) : null}
-                    </Link>
-                  ))
-                ) : null}
+                          {item.verified ? (
+                            <span className="absolute -top-0 -right-0.5 shadow-lg block h-3 w-3 rounded-full ring-1 ring-white bg-green-600 border-0 text-white text-sm flex justify-center items-center font-bold">
+                              <FontAwesomeIcon
+                                icon={faCheck}
+                                className="h-2 w-2"
+                              />
+                            </span>
+                          ) : null}
+                        </Link>
+                      ))
+                  : null}
               </div>
             </div>
 
             {nftDescription ? (
               <div className="pt-2">
-                <p className="mb-1 text-center md:text-left font-bold">Description</p>
-                <p className="mb-6 text-sm md:text-base text-center md:text-left">{nftDescription}</p>
+                <p className="mb-1 text-center md:text-left font-bold">
+                  Description
+                </p>
+                <p className="mb-6 text-sm md:text-base text-center md:text-left">
+                  {nftDescription}
+                </p>
               </div>
             ) : null}
 
-
             {/* DYNAMICALLY SHOW EACH RELEVANT LISTING SECTION AS REQUIRED - E.G, HIDE BUY NOW IF BIDS ONLY SELECTED */}
             <Accordion>
-
               {/* <AccordionItem toggle="buy-now">Buy Now</AccordionItem>
               <AccordionPanel id="buy-now">
                 <div className="px-2 mb-3">
@@ -1055,7 +1282,7 @@ export default function ItemDetail(props) {
                             <table className="min-w-full divide-y divide-gray-200">
                               <thead className="">
                                 <tr>
-                                <th
+                                  <th
                                     scope="col"
                                     className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
                                   >
@@ -1079,7 +1306,10 @@ export default function ItemDetail(props) {
                                   >
                                     From
                                   </th>
-                                  <th scope="col" className="relative px-6 py-3">
+                                  <th
+                                    scope="col"
+                                    className="relative px-6 py-3"
+                                  >
                                     <span className="sr-only">Actions</span>
                                   </th>
                                 </tr>
@@ -1087,25 +1317,47 @@ export default function ItemDetail(props) {
                               <tbody className="bg-white divide-y divide-gray-200">
                                 {listings.map((item) => (
                                   <tr key={item.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.payToken.payTokenName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                      {item.payToken.payTokenName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                      {item.pricePerItem}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                      <Link to={`/profile-info?userId=${item.ownerUserId}`}>
-                                        {item.sellerName.length > 12 ? `${item.sellerName.substr(0,12)}...` : item.sellerName}
+                                      {item.quantity}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      <Link
+                                        to={`/profile-info?userId=${item.ownerUserId}`}
+                                      >
+                                        {item.sellerName.length > 12
+                                          ? `${item.sellerName.substr(
+                                              0,
+                                              12
+                                            )}...`
+                                          : item.sellerName}
                                       </Link>
                                     </td>
                                     {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><Link to={`/profile-info?userId=${item.ownerUserId}`}><img src={item.sellerProfilePic}/></Link></td> */}
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {item.owner?.toLowerCase() === myAdd?.toLowerCase() ? (
-                                        <a onClick={() => cancelListing()} href="#" className="font-bold text-red-600 hover:text-ref-700">
-                                        Cancel Listing
-                                      </a>
-                                    ) : (
-                                        <a onClick={() => buyItem(item)} href="#" className="font-bold text-indigo-600 hover:text-indigo-900">
+                                      {item.owner?.toLowerCase() ===
+                                      myAdd?.toLowerCase() ? (
+                                        <a
+                                          onClick={() => cancelListing()}
+                                          href="#"
+                                          className="font-bold text-red-600 hover:text-ref-700"
+                                        >
+                                          Cancel Listing
+                                        </a>
+                                      ) : (
+                                        <a
+                                          onClick={() => buyItem(item)}
+                                          href="#"
+                                          className="font-bold text-indigo-600 hover:text-indigo-900"
+                                        >
                                           Buy Now
                                         </a>
-                                    )}
+                                      )}
                                     </td>
                                   </tr>
                                 ))}
@@ -1114,7 +1366,9 @@ export default function ItemDetail(props) {
                           </div>
                         ) : (
                           <div>
-                            <p className="font-bold p-2 text-gray-600 mb-2">No listings for this item.</p>
+                            <p className="font-bold p-2 text-gray-600 mb-2">
+                              No listings for this item.
+                            </p>
                           </div>
                         )}
                       </div>
@@ -1125,7 +1379,7 @@ export default function ItemDetail(props) {
 
               <AccordionItem toggle="offers">Offers</AccordionItem>
               <AccordionPanel id="offers">
-              <div className="px-0">
+                <div className="px-0">
                   <div className="flex flex-col">
                     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                       <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -1134,7 +1388,7 @@ export default function ItemDetail(props) {
                             <table className="min-w-full divide-y divide-gray-200">
                               <thead className="">
                                 <tr>
-                                <th
+                                  <th
                                     scope="col"
                                     className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
                                   >
@@ -1158,7 +1412,10 @@ export default function ItemDetail(props) {
                                   >
                                     From
                                   </th>
-                                  <th scope="col" className="relative px-6 py-3">
+                                  <th
+                                    scope="col"
+                                    className="relative px-6 py-3"
+                                  >
                                     <span className="sr-only">Actions</span>
                                   </th>
                                 </tr>
@@ -1166,29 +1423,60 @@ export default function ItemDetail(props) {
                               <tbody className="bg-white divide-y divide-gray-200">
                                 {offers.map((item) => (
                                   <tr key={item.creatorAddress}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.offerTokenName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.pricePerItem}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.quantity}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                      {item.offerTokenName}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                      {item.pricePerItem}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                      {item.quantity}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                       {item.creatorUserId ? (
-                                        <Link to={`/profile-info?userId=${item.creatorUserId}`}>
-                                          {item.creatorUsername.length > 12 ? `${item.creatorUsername.substr(0,12)}...` : item.creatorUsername}
+                                        <Link
+                                          to={`/profile-info?userId=${item.creatorUserId}`}
+                                        >
+                                          {item.creatorUsername.length > 12
+                                            ? `${item.creatorUsername.substr(
+                                                0,
+                                                12
+                                              )}...`
+                                            : item.creatorUsername}
                                         </Link>
+                                      ) : item.creatorUsername.length > 12 ? (
+                                        `${item.creatorUsername.substr(
+                                          0,
+                                          12
+                                        )}...`
                                       ) : (
-                                        item.creatorUsername.length > 12 ? `${item.creatorUsername.substr(0,12)}...` : item.creatorUsername
+                                        item.creatorUsername
                                       )}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {isUserListedNft && item.creatorAddress.toLowerCase() != myAdd?.toLowerCase() ? (
-                                        <a onClick={() => acceptOffer(item.creatorAddress)} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                        Accept
-                                      </a>
-                                    ) : null}
-                                    {item.creatorAddress.toLowerCase() == myAdd?.toLowerCase() ? (
-                                        <a onClick={() => cancelOffer()} href="#" className="text-indigo-600 hover:text-indigo-900">
-                                        Cancel Offer
-                                       </a>
-                                    ) : null}
+                                      {isUserListedNft &&
+                                      item.creatorAddress.toLowerCase() !=
+                                        myAdd?.toLowerCase() ? (
+                                        <a
+                                          onClick={() =>
+                                            acceptOffer(item.creatorAddress)
+                                          }
+                                          href="#"
+                                          className="text-indigo-600 hover:text-indigo-900"
+                                        >
+                                          Accept
+                                        </a>
+                                      ) : null}
+                                      {item.creatorAddress.toLowerCase() ==
+                                      myAdd?.toLowerCase() ? (
+                                        <a
+                                          onClick={() => cancelOffer()}
+                                          href="#"
+                                          className="text-indigo-600 hover:text-indigo-900"
+                                        >
+                                          Cancel Offer
+                                        </a>
+                                      ) : null}
                                     </td>
                                   </tr>
                                 ))}
@@ -1197,7 +1485,9 @@ export default function ItemDetail(props) {
                           </div>
                         ) : (
                           <div>
-                            <p className="font-bold p-2 text-gray-600 mb-2">No open offers for this item.</p>
+                            <p className="font-bold p-2 text-gray-600 mb-2">
+                              No open offers for this item.
+                            </p>
                             <button
                               type="button"
                               onClick={() => setMakeOfferModalOpen(true)}
@@ -1211,11 +1501,14 @@ export default function ItemDetail(props) {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="px-2 mb-4">
                   {false ? (
                     <div>
-                      <p className="mb-2">This item is accepting offers. To make an offer use the button below:</p>
+                      <p className="mb-2">
+                        This item is accepting offers. To make an offer use the
+                        button below:
+                      </p>
                       <button
                         type="button"
                         onClick={() => setMakeOfferModalOpen(true)}
@@ -1224,14 +1517,14 @@ export default function ItemDetail(props) {
                         <span>Make Offer</span>
                       </button>
                     </div>
-                  ) : (null
-                    // <div>
-                    //   <p className="mb-4">This item is not accepting offers.</p>
-                    // </div>
-                  )}
+                  ) : null
+                  // <div>
+                  //   <p className="mb-4">This item is not accepting offers.</p>
+                  // </div>
+                  }
                 </div>
               </AccordionPanel>
- 
+
               {isOwner ? (
                 <Fragment>
                   <AccordionItem toggle="list-item">List Item</AccordionItem>
@@ -1247,31 +1540,32 @@ export default function ItemDetail(props) {
                           </p>
                         </div>
                         <div className="space-y-6 sm:space-y-5 border-b border-gray-200 pb-5">
-
                           {false ? (
-                                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                                  <label
-                                    htmlFor="country"
-                                    className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                                  >
-                                    Listing Type
-                                  </label>
-                                  <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                    <select
-                                      id="listing-type"
-                                      name="listing-type"
-                                      value={listingType}
-                                      onChange={(e) => setListingType(e.target.value)}
-                                      className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                    >
-                                      {listingTypes.map((item) => (
-                                        <option key={item} value={item}>
-                                          {item}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div>
-                                </div>
+                            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                              <label
+                                htmlFor="country"
+                                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                              >
+                                Listing Type
+                              </label>
+                              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                <select
+                                  id="listing-type"
+                                  name="listing-type"
+                                  value={listingType}
+                                  onChange={(e) =>
+                                    setListingType(e.target.value)
+                                  }
+                                  className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                >
+                                  {listingTypes.map((item) => (
+                                    <option key={item} value={item}>
+                                      {item}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
                           ) : null}
 
                           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -1284,11 +1578,16 @@ export default function ItemDetail(props) {
                             <div className="mt-1 sm:mt-0 sm:col-span-2">
                               <select
                                 value={ListingToken}
-                                onChange={(e) => setListingToken(e.target.value)}
+                                onChange={(e) =>
+                                  setListingToken(e.target.value)
+                                }
                                 className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                               >
                                 {tokenTypes.map((item) => (
-                                  <option key={item.tokenAddress} value={item.tokenAddress}>
+                                  <option
+                                    key={item.tokenAddress}
+                                    value={item.tokenAddress}
+                                  >
                                     {item.name}
                                   </option>
                                 ))}
@@ -1296,8 +1595,7 @@ export default function ItemDetail(props) {
                             </div>
                           </div>
 
-                          {["Fixed Price"].includes(listingType) ? (
-                            
+                          {['Fixed Price'].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1318,7 +1616,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {["Fixed Price"].includes(listingType) ? (
+                          {['Fixed Price'].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1333,14 +1631,16 @@ export default function ItemDetail(props) {
                                   id="listquantity"
                                   value={ListQuantity}
                                   max={nftQuantityOwned ? nftQuantityOwned : 0}
-                                  onChange={(e) => setListQuantity(e.target.value)}
+                                  onChange={(e) =>
+                                    setListQuantity(e.target.value)
+                                  }
                                   className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                                 />
                               </div>
                             </div>
                           ) : null}
 
-                          {["Timed Auction"].includes(listingType) ? (
+                          {['Timed Auction'].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1359,7 +1659,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {["Open For Offers"].includes(listingType) ? (
+                          {['Open For Offers'].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1378,7 +1678,9 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {["Fixed Price", "Timed Auction"].includes(listingType) && false ? (
+                          {['Fixed Price', 'Timed Auction'].includes(
+                            listingType
+                          ) && false ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="country"
@@ -1391,7 +1693,9 @@ export default function ItemDetail(props) {
                                   id="listing-length"
                                   name="listing-length"
                                   value={listingLength}
-                                  onChange={(e) => setListingLength(e.target.value)}
+                                  onChange={(e) =>
+                                    setListingLength(e.target.value)
+                                  }
                                   className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                                 >
                                   {listingLengths.map((item) => (
@@ -1404,7 +1708,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {["Open For Offers"].includes(listingType) ? (
+                          {['Open For Offers'].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="country"
@@ -1419,7 +1723,9 @@ export default function ItemDetail(props) {
                                   className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                                   disabled
                                 >
-                                  <option value="0">Until sold/cancelled</option>
+                                  <option value="0">
+                                    Until sold/cancelled
+                                  </option>
                                 </select>
                               </div>
                             </div>
@@ -1429,7 +1735,8 @@ export default function ItemDetail(props) {
 
                       <div>
                         <p className="mt-1 max-w-2xl text-sm text-gray-500 mt-3">
-                          Please note there is a listing fee of 25 FOMO and a 5% tax on sales
+                          Please note there is a listing fee of 25 FOMO and a 5%
+                          tax on sales
                         </p>
                       </div>
 
@@ -1446,10 +1753,7 @@ export default function ItemDetail(props) {
                   </AccordionPanel>
                 </Fragment>
               ) : null}
-              
-            
             </Accordion>
-
 
             <div className="border-b border-gray-200 mb-3">
               <div className="sm:flex sm:items-baseline">
@@ -1462,11 +1766,11 @@ export default function ItemDetail(props) {
                         onClick={() => setActiveTab(tab.name)}
                         className={classNames(
                           tab.name === activeTab
-                            ? "border-indigo-500 text-indigo-600"
-                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                          "whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
+                            ? 'border-indigo-500 text-indigo-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                          'whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm'
                         )}
-                        aria-current={tab.current ? "page" : undefined}
+                        aria-current={tab.current ? 'page' : undefined}
                       >
                         {tab.name}
                       </button>
@@ -1480,18 +1784,28 @@ export default function ItemDetail(props) {
               <div>
                 <dl className="sm:divide-y sm:divide-gray-200">
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-bold text-gray-800">Contract Address</dt>
+                    <dt className="text-sm font-bold text-gray-800">
+                      Contract Address
+                    </dt>
                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
                       <a href="#">{nftAddress}</a>
                     </dd>
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-bold text-gray-800">Token ID</dt>
-                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">{tokenid}</dd>
+                    <dt className="text-sm font-bold text-gray-800">
+                      Token ID
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                      {tokenid}
+                    </dd>
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
-                    <dt className="text-sm font-bold text-gray-800">Blockchain</dt>
-                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">{userContext.state.blockchainId == 0 ? "BSC" : "ETH"}</dd>
+                    <dt className="text-sm font-bold text-gray-800">
+                      Blockchain
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                      {userContext.state.blockchainId == 0 ? 'BSC' : 'ETH'}
+                    </dd>
                   </div>
                 </dl>
               </div>
@@ -1499,7 +1813,9 @@ export default function ItemDetail(props) {
 
             {activeTab === 'Creator' ? (
               <div className="pt-3">
-                <h1 className="font-bold text-xl mb-3 text-center md:text-left">About Creator</h1>
+                <h1 className="font-bold text-xl mb-3 text-center md:text-left">
+                  About Creator
+                </h1>
                 <p className="mb-3 text-center md:text-left"></p>
               </div>
             ) : null}
@@ -1508,12 +1824,21 @@ export default function ItemDetail(props) {
               <div>
                 {history && history.length ? (
                   <ul className="">
-                    {history.filter((item, i) => i < 20).map((item) => (
-                      <ItemHistoryRow key={item.blockNumber} type={item.eventName} userId={`${item.address1.substr(0,6)}`} date={`${item.txHash}`} />
-                    ))}
+                    {history
+                      .filter((item, i) => i < 20)
+                      .map((item) => (
+                        <ItemHistoryRow
+                          key={item.blockNumber}
+                          type={item.eventName}
+                          userId={`${item.address1.substr(0, 6)}`}
+                          date={`${item.txHash}`}
+                        />
+                      ))}
                   </ul>
                 ) : (
-                  <p className="mb-3 text-center md:text-left">No history for this item.</p>
+                  <p className="mb-3 text-center md:text-left">
+                    No history for this item.
+                  </p>
                 )}
               </div>
             ) : null}
@@ -1521,7 +1846,9 @@ export default function ItemDetail(props) {
             {activeTab === 'Transfer' ? (
               isOwner ? (
                 <div>
-                  <p className="mb-3 text-center md:text-left">Transfer ownership of this item to another wallet.</p>
+                  <p className="mb-3 text-center md:text-left">
+                    Transfer ownership of this item to another wallet.
+                  </p>
                   <Link
                     to={`/transfer-item?tokenid=${tokenid}&nftaddress=${nftAddress}`}
                     className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm"
@@ -1531,11 +1858,12 @@ export default function ItemDetail(props) {
                 </div>
               ) : (
                 <div>
-                  <p className="mb-3 text-center md:text-left text-sm pt-3">Only the owner of this item can transfer it.</p>
+                  <p className="mb-3 text-center md:text-left text-sm pt-3">
+                    Only the owner of this item can transfer it.
+                  </p>
                 </div>
               )
             ) : null}
-           
           </div>
         </div>
 
@@ -1547,14 +1875,14 @@ export default function ItemDetail(props) {
           <div>
             <div className="mt-3 text-center sm:mt-5">
               <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-5">
-                </p>
-
+                <p className="text-sm text-gray-500 mb-5"></p>
 
                 <div className="grid gap-3 mb-10">
-
                   <div className="text-left">
-                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Token
                     </label>
                     <div className="mt-1">
@@ -1564,8 +1892,11 @@ export default function ItemDetail(props) {
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       >
                         {tokenTypes.map((item) => (
-                          <option key={item.tokenAddress} value={item.tokenAddress}>
-                           {item.name}
+                          <option
+                            key={item.tokenAddress}
+                            value={item.tokenAddress}
+                          >
+                            {item.name}
                           </option>
                         ))}
                       </select>
@@ -1573,7 +1904,10 @@ export default function ItemDetail(props) {
                   </div>
 
                   <div className="text-left">
-                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Offer Duration
                     </label>
                     <div className="mt-1">
@@ -1592,7 +1926,10 @@ export default function ItemDetail(props) {
                   </div>
 
                   <div className="text-left">
-                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Quantity
                     </label>
                     <div className="mt-1">
@@ -1606,7 +1943,10 @@ export default function ItemDetail(props) {
                   </div>
 
                   <div className="text-left">
-                    <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       Price Per Item
                     </label>
                     <div className="mt-1">
@@ -1618,9 +1958,7 @@ export default function ItemDetail(props) {
                       />
                     </div>
                   </div>
-
                 </div>
-
               </div>
             </div>
           </div>
@@ -1648,7 +1986,6 @@ export default function ItemDetail(props) {
           modalOpen={showPurchasedModal}
           setModalOpen={(v) => setShowPurchasedModal(v)}
         />
-
       </div>
     </div>
   );
