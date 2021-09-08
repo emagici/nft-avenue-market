@@ -269,7 +269,7 @@ export default function ItemDetail(props) {
           deadline: item.deadline,
           offerTokenName: getPayTokenDetailByAddress(item.payToken, userContext.state.blockchainId).payTokenName,
           verified: item.verified,
-          creatorUserId: item.CreatorId
+          creatorUserId: item.creatorId
         }
         return obj;
       }));
