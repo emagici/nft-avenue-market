@@ -1416,19 +1416,19 @@ export default function ItemDetail(props) {
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     Price per item
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     Quantity
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     From
                                   </th>
@@ -1446,13 +1446,13 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                       {item.payToken.payTokenName}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                                       {item.pricePerItem}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                       {item.quantity}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                       <Link
                                         to={`/profile-info?userId=${item.ownerUserId}`}
                                       >
@@ -1524,19 +1524,19 @@ export default function ItemDetail(props) {
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     Price per item
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     Quantity
                                   </th>
                                   <th
                                     scope="col"
-                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
                                   >
                                     From
                                   </th>
@@ -1554,13 +1554,13 @@ export default function ItemDetail(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                       {item.offerTokenName}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
                                       {item.pricePerItem}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                       {item.quantity}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                       {item.creatorUserId ? (
                                         <Link
                                           to={`/profile-info?userId=${item.creatorUserId}`}

@@ -39,6 +39,7 @@ export default function Profile() {
   const [loadingData, setLoadingData] = useState({
     onsale: true,
     owned: true,
+    offers: true,
     profile: true,
     activity: true,
   })
@@ -54,13 +55,14 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("On Sale")
   const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false)
   const [seedWords, setSeedWords] = useState("")
+  const [offers, setOffers] = useState(null)
   const [followers, setFollowers] = useState([])
   const [followees, setFollowees] = useState([])
   const [likedItems, setLikedItems] = useState([])
   const tabs = [
     "On Sale",
     "Owned",
-    // "Offers",
+    "Offers",
     // "Created",
     "Liked",
     "Following",
@@ -98,6 +100,10 @@ export default function Profile() {
       setDisplayName(null)
     }
   }, [userProfile])
+
+  useEffect(() => {
+    if (userContext.state.accessToken) getOffers()
+  }, [userContext.state.accessToken])
 
   function init() {
     let accessToken = getUrlAccessToken()
@@ -375,18 +381,28 @@ export default function Profile() {
     )
   }
 
-  function isLoading(state) {
-    loading = state
-    // if(state){
-    //   sharedContext.dispatch({
-    //     type: "START_LOADING"
-    //   })
-    // }
-    // else{
-    //   sharedContext.dispatch({
-    //     type: "STOP_LOADING"
-    //   })
-    // }
+  async function getOffers() {
+    console.log("getOffers")
+    await axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetOffersByUser?blockchain=0`,
+      headers: {
+        Authorization: "Bearer " + userContext.state.accessToken + "",
+      },
+    })
+      .then(function (response) {
+        console.log("getOffers DATA")
+        console.log(response)
+        setOffers(response.data.result)
+      })
+      .catch(function (response) {
+        console.log("getOffers ERROR")
+        console.log(response)
+      })
+
+    setLoadingData((prevState) => {
+      return { ...prevState, offers: false }
+    })
   }
 
   return (
@@ -540,6 +556,98 @@ export default function Profile() {
                   right here on the The Avenue
                 </p>
               </div>
+            ) : null}
+
+            {activeTab === "Offers" ? (
+              loadingData.offers ? (
+                <div className="flex items-center justify-center">
+                  <Spinner className="h-9 w-9" />
+                </div>
+              ) : offers && offers.length ? (
+                <div className="max-w-5xl mx-auto">
+                  <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                      <div className="overflow-hidden sm:rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                              >
+                                Item
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Token
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Price per item
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Quantity
+                              </th>
+                              <th scope="col" className="relative px-6 py-3">
+                                <span className="sr-only">Actions</span>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {offers.map((item, i) => (
+                              <tr key={i}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                  {item.tokenName}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                                  {item.offerTokenName
+                                    ? item.offerTokenName
+                                    : "TBC"}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                                  {item.pricePerItemUsd}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                  {item.quantity}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <Link
+                                    as="a"
+                                    to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                    className="text-indigo-600 hover:text-indigo-900"
+                                  >
+                                    View Item
+                                  </Link>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No active offers</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    When you make an offer an item it will appear here.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
+              )
             ) : null}
 
             {activeTab === "Liked" ? (

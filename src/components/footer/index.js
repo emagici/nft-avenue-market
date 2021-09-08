@@ -1,92 +1,90 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import Logo from '../../assets/img/fomo/the-avenue-v2.gif'
-import MailchimpSubscribe from "react-mailchimp-subscribe";
+import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import Logo from "../../assets/img/fomo/the-avenue-v2.gif"
+import MailchimpSubscribe from "react-mailchimp-subscribe"
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faTwitter,
   faInstagram,
   faTiktok,
   faMedium,
   faTelegramPlane,
-} from '@fortawesome/free-brands-svg-icons'
-
+} from "@fortawesome/free-brands-svg-icons"
 
 const navigation = {
   pages: [
-    { name: 'Explore', href: '/explore' },
-    { name: 'Featured', href: '/featured' },
-    { name: 'My Profile', href: '/user' },
+    { name: "Explore", href: "/explore" },
+    { name: "Featured", href: "/featured" },
+    { name: "My Profile", href: "/user" },
   ],
   contactus: [
-    { name: 'Email Us', href: 'mailto:contactus@fomolab.io' },
-    { name: 'Apply For Verification', href: 'https://forms.gle/rrKs57QTfdGA1mJB8', target: "_blank" },
-    { name: 'FAQ', href: '/faq' },
+    { name: "Email Us", href: "mailto:contactus@fomolab.io", target: "_blank" },
+    {
+      name: "Apply For Verification",
+      href: "https://forms.gle/rrKs57QTfdGA1mJB8",
+      target: "_blank",
+    },
+    { name: "FAQ", href: "/faq" },
   ],
   legal: [
-    { name: 'Privacy', href: '/privacy-policy' },
-    { name: 'Terms', href: '/terms' },
+    { name: "Privacy", href: "/privacy-policy" },
+    { name: "Terms", href: "/terms" },
   ],
   social: [
     {
-      name: 'Twitter',
-      href: 'https://twitter.com/fomo_lab',
+      name: "Twitter",
+      href: "https://twitter.com/fomo_lab",
       icon: (props) => (
-        <FontAwesomeIcon icon={faTwitter} size='lg' {...props} />
+        <FontAwesomeIcon icon={faTwitter} size="lg" {...props} />
       ),
     },
     {
-      name: 'Instagram',
-      href: 'https://www.instagram.com/fomo_lab/',
+      name: "Instagram",
+      href: "https://www.instagram.com/fomo_lab/",
       icon: (props) => (
-        <FontAwesomeIcon icon={faInstagram} size='lg' {...props} />
+        <FontAwesomeIcon icon={faInstagram} size="lg" {...props} />
       ),
     },
     {
-      name: 'TikTok',
-      href: 'https://www.tiktok.com/@fomolab',
-      icon: (props) => (
-        <FontAwesomeIcon icon={faTiktok} size='lg' {...props} />
-      ),
+      name: "TikTok",
+      href: "https://www.tiktok.com/@fomolab",
+      icon: (props) => <FontAwesomeIcon icon={faTiktok} size="lg" {...props} />,
     },
     {
-      name: 'Medium',
-      href: 'https://thefomolab.medium.com/',
-      icon: (props) => (
-        <FontAwesomeIcon icon={faMedium} size='lg' {...props} />
-      ),
+      name: "Medium",
+      href: "https://thefomolab.medium.com/",
+      icon: (props) => <FontAwesomeIcon icon={faMedium} size="lg" {...props} />,
     },
     {
-      name: 'Telegram',
-      href: 'https://www.t.me/FOMOlab',
+      name: "Telegram",
+      href: "https://www.t.me/FOMOlab",
       icon: (props) => (
-        <FontAwesomeIcon icon={faTelegramPlane} size='lg' {...props} />
+        <FontAwesomeIcon icon={faTelegramPlane} size="lg" {...props} />
       ),
     },
   ],
 }
 
 const CustomForm = ({ status, message, onValidated }) => {
-
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("")
 
   useEffect(() => {
-    if(status === "success") clearFields();
+    if (status === "success") clearFields()
   }, [status])
 
   const clearFields = () => {
-    setEmail('');
+    setEmail("")
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     email &&
-    email.indexOf("@") > -1 &&
-    onValidated({
-      EMAIL: email,
-    });
-}
+      email.indexOf("@") > -1 &&
+      onValidated({
+        EMAIL: email,
+      })
+  }
 
   return (
     <div>
@@ -114,23 +112,24 @@ const CustomForm = ({ status, message, onValidated }) => {
         </div>
       </form>
       {status === "error" && (
-        <div 
+        <div
           className="text-center font-medium text-red-600 pt-2"
           dangerouslySetInnerHTML={{ __html: message }}
         />
       )}
       {status === "success" && (
         <div
-        className="text-center font-medium text-green-600 pt-2"
+          className="text-center font-medium text-green-600 pt-2"
           dangerouslySetInnerHTML={{ __html: message }}
         />
       )}
     </div>
   )
-};
+}
 
 export default function Footer() {
-  const postUrl = "https://fomolab.us6.list-manage.com/subscribe/post?u=25284ccfd48fde835d02a2ad9&id=dfc9aa4be5"
+  const postUrl =
+    "https://fomolab.us6.list-manage.com/subscribe/post?u=25284ccfd48fde835d02a2ad9&id=dfc9aa4be5"
 
   return (
     <footer className="bg-white mt-20 border-t" aria-labelledby="footerHeading">
@@ -140,17 +139,28 @@ export default function Footer() {
       <div className="max-w-screen-2xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 text-center lg:text-left">
         <div className="pb-8 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-8">
           <div className="md:col-span-3 lg:col-span-2 mb-10 md:mb-5">
-            <img src={Logo} alt="avenue logo" className="h-16 mb-3 mx-auto lg:mx-0 lg:-ml-5" />
+            <img
+              src={Logo}
+              alt="avenue logo"
+              className="h-16 mb-3 mx-auto lg:mx-0 lg:-ml-5"
+            />
             <a href="https://fomolab.io">
-              <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">Powered by Fomo Lab</h3>
+              <h3 className="text-md font-bold text-gray-700 tracking-wider uppercase">
+                Powered by Fomo Lab
+              </h3>
             </a>
           </div>
           <div className="mb-10 md:mb-0">
-            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Pages</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
+              Pages
+            </h3>
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.pages.map((item) => (
                 <li key={item.name}>
-                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link
+                    to={item.href}
+                    className="text-base text-gray-500 hover:text-gray-900"
+                  >
                     {item.name}
                   </Link>
                 </li>
@@ -158,16 +168,26 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Contact Us</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
+              Contact Us
+            </h3>
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.contactus.map((item) => (
                 <li key={item.name}>
                   {item.target ? (
-                    <a href={item.href} target={item.target === "_blank" ? "_blank" : "_self"} rel={item.target === "_blank" ? "noreferrer" : ""} className="text-base text-gray-500 hover:text-gray-900">
+                    <a
+                      href={item.href}
+                      target={item.target === "_blank" ? "_blank" : "_self"}
+                      rel={item.target === "_blank" ? "noreferrer" : ""}
+                      className="text-base text-gray-500 hover:text-gray-900"
+                    >
                       {item.name}
                     </a>
                   ) : (
-                    <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                    <Link
+                      to={item.href}
+                      className="text-base text-gray-500 hover:text-gray-900"
+                    >
                       {item.name}
                     </Link>
                   )}
@@ -176,11 +196,16 @@ export default function Footer() {
             </ul>
           </div>
           <div className="mt-12 md:mt-0">
-            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">Legal</h3>
+            <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
+              Legal
+            </h3>
             <ul className="mt-3 md:mt-6 space-y-4">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
-                  <Link to={item.href} className="text-base text-gray-500 hover:text-gray-900">
+                  <Link
+                    to={item.href}
+                    className="text-base text-gray-500 hover:text-gray-900"
+                  >
                     {item.name}
                   </Link>
                 </li>
@@ -188,7 +213,10 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div id="subscribe" className="border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0">
+        <div
+          id="subscribe"
+          className="border-t border-gray-200 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0"
+        >
           <div>
             <h3 className="text-sm font-bold text-gray-800 tracking-wider uppercase">
               Subscribe to our mailing list
@@ -202,9 +230,9 @@ export default function Footer() {
               url={postUrl}
               render={({ subscribe, status, message }) => (
                 <CustomForm
-                  status={status} 
+                  status={status}
                   message={message}
-                  onValidated={formData => subscribe(formData)}
+                  onValidated={(formData) => subscribe(formData)}
                 />
               )}
             />
@@ -235,7 +263,13 @@ export default function Footer() {
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">
           <div className="flex space-x-6 md:order-2 justify-center">
             {navigation.social.map((item) => (
-              <a key={item.name} href={item.href} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-500">
+              <a
+                key={item.name}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="text-gray-400 hover:text-gray-500"
+              >
                 <span className="sr-only">{item.name}</span>
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>
