@@ -1,34 +1,34 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useToasts } from 'react-toast-notifications';
-import qs from 'qs';
+import React, { useEffect, useState, useContext } from "react"
+import { Link, useLocation } from "react-router-dom"
+import { useToasts } from "react-toast-notifications"
+import qs from "qs"
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
-} from '../../components/accordion';
-import Web3 from 'web3';
-import axios from 'axios';
-import Modal from '../../components/modal';
-import PageTitle from '../../components/page-title';
-import ItemHistoryRow from './item-history-row';
-import PurchasedModal from './purchased-modal';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+} from "../../components/accordion"
+import Web3 from "web3"
+import axios from "axios"
+import Modal from "../../components/modal"
+import PageTitle from "../../components/page-title"
+import ItemHistoryRow from "./item-history-row"
+import PurchasedModal from "./purchased-modal"
+import { CopyToClipboard } from "react-copy-to-clipboard"
 
-import { HeartIcon } from '@heroicons/react/solid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { HeartIcon } from "@heroicons/react/solid"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons"
 
-import { SharedContext } from '../../context/shared-context';
-import { UserContext } from '../../context/user-context';
-import { Web3Context } from '../../context/web3-context';
-import { WalletContext } from '../../context/wallet-context';
+import { SharedContext } from "../../context/shared-context"
+import { UserContext } from "../../context/user-context"
+import { Web3Context } from "../../context/web3-context"
+import { WalletContext } from "../../context/wallet-context"
 import {
   MARKETPLACE_ABI,
   getMarketplaceContractAddress,
-} from '../../contracts/FomoMarketPlace';
-import { GENERICNFT_ABI } from '../../contracts/GenericNFT';
-import { GENERIC_TOKEN_ABI } from '../../contracts/GenericToken';
+} from "../../contracts/FomoMarketPlace"
+import { GENERICNFT_ABI } from "../../contracts/GenericNFT"
+import { GENERIC_TOKEN_ABI } from "../../contracts/GenericToken"
 import {
   getTokenTypes,
   getDefaultTokenAddress,
@@ -38,7 +38,8 @@ import {
   toFixed,
   getUserFomoBalance,
   getTokenBalance,
-} from '../../utilities/utils';
+  defaultAvatar,
+} from "../../utilities/utils"
 
 import {
   TelegramShareButton,
@@ -47,130 +48,131 @@ import {
   TelegramIcon,
   TwitterIcon,
   WhatsappIcon,
-} from 'react-share';
+} from "react-share"
 
-import AppUrls from '../../AppSettings';
-import { Fragment } from 'react';
+import AppUrls from "../../AppSettings"
+import { Fragment } from "react"
 
 const tabs = [
-  { name: 'Info', href: '#', current: true },
+  { name: "Info", href: "#", current: true },
   // { name: 'Creator', href: '#', current: false },
-  { name: 'History', href: '#', current: false },
-  { name: 'Transfer', href: '#', current: false },
-];
+  { name: "History", href: "#", current: false },
+  { name: "Transfer", href: "#", current: false },
+]
 
 // const listingTypes = ["Fixed Price", "Timed Auction", "Open For Offers"];
-const listingTypes = ['Fixed Price'];
-const listingLengths = [3, 7, 14, 30];
+const listingTypes = ["Fixed Price"]
+const listingLengths = [3, 7, 14, 30]
 
 const user = {
-  name: '',
-  profilePictureUrl: '',
-};
+  name: "",
+  profilePictureUrl: "",
+}
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ")
 }
 
 const appUrls = {
   fomoHost: AppUrls.fomoHost,
   fomoHostApi: AppUrls.fomoHostApi,
   fomoClient: AppUrls.fomoClient,
-};
+}
 
 export default function ItemDetail(props) {
-  const location = useLocation();
-  const { addToast } = useToasts();
-  const sharedContext = useContext(SharedContext);
-  const userContext = useContext(UserContext);
-  const web3Context = useContext(Web3Context);
-  const walletContext = useContext(WalletContext);
+  const location = useLocation()
+  const { addToast } = useToasts()
+  const sharedContext = useContext(SharedContext)
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+  const walletContext = useContext(WalletContext)
 
-  const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false);
-  const [tokenid, setTokenId] = useState('');
-  const [nftAddress, setNftAddress] = useState('');
-  const [nftName, setNftName] = useState('');
-  const [nftDescription, setNftDescription] = useState('');
-  const [nftVideoSrc, setVideoNftSrc] = useState('');
-  const [nftImageSrc, setImageNftSrc] = useState('');
-  const [web3, setWeb3] = useState();
-  const [marketplaceContract, setMarketplaceContract] = useState();
-  const [myAdd, setMyadd] = useState();
-  const [activeTab, setActiveTab] = useState('Info');
-  const [isOwner, setIsOwner] = useState(false);
-  const [isUserListedNft, setIsUserListedNft] = useState(false);
-  const [nftQuantityOwned, setNftQuantityOwned] = useState(0);
-  const [ListPrice, setListPrice] = useState(0);
-  const [ListQuantity, setListQuantity] = useState(0);
+  const [makeOfferModalOpen, setMakeOfferModalOpen] = useState(false)
+  const [tokenid, setTokenId] = useState("")
+  const [nftData, setNftData] = useState(null)
+  const [nftMetadata, setNftMetadata] = useState(null)
+  const [nftAddress, setNftAddress] = useState("")
+  const [nftName, setNftName] = useState("")
+  const [nftDescription, setNftDescription] = useState("")
+  const [nftVideoSrc, setVideoNftSrc] = useState("")
+  const [nftImageSrc, setImageNftSrc] = useState("")
+  const [web3, setWeb3] = useState()
+  const [marketplaceContract, setMarketplaceContract] = useState()
+  const [myAdd, setMyadd] = useState()
+  const [activeTab, setActiveTab] = useState("Info")
+  const [isOwner, setIsOwner] = useState(false)
+  const [isUserListedNft, setIsUserListedNft] = useState(false)
+  const [nftQuantityOwned, setNftQuantityOwned] = useState(0)
+  const [ListPrice, setListPrice] = useState(0)
+  const [ListQuantity, setListQuantity] = useState(0)
   const [ListingToken, setListingToken] = useState(
-    getDefaultTokenAddress(userContext.state.blockchainId)
-  );
-  const [isItemListed, setIsItemListed] = useState(false);
-  const [listingType, setListingType] = useState('Fixed Price');
-  const [listingLength, setListingLength] = useState(7);
-  const [shareUrl, setShareUrl] = useState(null);
+    getDefaultTokenAddress(userContext.state.blockchainId),
+  )
+  const [isItemListed, setIsItemListed] = useState(false)
+  const [listingType, setListingType] = useState("Fixed Price")
+  const [listingLength, setListingLength] = useState(7)
+  const [shareUrl, setShareUrl] = useState(null)
 
-  const [showPurchasedModal, setShowPurchasedModal] = useState(false);
+  const [showPurchasedModal, setShowPurchasedModal] = useState(false)
 
-  const [offerLength, setOfferLength] = useState(7);
-  const [offerQuantity, setOfferQuantity] = useState(1);
-  const [offerPricePerItem, setOfferPricePerItem] = useState(0);
+  const [offerLength, setOfferLength] = useState(7)
+  const [offerQuantity, setOfferQuantity] = useState(1)
+  const [offerPricePerItem, setOfferPricePerItem] = useState(0)
   const [offerToken, setOfferToken] = useState(
-    getDefaultTokenAddress(userContext.state.blockchainId)
-  );
+    getDefaultTokenAddress(userContext.state.blockchainId),
+  )
 
-  const [listings, setListings] = useState([]);
-  const [offers, setOffers] = useState([]);
-  const [history, setHistory] = useState([]);
+  const [listings, setListings] = useState([])
+  const [offers, setOffers] = useState([])
+  const [history, setHistory] = useState([])
 
-  const [lowestSellerItem, setLowestSellerItem] = useState();
+  const [lowestSellerItem, setLowestSellerItem] = useState()
 
-  const [hasLiked, setHasLiked] = useState(false);
-  const [tokenTypes, setTokenTypes] = useState([]);
-  const [marketplaceContractAddress, setMarketplaceContractAddress] =
-    useState();
+  const [hasLiked, setHasLiked] = useState(false)
+  const [tokenTypes, setTokenTypes] = useState([])
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState()
 
   useEffect(() => {
-    setTokenTypes(getTokenTypes(userContext.state.blockchainId));
+    setTokenTypes(getTokenTypes(userContext.state.blockchainId))
     setMarketplaceContractAddress(
-      getMarketplaceContractAddress(userContext.state.blockchainId)
-    );
-  }, [userContext.state.blockchainId]);
+      getMarketplaceContractAddress(userContext.state.blockchainId),
+    )
+  }, [userContext.state.blockchainId])
 
   const getEvent = () => {
     axios({
-      method: 'get',
+      method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetEvents?contractAddress=${nftAddress}&tokenId=${tokenid}`,
     })
       .then(async function (response) {
-        console.log(response.data);
+        console.log(response.data)
         setHistory(
           response.data.result.filter(
-            (item) => item.eventName.toLowerCase() !== 'itemliked'
-          )
-        );
+            (item) => item.eventName.toLowerCase() !== "itemliked",
+          ),
+        )
       })
-      .catch(function (response) {});
-  };
+      .catch(function (response) {})
+  }
 
   const getTokenURI = async () => {
     const ownCurrentNft = userContext.state.ownNfts.find(
       (o) =>
         o.TokenId === tokenid &&
-        o.NftAddress.toLowerCase() === nftAddress.toLowerCase()
-    );
+        o.NftAddress.toLowerCase() === nftAddress.toLowerCase(),
+    )
 
     if (ownCurrentNft) {
-      setNftQuantityOwned(ownCurrentNft.OwnedNftQuantity);
-      setIsOwner(true);
+      setNftQuantityOwned(ownCurrentNft.OwnedNftQuantity)
+      setIsOwner(true)
     }
 
     if (isItemListed) {
-      getListedNftInfo();
+      getListedNftInfo()
     } else {
-      getExternalNftInfo();
+      getExternalNftInfo()
     }
-  };
+  }
 
   const addNewListing = async (item) => {
     const newItem = {
@@ -178,68 +180,72 @@ export default function ItemDetail(props) {
       NftAddress: item.nft,
       owner: item.owner,
       ownerUserId: userContext.state.id,
-      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'),
+      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
       quantity: item.quantity,
       sellerName: userContext.state.name,
       payToken: null,
-    };
+    }
     newItem.payToken = await getPayTokenFromListing(
       web3,
       item.nft,
       item.tokenId,
       myAdd,
-      userContext.state.blockchainId
-    );
+      userContext.state.blockchainId,
+    )
 
     setListings((prevState) => {
       return [
         ...prevState.filter(
-          (item) => item.owner.toLowerCase() !== newItem.owner.toLowerCase()
+          (item) => item.owner.toLowerCase() !== newItem.owner.toLowerCase(),
         ),
         newItem,
-      ];
-    });
+      ]
+    })
 
-    addToast('Item listed successfully!', {
-      appearance: 'success',
+    addToast("Item listed successfully!", {
+      appearance: "success",
       autoDismiss: true,
-    });
+    })
 
     // reset listing form
     try {
-      setListPrice(0);
-      setListQuantity(0);
-      setNftQuantityOwned((prevState) => prevState - 1);
+      setListPrice(0)
+      setListQuantity(0)
+      setNftQuantityOwned((prevState) => prevState - 1)
     } catch (err) {
       // console.log(err)
     }
-  };
+  }
 
   const getListedNftInfo = () => {
-    getEvent();
+    getEvent()
 
-    let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}&blockchain=${userContext.state.blockchainId}`;
+    let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}&blockchain=${userContext.state.blockchainId}`
 
     if (userContext.state.id) {
-      url += `&loggedInUserId=${userContext.state.id}`;
+      url += `&loggedInUserId=${userContext.state.id}`
     }
 
     axios({
-      method: 'get',
+      method: "get",
       url: url,
     })
       .then(async function (nftListingResponse) {
-        const nftListingResult = nftListingResponse.data.result;
+        const nftListingResult = nftListingResponse.data.result
 
-        console.log(nftListingResult);
+        console.log("nftListingResult")
+        console.log(nftListingResult)
 
-        if (nftListingResult.length === 0) return;
+        if (!nftListingResult.length) return
 
-        setHasLiked(nftListingResult[0].nft.hasLiked);
-        setNftDescription(nftListingResult[0].nft.description);
-        setNftName(nftListingResult[0].nft.tokenName);
-        setImageNftSrc(nftListingResult[0].nft.imageUrl);
-        setVideoNftSrc(nftListingResult[0].nft.videoUrl);
+        setNftData(nftListingResult[0].nft)
+        setNftMetadata(JSON.parse(nftListingResult[0].nft.metadata))
+
+        setHasLiked(nftListingResult[0].nft.hasLiked)
+        setNftDescription(nftListingResult[0].nft.description)
+        setNftName(nftListingResult[0].nft.tokenName)
+        setImageNftSrc(nftListingResult[0].nft.imageUrl)
+        setVideoNftSrc(nftListingResult[0].nft.videoUrl)
 
         const listingItems = await Promise.all(
           nftListingResult.map(async (item) => ({
@@ -251,7 +257,7 @@ export default function ItemDetail(props) {
             ownerUserId: item.nft.ownerId,
             pricePerItem: Web3.utils.fromWei(
               toFixed(item.nft.pricePerItem),
-              'ether'
+              "ether",
             ),
             pricePerItemUsd: item.nft.pricePerItemUsd,
             quantity: item.nft.quantity,
@@ -262,41 +268,41 @@ export default function ItemDetail(props) {
               item.nft.nft,
               item.nft.tokenId,
               item.nft.owner,
-              userContext.state.blockchainId
+              userContext.state.blockchainId,
             ),
             verified: item.seller.verified,
-          }))
-        );
+          })),
+        )
 
         const sortedlistingItems = listingItems.sort(function (a, b) {
-          return a.pricePerItemUsd - b.pricePerItemUsd;
-        });
-        setLowestSellerItem(sortedlistingItems[0]);
+          return a.pricePerItemUsd - b.pricePerItemUsd
+        })
+        setLowestSellerItem(sortedlistingItems[0])
 
         if (myAdd) {
           const listedCurrentNft = listingItems.find(
-            (o) => o.owner.toLowerCase() === myAdd.toLowerCase()
-          );
+            (o) => o.owner.toLowerCase() === myAdd.toLowerCase(),
+          )
           if (listedCurrentNft) {
-            setIsUserListedNft(true);
+            setIsUserListedNft(true)
           }
         }
 
-        setListings(sortedlistingItems);
+        setListings(sortedlistingItems)
 
         const offerItems = await Promise.all(
           nftListingResult[0].offers.map(async (item) => {
             var balance = await getTokenBalance(
               item.creatorAddress,
               item.payToken,
-              web3
-            );
+              web3,
+            )
             if (
               Number(balance) <
               Number(item.quantity) *
-                Number(Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'))
+                Number(Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"))
             ) {
-              return;
+              return
             }
 
             var obj = {
@@ -305,7 +311,7 @@ export default function ItemDetail(props) {
               creatorAddress: item.creatorAddress,
               pricePerItem: Web3.utils.fromWei(
                 toFixed(item.pricePerItem),
-                'ether'
+                "ether",
               ),
               pricePerItemUsd: item.pricePerItemUsd,
               quantity: item.quantity,
@@ -313,50 +319,50 @@ export default function ItemDetail(props) {
               deadline: item.deadline,
               offerTokenName: getPayTokenDetailByAddress(
                 item.payToken,
-                userContext.state.blockchainId
+                userContext.state.blockchainId,
               ).payTokenName,
               verified: item.verified,
               creatorUserId: item.creatorId,
-            };
-            return obj;
-          })
-        );
+            }
+            return obj
+          }),
+        )
 
         const sortedOfferItems = offerItems.sort(function (a, b) {
-          return b.pricePerItemUsd - a.pricePerItemUsd;
-        });
+          return b.pricePerItemUsd - a.pricePerItemUsd
+        })
         setOffers(
           sortedOfferItems.filter(
-            (item) => item && item.deadline > getCurrentTimeInSeconds()
-          )
-        );
+            (item) => item && item.deadline > getCurrentTimeInSeconds(),
+          ),
+        )
       })
       .catch(function (response) {
         // console.log(response);
-      });
-  };
+      })
+  }
 
   const getExternalNftInfo = () => {
     axios({
-      method: 'get',
+      method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetExternalNftInfo?TokenId=${tokenid}&ContractAddress=${nftAddress}`,
     })
       .then(function (response) {
-        const nftDetails = response.data.result;
+        const nftDetails = response.data.result
         // console.log(nftDetails)
-        setVideoNftSrc(nftDetails.videoUrl);
-        setImageNftSrc(nftDetails.imageUrl);
-        setNftDescription(nftDetails.description);
-        setNftName(nftDetails.tokenName);
+        setVideoNftSrc(nftDetails.videoUrl)
+        setImageNftSrc(nftDetails.imageUrl)
+        setNftDescription(nftDetails.description)
+        setNftName(nftDetails.tokenName)
         if (nftDetails.hasAnyListing) {
-          setIsItemListed(true);
-          getListedNftInfo();
+          setIsItemListed(true)
+          getListedNftInfo()
         }
       })
       .catch(function (response) {
         // console.log(response);
-      });
-  };
+      })
+  }
 
   const listItem = async () => {
     if (
@@ -364,60 +370,60 @@ export default function ItemDetail(props) {
       !userContext.state.sign ||
       !walletContext.state.userConnected
     ) {
-      addToast('Please connect wallet and sign in.', {
-        appearance: 'error',
+      addToast("Please connect wallet and sign in.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
     if (ListPrice <= 0 || ListQuantity <= 0) {
-      addToast('Invalid quantity or price.', {
-        appearance: 'error',
+      addToast("Invalid quantity or price.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
     if (ListQuantity > nftQuantityOwned) {
       addToast(
         `Listing quantity cannot be more than available (${nftQuantityOwned})`,
         {
-          appearance: 'error',
+          appearance: "error",
           autoDismiss: true,
-        }
-      );
-      return;
+        },
+      )
+      return
     }
 
     if (userContext.state.blockchainId == 0) {
       const genericTokenContract = new web3.eth.Contract(
         GENERIC_TOKEN_ABI,
-        listingFeeTokenBsc
-      );
+        listingFeeTokenBsc,
+      )
       const currentAllowance = await genericTokenContract.methods
         .allowance(myAdd, marketplaceContractAddress)
-        .call();
-      const listingFee = await marketplaceContract.methods.listingFee().call();
+        .call()
+      const listingFee = await marketplaceContract.methods.listingFee().call()
       const totalAllowanceRequierd =
-        Number(currentAllowance) + Number(listingFee);
-      const fomoTokenBalance = await getUserFomoBalance(myAdd, web3);
+        Number(currentAllowance) + Number(listingFee)
+      const fomoTokenBalance = await getUserFomoBalance(myAdd, web3)
       const FomoListingFee = Number(
-        Web3.utils.fromWei(toFixed(listingFee), 'ether')
-      );
+        Web3.utils.fromWei(toFixed(listingFee), "ether"),
+      )
 
       if (Number(fomoTokenBalance) < FomoListingFee) {
         addToast(
           `Low token balance, ${FomoListingFee} FOMO required for listing`,
           {
-            appearance: 'error',
+            appearance: "error",
             autoDismiss: true,
-          }
-        );
-        return;
+          },
+        )
+        return
       }
 
-      isLoading(true);
+      isLoading(true)
 
       await genericTokenContract.methods
         .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
@@ -425,27 +431,24 @@ export default function ItemDetail(props) {
           from: myAdd,
         })
         .then(async function (result) {
-          isLoading(false);
-          checkNftApprovalAndList();
+          isLoading(false)
+          checkNftApprovalAndList()
         })
         .catch((error) => {
-          isLoading(false);
-        });
+          isLoading(false)
+        })
     } else {
-      checkNftApprovalAndList();
+      checkNftApprovalAndList()
     }
-  };
+  }
 
   const checkNftApprovalAndList = async () => {
-    const genericNftContract = new web3.eth.Contract(
-      GENERICNFT_ABI,
-      nftAddress
-    );
+    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress)
     const isApprovedForAll = await genericNftContract.methods
       .isApprovedForAll(myAdd, marketplaceContractAddress)
-      .call();
+      .call()
 
-    isLoading(true);
+    isLoading(true)
     if (!isApprovedForAll) {
       await genericNftContract.methods
         .setApprovalForAll(marketplaceContractAddress, true)
@@ -453,21 +456,21 @@ export default function ItemDetail(props) {
           from: myAdd,
         })
         .then(async function (result) {
-          isLoading(false);
-          listItemConfirm();
+          isLoading(false)
+          listItemConfirm()
         })
         .catch((error) => {
-          isLoading(false);
-        });
-    } else listItemConfirm();
-  };
+          isLoading(false)
+        })
+    } else listItemConfirm()
+  }
 
   const listItemConfirm = async () => {
-    const timestamp = new Date().getTime();
-    const timestampInSeconds = Math.trunc(timestamp / 1000);
-    const listPriceToSend = Web3.utils.toWei(toFixed(ListPrice), 'ether');
+    const timestamp = new Date().getTime()
+    const timestampInSeconds = Math.trunc(timestamp / 1000)
+    const listPriceToSend = Web3.utils.toWei(toFixed(ListPrice), "ether")
 
-    isLoading(true);
+    isLoading(true)
     await marketplaceContract.methods
       .listItem(
         nftAddress,
@@ -476,24 +479,24 @@ export default function ItemDetail(props) {
         ListQuantity,
         toFixed(listPriceToSend),
         timestampInSeconds,
-        '0x0000000000000000000000000000000000000000'
+        "0x0000000000000000000000000000000000000000",
       )
       .send({ from: myAdd })
       .then(async function (result) {
         // console.log(result.events.ItemListed.returnValues)
-        addNewListing(result.events.ItemListed.returnValues);
-        isLoading(false);
+        addNewListing(result.events.ItemListed.returnValues)
+        isLoading(false)
       })
       .catch((error) => {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   const updateListing = async (newPricePerItem) => {
     await marketplaceContract.methods
       .updateListing(nftAddress, tokenid, 200)
-      .send({ from: myAdd });
-  };
+      .send({ from: myAdd })
+  }
 
   const cancelListing = async () => {
     if (
@@ -501,40 +504,40 @@ export default function ItemDetail(props) {
       !userContext.state.sign ||
       !walletContext.state.userConnected
     ) {
-      addToast('Please connect wallet and sign in.', {
-        appearance: 'error',
+      addToast("Please connect wallet and sign in.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
-    isLoading(true);
+    isLoading(true)
     await marketplaceContract.methods
       .cancelListing(nftAddress, tokenid)
       .send({ from: myAdd })
       .then(async function (result) {
         // console.log(result.events.ItemCanceled.returnValues)
-        const canceledItem = result.events.ItemCanceled.returnValues;
+        const canceledItem = result.events.ItemCanceled.returnValues
         setListings(
           listings.filter(
             (item) =>
-              item.owner.toLowerCase() !== canceledItem.owner.toLowerCase()
-          )
-        );
-        isLoading(false);
+              item.owner.toLowerCase() !== canceledItem.owner.toLowerCase(),
+          ),
+        )
+        isLoading(false)
 
-        addToast('Listing cancelled successfully.', {
-          appearance: 'success',
+        addToast("Listing cancelled successfully.", {
+          appearance: "success",
           autoDismiss: true,
-        });
+        })
       })
       .catch((error) => {
-        addToast('Error cancelling listing.', {
-          appearance: 'error',
+        addToast("Error cancelling listing.", {
+          appearance: "error",
           autoDismiss: true,
-        });
-      });
-  };
+        })
+      })
+  }
 
   const acceptOffer = async (offerOwnerAdd) => {
     if (
@@ -542,42 +545,44 @@ export default function ItemDetail(props) {
       !userContext.state.sign ||
       !walletContext.state.userConnected
     ) {
-      addToast('Please connect wallet and sign in.', {
-        appearance: 'error',
+      addToast("Please connect wallet and sign in.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
-    isLoading(true);
+    isLoading(true)
 
     await marketplaceContract.methods
       .acceptOffer(nftAddress, tokenid, offerOwnerAdd)
       .send({ from: myAdd })
       .then(async function (result) {
         // console.log(result)
-        isLoading(false);
+        isLoading(false)
 
-        const soldItem = result.events.ItemSold.returnValues;
+        const soldItem = result.events.ItemSold.returnValues
         setListings(
           listings.filter(
-            (item) => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()
-          )
-        );
+            (item) =>
+              item.owner.toLowerCase() !== soldItem.seller.toLowerCase(),
+          ),
+        )
         setOffers(
           offers.filter(
             (item) =>
-              item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()
-          )
-        );
+              item.creatorAddress.toLowerCase() !==
+              soldItem.buyer.toLowerCase(),
+          ),
+        )
         setNftQuantityOwned(
-          (prevState) => prevState - Number(soldItem.quantity)
-        );
+          (prevState) => prevState - Number(soldItem.quantity),
+        )
       })
       .catch((error) => {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   const createOffer = async () => {
     if (
@@ -585,40 +590,40 @@ export default function ItemDetail(props) {
       !userContext.state.sign ||
       !walletContext.state.userConnected
     ) {
-      addToast('Please connect wallet and sign in.', {
-        appearance: 'error',
+      addToast("Please connect wallet and sign in.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
-    setMakeOfferModalOpen(false);
+    setMakeOfferModalOpen(false)
 
     const genericTokenContract = new web3.eth.Contract(
       GENERIC_TOKEN_ABI,
-      offerToken
-    );
+      offerToken,
+    )
     let currentAllowance = await genericTokenContract.methods
       .allowance(myAdd, marketplaceContractAddress)
-      .call();
-    const totalAmount = offerQuantity * offerPricePerItem;
-    const totalAmountToSend = Web3.utils.toWei(toFixed(totalAmount), 'ether');
+      .call()
+    const totalAmount = offerQuantity * offerPricePerItem
+    const totalAmountToSend = Web3.utils.toWei(toFixed(totalAmount), "ether")
     const totalAllowanceRequierd =
-      Number(currentAllowance) + Number(totalAmountToSend);
-    const offerTokenBalance = await getTokenBalance(myAdd, offerToken, web3);
+      Number(currentAllowance) + Number(totalAmountToSend)
+    const offerTokenBalance = await getTokenBalance(myAdd, offerToken, web3)
 
     if (
-      Number(Web3.utils.toWei(toFixed(offerTokenBalance), 'ether')) <
+      Number(Web3.utils.toWei(toFixed(offerTokenBalance), "ether")) <
       Number(totalAmountToSend)
     ) {
       addToast(`Insufficient balance to make this offer`, {
-        appearance: 'error',
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
-    isLoading(true);
+    isLoading(true)
     // if(Number(currentAllowance) < Number(totalAmountToSend)){
     await genericTokenContract.methods
       .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
@@ -626,37 +631,37 @@ export default function ItemDetail(props) {
         from: myAdd,
       })
       .then(async function (result) {
-        isLoading(false);
-        createOfferConfirm();
+        isLoading(false)
+        createOfferConfirm()
       })
       .catch((error) => {
-        addToast('Error creating offer.', {
-          appearance: 'error',
+        addToast("Error creating offer.", {
+          appearance: "error",
           autoDismiss: true,
-        });
-        isLoading(false);
-      });
+        })
+        isLoading(false)
+      })
     // }
     // else
     //   createOfferConfirm();
-  };
+  }
 
   const getCurrentTimeInSeconds = () => {
-    const timestamp = new Date().getTime();
-    const timestampInSeconds = Math.trunc(timestamp / 1000);
-    return Number(timestampInSeconds);
-  };
+    const timestamp = new Date().getTime()
+    const timestampInSeconds = Math.trunc(timestamp / 1000)
+    return Number(timestampInSeconds)
+  }
 
   const createOfferConfirm = async () => {
-    const seconds = getCurrentTimeInSeconds() + offerLength * 24 * 60 * 60;
+    const seconds = getCurrentTimeInSeconds() + offerLength * 24 * 60 * 60
     const offerPricePerItemToSend = Web3.utils.toWei(
       offerPricePerItem.toString(),
-      'ether'
-    );
+      "ether",
+    )
 
     // console.log(seconds)
 
-    isLoading(true);
+    isLoading(true)
     await marketplaceContract.methods
       .createOffer(
         nftAddress,
@@ -664,41 +669,41 @@ export default function ItemDetail(props) {
         offerToken,
         offerQuantity,
         toFixed(offerPricePerItemToSend),
-        seconds
+        seconds,
       )
       .send({ from: myAdd })
       .then(async function (result) {
         // console.log(result.events.OfferCreated.returnValues)
-        addNewOffer(result.events.OfferCreated.returnValues);
-        addToast('Your offer has been sent!.', {
-          appearance: 'success',
+        addNewOffer(result.events.OfferCreated.returnValues)
+        addToast("Your offer has been sent!.", {
+          appearance: "success",
           autoDismiss: true,
-        });
-        isLoading(false);
+        })
+        isLoading(false)
       })
       .catch((error) => {
-        addToast('Error making offer.', {
-          appearance: 'error',
+        addToast("Error making offer.", {
+          appearance: "error",
           autoDismiss: true,
-        });
-        isLoading(false);
-      });
-  };
+        })
+        isLoading(false)
+      })
+  }
 
   const addNewOffer = async (item) => {
     const newItem = {
       TokenId: item.tokenId,
       NftAddress: item.nft,
       creatorAddress: item.creator,
-      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), 'ether'),
+      pricePerItem: Web3.utils.fromWei(toFixed(item.pricePerItem), "ether"),
       quantity: item.quantity,
       creatorUsername: userContext.state.name,
       deadline: item.deadline,
       offerTokenName: getPayTokenDetailByAddress(
         item.payToken,
-        userContext.state.blockchainId
+        userContext.state.blockchainId,
       ).payTokenName,
-    };
+    }
 
     // console.log(offers)
     setOffers((prevState) => {
@@ -706,34 +711,34 @@ export default function ItemDetail(props) {
         ...prevState.filter(
           (item) =>
             item.creatorAddress.toLowerCase() !==
-            newItem.creatorAddress.toLowerCase()
+            newItem.creatorAddress.toLowerCase(),
         ),
         newItem,
-      ];
-    });
-  };
+      ]
+    })
+  }
 
   const cancelOffer = async () => {
-    if (!web3 || !walletContext.state.userConnected) return;
+    if (!web3 || !walletContext.state.userConnected) return
 
-    isLoading(true);
+    isLoading(true)
     await marketplaceContract.methods
       .cancelOffer(nftAddress, tokenid)
       .send({ from: myAdd })
       .then(async function (result) {
-        const canceledItem = result.events.OfferCanceled.returnValues;
+        const canceledItem = result.events.OfferCanceled.returnValues
         setOffers(
           offers.filter(
             (item) =>
               item.creatorAddress.toLowerCase() !==
-              canceledItem.creator.toLowerCase()
-          )
-        );
+              canceledItem.creator.toLowerCase(),
+          ),
+        )
       })
       .catch((error) => {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   const buyItem = async (obj) => {
     if (
@@ -741,212 +746,218 @@ export default function ItemDetail(props) {
       !userContext.state.sign ||
       !walletContext.state.userConnected
     ) {
-      addToast('Please connect wallet and sign in.', {
-        appearance: 'error',
+      addToast("Please connect wallet and sign in.", {
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
     const genericTokenContract = new web3.eth.Contract(
       GENERIC_TOKEN_ABI,
-      obj.payToken.payTokenAddress
-    );
+      obj.payToken.payTokenAddress,
+    )
     let currentAllowance = await genericTokenContract.methods
       .allowance(myAdd, marketplaceContractAddress)
-      .call();
-    const totalPrice = obj.pricePerItem * obj.quantity;
-    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), 'ether');
+      .call()
+    const totalPrice = obj.pricePerItem * obj.quantity
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether")
     const totalAllowanceRequierd =
-      Number(currentAllowance) + Number(amountToSend);
+      Number(currentAllowance) + Number(amountToSend)
 
     const tokenBalance = await getTokenBalance(
       myAdd,
       obj.payToken.payTokenAddress,
-      web3
-    );
+      web3,
+    )
 
     if (
-      Number(Web3.utils.toWei(toFixed(tokenBalance), 'ether')) <
+      Number(Web3.utils.toWei(toFixed(tokenBalance), "ether")) <
       Number(amountToSend)
     ) {
       addToast(`Insufficient balance to make this purchase`, {
-        appearance: 'error',
+        appearance: "error",
         autoDismiss: true,
-      });
-      return;
+      })
+      return
     }
 
-    isLoading(true);
+    isLoading(true)
 
     // if(Number(currentAllowance) < Number(amountToSend)){
     await genericTokenContract.methods
       .approve(marketplaceContractAddress, toFixed(totalAllowanceRequierd))
       .send({ from: myAdd })
       .then(async function (result) {
-        isLoading(false);
-        buyItemConfirm(obj);
+        isLoading(false)
+        buyItemConfirm(obj)
       })
       .catch((error) => {
-        isLoading(false);
-      });
+        isLoading(false)
+      })
     // }
     // else
     //   buyItemConfirm(obj);
-  };
+  }
 
   const buyItemConfirm = async (obj) => {
-    const totalPrice = obj.pricePerItem * obj.quantity;
-    const nftOwnerAdd = obj.owner;
-    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), 'ether');
+    const totalPrice = obj.pricePerItem * obj.quantity
+    const nftOwnerAdd = obj.owner
+    const amountToSend = Web3.utils.toWei(toFixed(totalPrice), "ether")
 
-    isLoading(true);
+    isLoading(true)
     await marketplaceContract.methods
       .buyItem(nftAddress, tokenid, toFixed(amountToSend), nftOwnerAdd)
       .send({ from: myAdd })
       .then(async function (result) {
-        isLoading(false);
-        setShowPurchasedModal(true);
-        const soldItem = result.events.ItemSold.returnValues;
+        isLoading(false)
+        setShowPurchasedModal(true)
+        const soldItem = result.events.ItemSold.returnValues
         setListings(
           listings.filter(
-            (item) => item.owner.toLowerCase() !== soldItem.seller.toLowerCase()
-          )
-        );
+            (item) =>
+              item.owner.toLowerCase() !== soldItem.seller.toLowerCase(),
+          ),
+        )
         setOffers(
           offers.filter(
             (item) =>
-              item.creatorAddress.toLowerCase() !== soldItem.buyer.toLowerCase()
-          )
-        );
+              item.creatorAddress.toLowerCase() !==
+              soldItem.buyer.toLowerCase(),
+          ),
+        )
         setNftQuantityOwned(
-          (prevState) => prevState + Number(soldItem.quantity)
-        );
+          (prevState) => prevState + Number(soldItem.quantity),
+        )
       })
       .catch((error) => {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   useEffect(async () => {
-    if (!web3) return;
-    getTokenURI();
-  }, [myAdd, web3]);
+    if (!web3) return
+    getTokenURI()
+  }, [myAdd, web3])
 
   useEffect(async () => {
-    if (!web3) return;
-    const accounts = await web3.eth.getAccounts();
-    var myadd = accounts[0];
-    setMyadd(myadd);
+    if (!web3) return
+    const accounts = await web3.eth.getAccounts()
+    var myadd = accounts[0]
+    setMyadd(myadd)
     setMarketplaceContract(
-      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress)
-    );
-  }, [web3]);
+      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress),
+    )
+  }, [web3])
 
   useEffect(() => {
-    setWeb3(web3Context.state.web3Data);
-  }, [web3Context.state.web3Data]);
+    setWeb3(web3Context.state.web3Data)
+  }, [web3Context.state.web3Data])
 
   useEffect(async () => {
-    setWeb3(web3Context.state.web3Data);
+    setWeb3(web3Context.state.web3Data)
 
-    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true })
 
-    if (params.listed === 'true') setIsItemListed(true);
-    else setIsItemListed(false);
+    if (params.listed === "true") setIsItemListed(true)
+    else setIsItemListed(false)
 
-    if (params.tokenid) setTokenId(params.tokenid);
+    if (params.tokenid) setTokenId(params.tokenid)
 
-    if (params.nftaddress) setNftAddress(params.nftaddress);
-  }, []);
+    if (params.nftaddress) setNftAddress(params.nftaddress)
+  }, [])
+
+  useEffect(() => {
+    if (nftAddress && tokenid) getEvent()
+  }, [nftAddress, tokenid])
 
   const like = () => {
-    isLoading(true);
+    isLoading(true)
 
     axios({
-      method: 'POST',
+      method: "POST",
       url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/Like?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
       headers: {
-        Authorization: 'Bearer ' + userContext.state.accessToken + '',
+        Authorization: "Bearer " + userContext.state.accessToken + "",
       },
     })
       .then(function (response) {
-        setHasLiked(true);
-        addToast('Liked item!', {
-          appearance: 'success',
+        setHasLiked(true)
+        addToast("Liked item!", {
+          appearance: "success",
           autoDismiss: true,
-        });
+        })
       })
       .catch(function (response) {
         // console.log(response);
-        addToast('Error processing request.', {
-          appearance: 'error',
+        addToast("Error processing request.", {
+          appearance: "error",
           autoDismiss: true,
-        });
+        })
       })
       .finally(function () {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   const unLike = () => {
-    isLoading(true);
+    isLoading(true)
 
     axios({
-      method: 'POST',
+      method: "POST",
       url: `${appUrls.fomoHostApi}/api/services/app/UserLikes/UnLike?itemId=${tokenid}&itemType=0&blockchain=${userContext.state.blockchainId}`,
       headers: {
-        Authorization: 'Bearer ' + userContext.state.accessToken + '',
+        Authorization: "Bearer " + userContext.state.accessToken + "",
       },
     })
       .then(function (response) {
-        setHasLiked(false);
-        addToast('Unliked item.', {
-          appearance: 'success',
+        setHasLiked(false)
+        addToast("Unliked item.", {
+          appearance: "success",
           autoDismiss: true,
-        });
+        })
       })
       .catch(function (response) {
         // console.log(response);
-        addToast('Error processing request.', {
-          appearance: 'error',
+        addToast("Error processing request.", {
+          appearance: "error",
           autoDismiss: true,
-        });
+        })
       })
       .finally(function () {
-        isLoading(false);
-      });
-  };
+        isLoading(false)
+      })
+  }
 
   function onLike(e) {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!userContext.state.accessToken) {
-      return;
+      return
     }
 
-    like();
+    like()
   }
 
   function onUnLike(e) {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!userContext.state.accessToken) {
-      return;
+      return
     }
 
-    unLike();
+    unLike()
   }
 
   function isLoading(state) {
     if (state) {
       sharedContext.dispatch({
-        type: 'START_LOADING',
-      });
+        type: "START_LOADING",
+      })
     } else {
       sharedContext.dispatch({
-        type: 'STOP_LOADING',
-      });
+        type: "STOP_LOADING",
+      })
     }
   }
 
@@ -954,51 +965,51 @@ export default function ItemDetail(props) {
     // console.log('getting short url')
 
     const resp = await axios({
-      method: 'GET',
+      method: "GET",
       url: `${
         appUrls.fomoHostApi
       }/ShareUrl/GetShortUrlForLongUrl?longUrl=${encodeURIComponent(url)}`,
     })
       .then(function (response) {
-        return response.data.result;
+        return response.data.result
       })
       .catch(function (response) {
         // console.log('short URL resp');
         // console.log(response);
-        return null;
-      });
+        return null
+      })
 
-    return resp;
-  };
+    return resp
+  }
 
   function handleCopyNotification() {
-    addToast('Link copied to clipboard!', {
-      appearance: 'success',
+    addToast("Link copied to clipboard!", {
+      appearance: "success",
       autoDismiss: true,
-    });
+    })
   }
 
   // generate shortened share link
   useEffect(async () => {
-    if (!web3) return;
+    if (!web3) return
 
-    const params = qs.parse(location.search, { ignoreQueryPrefix: true });
-    if (!params.tokenid) return;
+    const params = qs.parse(location.search, { ignoreQueryPrefix: true })
+    if (!params.tokenid) return
 
-    const hostname = window.location.hostname;
-    let urlTmp = null;
-    if (hostname.includes('staging') || hostname.includes('localhost')) {
+    const hostname = window.location.hostname
+    let urlTmp = null
+    if (hostname.includes("staging") || hostname.includes("localhost")) {
       urlTmp = await generateShortUrl(
-        `https://staging.theavenue.market${location.pathname}${location.search}`
-      );
+        `https://staging.theavenue.market${location.pathname}${location.search}`,
+      )
     } else {
       urlTmp = await generateShortUrl(
-        `https://theavenue.market${location.pathname}${location.search}`
-      );
+        `https://theavenue.market${location.pathname}${location.search}`,
+      )
     }
 
-    setShareUrl(urlTmp ? urlTmp : null);
-  }, [web3]);
+    setShareUrl(urlTmp ? urlTmp : null)
+  }, [web3])
 
   return (
     <div className="">
@@ -1037,12 +1048,12 @@ export default function ItemDetail(props) {
                       onClick={(e) => (hasLiked ? onUnLike(e) : onLike(e))}
                       className={classNames(
                         hasLiked
-                          ? 'bg-red-500 hover:bg-red-600 text-white'
-                          : 'bg-gray-200 hover:bg-gray-300 text-gray-900',
-                        'relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none'
+                          ? "bg-red-500 hover:bg-red-600 text-white"
+                          : "bg-gray-200 hover:bg-gray-300 text-gray-900",
+                        "relative inline-flex items-center justify-center px-3 py-1.5 -ml-1 border border-transparent text-sm font-medium rounded-full shadow-sm focus:outline-none",
                       )}
                     >
-                      <span>{hasLiked ? 'Liked' : 'Like'}</span>
+                      <span>{hasLiked ? "Liked" : "Like"}</span>
                       <HeartIcon className="h-5 w-5 ml-1 -mr-1 relative bottom-0.5" />
                     </button>
                   ) : null}
@@ -1064,7 +1075,7 @@ export default function ItemDetail(props) {
                     ) : null}
                     <TwitterShareButton
                       url={`Check out this item on The Avenue! ${shareUrl}`}
-                      hashtags={['TheAvenue', 'FomoLab', 'NFT', 'Crypto']}
+                      hashtags={["TheAvenue", "FomoLab", "NFT", "Crypto"]}
                       className="hover:opacity-80 transition-opacity shadow-lg rounded-full"
                     >
                       <TwitterIcon size={32} round={true} />
@@ -1103,7 +1114,7 @@ export default function ItemDetail(props) {
                   // </div>
                   <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
                     <p className="mt-2 block text-3xl inline font-extrabold text-green-500 pointer-events-none">
-                      {lowestSellerItem.pricePerItem}{' '}
+                      {lowestSellerItem.pricePerItem}{" "}
                       {lowestSellerItem.payToken?.payTokenName}
                     </p>
                   </div>
@@ -1211,13 +1222,17 @@ export default function ItemDetail(props) {
                       .map((item) => (
                         <Link
                           as="span"
-                          to={'/profile-info?userId=' + item.ownerUserId}
+                          to={"/profile-info?userId=" + item.ownerUserId}
                           className="group relative"
                         >
                           <div className="relative inline-block h-6 w-6 rounded-full ring-2 ring-white bg-gray-200">
                             <img
                               className="h-6 w-6 rounded-full"
-                              src={item.sellerProfilePic}
+                              src={
+                                item.sellerProfilePic
+                                  ? item.sellerProfilePic
+                                  : defaultAvatar
+                              }
                               alt=""
                             />
                           </div>
@@ -1271,7 +1286,116 @@ export default function ItemDetail(props) {
                 </div>
               </AccordionPanel> */}
 
-              <AccordionItem toggle="listings">Listings</AccordionItem>
+              {nftAddress === "0x429b37477dfad86369503567994b2e548e2f0e0d" &&
+              nftMetadata ? (
+                <Fragment>
+                  <AccordionItem toggle="fegstats">FEG NFT Stats</AccordionItem>
+                  <AccordionPanel id="fegstats">
+                    <div className="overflow-hidden sm:rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                            >
+                              Property
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                            >
+                              Value
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {nftMetadata.Special_Move ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Special Move
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Special_Move}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.HP ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                HP
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.HP}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.Attack ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Attack
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Attack}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.Defence ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Defence
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Defence}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.Rarity ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Rarity
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Rarity}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.Edition ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Edition
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Edition}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {nftMetadata.Type ? (
+                            <tr>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                Type
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {nftMetadata.Type}
+                              </td>
+                            </tr>
+                          ) : null}
+                        </tbody>
+                      </table>
+                    </div>
+                  </AccordionPanel>
+                </Fragment>
+              ) : null}
+
+              <AccordionItem toggle="listings">{`Listings${
+                listings && listings.length ? " (" + listings.length + ")" : ""
+              }`}</AccordionItem>
               <AccordionPanel id="listings">
                 <div className="px-0">
                   <div className="flex flex-col">
@@ -1333,7 +1457,7 @@ export default function ItemDetail(props) {
                                         {item.sellerName.length > 12
                                           ? `${item.sellerName.substr(
                                               0,
-                                              12
+                                              12,
                                             )}...`
                                           : item.sellerName}
                                       </Link>
@@ -1377,7 +1501,9 @@ export default function ItemDetail(props) {
                 </div>
               </AccordionPanel>
 
-              <AccordionItem toggle="offers">Offers</AccordionItem>
+              <AccordionItem toggle="offers">{`Offers${
+                offers && offers.length ? " (" + offers.length + ")" : ""
+              }`}</AccordionItem>
               <AccordionPanel id="offers">
                 <div className="px-0">
                   <div className="flex flex-col">
@@ -1440,14 +1566,14 @@ export default function ItemDetail(props) {
                                           {item.creatorUsername.length > 12
                                             ? `${item.creatorUsername.substr(
                                                 0,
-                                                12
+                                                12,
                                               )}...`
                                             : item.creatorUsername}
                                         </Link>
                                       ) : item.creatorUsername.length > 12 ? (
                                         `${item.creatorUsername.substr(
                                           0,
-                                          12
+                                          12,
                                         )}...`
                                       ) : (
                                         item.creatorUsername
@@ -1503,24 +1629,25 @@ export default function ItemDetail(props) {
                 </div>
 
                 <div className="px-2 mb-4">
-                  {false ? (
-                    <div>
-                      <p className="mb-2">
-                        This item is accepting offers. To make an offer use the
-                        button below:
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setMakeOfferModalOpen(true)}
-                        className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
-                      >
-                        <span>Make Offer</span>
-                      </button>
-                    </div>
-                  ) : null
-                  // <div>
-                  //   <p className="mb-4">This item is not accepting offers.</p>
-                  // </div>
+                  {
+                    false ? (
+                      <div>
+                        <p className="mb-2">
+                          This item is accepting offers. To make an offer use
+                          the button below:
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setMakeOfferModalOpen(true)}
+                          className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white bg-indigo-600 shadow-sm hover:bg-green-600 focus:outline-none"
+                        >
+                          <span>Make Offer</span>
+                        </button>
+                      </div>
+                    ) : null
+                    // <div>
+                    //   <p className="mb-4">This item is not accepting offers.</p>
+                    // </div>
                   }
                 </div>
               </AccordionPanel>
@@ -1595,7 +1722,7 @@ export default function ItemDetail(props) {
                             </div>
                           </div>
 
-                          {['Fixed Price'].includes(listingType) ? (
+                          {["Fixed Price"].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1616,7 +1743,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {['Fixed Price'].includes(listingType) ? (
+                          {["Fixed Price"].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1640,7 +1767,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {['Timed Auction'].includes(listingType) ? (
+                          {["Timed Auction"].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1659,7 +1786,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {['Open For Offers'].includes(listingType) ? (
+                          {["Open For Offers"].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="price"
@@ -1678,8 +1805,8 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {['Fixed Price', 'Timed Auction'].includes(
-                            listingType
+                          {["Fixed Price", "Timed Auction"].includes(
+                            listingType,
                           ) && false ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
@@ -1708,7 +1835,7 @@ export default function ItemDetail(props) {
                             </div>
                           ) : null}
 
-                          {['Open For Offers'].includes(listingType) ? (
+                          {["Open For Offers"].includes(listingType) ? (
                             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                               <label
                                 htmlFor="country"
@@ -1766,11 +1893,11 @@ export default function ItemDetail(props) {
                         onClick={() => setActiveTab(tab.name)}
                         className={classNames(
                           tab.name === activeTab
-                            ? 'border-indigo-500 text-indigo-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                          'whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm'
+                            ? "border-indigo-500 text-indigo-600"
+                            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                          "whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm",
                         )}
-                        aria-current={tab.current ? 'page' : undefined}
+                        aria-current={tab.current ? "page" : undefined}
                       >
                         {tab.name}
                       </button>
@@ -1780,15 +1907,20 @@ export default function ItemDetail(props) {
               </div>
             </div>
 
-            {activeTab === 'Info' ? (
+            {activeTab === "Info" ? (
               <div>
                 <dl className="sm:divide-y sm:divide-gray-200">
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
                     <dt className="text-sm font-bold text-gray-800">
                       Contract Address
                     </dt>
-                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                      <a href="#">{nftAddress}</a>
+                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2 underline">
+                      <a
+                        href={`https://bscscan.com/address/${nftAddress}`}
+                        target="_blank"
+                      >
+                        {`${nftAddress.substr(0, 24)}...`}
+                      </a>
                     </dd>
                   </div>
                   <div className="py-3 sm:py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-2">
@@ -1804,14 +1936,14 @@ export default function ItemDetail(props) {
                       Blockchain
                     </dt>
                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                      {userContext.state.blockchainId == 0 ? 'BSC' : 'ETH'}
+                      {userContext.state.blockchainId == 0 ? "BSC" : "ETH"}
                     </dd>
                   </div>
                 </dl>
               </div>
             ) : null}
 
-            {activeTab === 'Creator' ? (
+            {activeTab === "Creator" ? (
               <div className="pt-3">
                 <h1 className="font-bold text-xl mb-3 text-center md:text-left">
                   About Creator
@@ -1820,7 +1952,7 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            {activeTab === 'History' ? (
+            {activeTab === "History" ? (
               <div>
                 {history && history.length ? (
                   <ul className="">
@@ -1843,7 +1975,7 @@ export default function ItemDetail(props) {
               </div>
             ) : null}
 
-            {activeTab === 'Transfer' ? (
+            {activeTab === "Transfer" ? (
               isOwner ? (
                 <div>
                   <p className="mb-3 text-center md:text-left">
@@ -1988,5 +2120,5 @@ export default function ItemDetail(props) {
         />
       </div>
     </div>
-  );
+  )
 }
