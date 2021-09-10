@@ -729,7 +729,7 @@ export default function Profile() {
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                   <a
                                     onClick={() =>
-                                      cancelOffer(item.tokenId, item.nftAddress)
+                                      cancelOffer(item.nftAddress, item.tokenId)
                                     }
                                     href="javascript:void()"
                                     className="text-red-600 hover:text-red-700"
