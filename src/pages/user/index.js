@@ -11,7 +11,18 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/solid"
 import { CheckIcon } from "@heroicons/react/outline"
-import { classNames, defaultAvatar } from "../../utilities/utils"
+import {
+  classNames,
+  defaultAvatar,
+  getTokenTypes,
+  getPayTokenDetailByAddress,
+  toFixed,
+} from "../../utilities/utils"
+
+import {
+  getMarketplaceContractAddress,
+  MARKETPLACE_ABI,
+} from "../../contracts/FomoMarketPlace"
 
 import Web3 from "web3"
 import axios from "axios"
@@ -22,6 +33,7 @@ import Spinner from "../../components/loading-spinner/spinner"
 import { UserContext } from "../../context/user-context"
 import { Web3Context } from "../../context/web3-context"
 import { SharedContext } from "../../context/shared-context"
+import { WalletContext } from "../../context/wallet-context"
 
 import AppUrls from "../../AppSettings"
 
@@ -35,7 +47,11 @@ const appUrls = {
 var loading = false
 
 export default function Profile() {
-  const [web3, setWeb3] = useState()
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+  const sharedContext = useContext(SharedContext)
+  const walletContext = useContext(WalletContext)
+
   const [loadingData, setLoadingData] = useState({
     onsale: true,
     owned: true,
@@ -43,6 +59,12 @@ export default function Profile() {
     profile: true,
     activity: true,
   })
+
+  const [web3, setWeb3] = useState()
+  const [myAdd, setMyadd] = useState()
+  const [tokenTypes, setTokenTypes] = useState([])
+  const [marketplaceContract, setMarketplaceContract] = useState()
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState()
 
   const [myActivies, setMyActivities] = useState([])
   const [ownNfts, setOwnNfts] = useState([])
@@ -72,9 +94,12 @@ export default function Profile() {
 
   const [ratingModalOpen, setRatingModalOpen] = useState(false)
 
-  const userContext = useContext(UserContext)
-  const web3Context = useContext(Web3Context)
-  const sharedContext = useContext(SharedContext)
+  useEffect(() => {
+    setTokenTypes(getTokenTypes(userContext.state.blockchainId))
+    setMarketplaceContractAddress(
+      getMarketplaceContractAddress(userContext.state.blockchainId),
+    )
+  }, [userContext.state.blockchainId])
 
   useEffect(() => {
     init()
@@ -147,6 +172,18 @@ export default function Profile() {
       Quantity: ownObj.OwnedNftQuantity,
     }
     return obj
+  }
+
+  function isLoading(state) {
+    if (state) {
+      sharedContext.dispatch({
+        type: "START_LOADING",
+      })
+    } else {
+      sharedContext.dispatch({
+        type: "STOP_LOADING",
+      })
+    }
   }
 
   const loadMyRegisteredWalletAddress = (accessToken) => {
@@ -405,6 +442,44 @@ export default function Profile() {
     })
   }
 
+  useEffect(async () => {
+    if (!web3 || !marketplaceContractAddress) return
+    const accounts = await web3.eth.getAccounts()
+    var myadd = accounts[0]
+    setMyadd(myadd)
+    setMarketplaceContract(
+      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress),
+    )
+  }, [web3, marketplaceContractAddress])
+
+  async function cancelOffer(nftAddress, tokenid) {
+    if (!web3 || !walletContext.state.userConnected || !marketplaceContract)
+      return
+    isLoading(true)
+
+    try {
+      await marketplaceContract.methods
+        .cancelOffer(nftAddress, tokenid)
+        .send({ from: myAdd })
+        .then(async function (result) {
+          const canceledItem = result.events.OfferCanceled.returnValues
+          setOffers(
+            offers.filter(
+              (item) =>
+                item.nftAddress !== nftAddress && item.tokenId !== tokenid,
+            ),
+          )
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } catch (e) {
+      console.log(e)
+    }
+
+    isLoading(false)
+  }
+
   return (
     <div className="">
       <PageTitle title="My Profile" />
@@ -604,27 +679,63 @@ export default function Profile() {
                             {offers.map((item, i) => (
                               <tr key={i}>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  {item.tokenName}
+                                  <div className="flex items-center">
+                                    <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                                      <Link
+                                        to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                        className="hover:opacity-90"
+                                      >
+                                        {item && item.image ? (
+                                          <img
+                                            src={item.image}
+                                            className="w-full h-full object-cover rounded-xl"
+                                          />
+                                        ) : item &&
+                                          item.tokenIPFSVideoPreview ? (
+                                          <video
+                                            src={item.tokenIPFSVideoPreview}
+                                            className="w-full h-full object-cover rounded-xl"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                          />
+                                        ) : (
+                                          <div className="h-full w-full flex items-center justify-center">
+                                            <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                          </div>
+                                        )}
+                                      </Link>
+                                    </div>
+                                    {item.tokenName}
+                                  </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                  {item.offerTokenName
-                                    ? item.offerTokenName
-                                    : "TBC"}
+                                  {
+                                    getPayTokenDetailByAddress(
+                                      item.payToken,
+                                      userContext.state.blockchainId,
+                                    ).payTokenName
+                                  }
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
-                                  {item.pricePerItemUsd}
+                                  {Web3.utils.fromWei(
+                                    toFixed(item.pricePerItem, "ether"),
+                                  )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                   {item.quantity}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  <Link
-                                    as="a"
-                                    to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
-                                    className="text-indigo-600 hover:text-indigo-900"
+                                  <a
+                                    onClick={() =>
+                                      cancelOffer(item.tokenId, item.nftAddress)
+                                    }
+                                    href="javascript:void()"
+                                    className="text-red-600 hover:text-red-700"
                                   >
-                                    View Item
-                                  </Link>
+                                    Cancel Offer
+                                  </a>
                                 </td>
                               </tr>
                             ))}

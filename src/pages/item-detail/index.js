@@ -217,7 +217,7 @@ export default function ItemDetail(props) {
     }
   }
 
-  const getListedNftInfo = () => {
+  const getListedNftInfo = async () => {
     getEvent()
 
     let url = `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoByContractAddress?contractAddress=${nftAddress}&tokenId=${tokenid}&blockchain=${userContext.state.blockchainId}`
@@ -238,14 +238,24 @@ export default function ItemDetail(props) {
 
         if (!nftListingResult.length) return
 
+        console.log("after return")
+
         setNftData(nftListingResult[0].nft)
-        setNftMetadata(JSON.parse(nftListingResult[0].nft.metadata))
+        try {
+          setNftMetadata(JSON.parse(nftListingResult[0].nft.metadata))
+        } catch (e) {
+          console.log(e)
+        }
+
+        console.log("midway")
 
         setHasLiked(nftListingResult[0].nft.hasLiked)
         setNftDescription(nftListingResult[0].nft.description)
         setNftName(nftListingResult[0].nft.tokenName)
         setImageNftSrc(nftListingResult[0].nft.imageUrl)
         setVideoNftSrc(nftListingResult[0].nft.videoUrl)
+
+        console.log("before listing items")
 
         const listingItems = await Promise.all(
           nftListingResult.map(async (item) => ({
@@ -273,6 +283,7 @@ export default function ItemDetail(props) {
             verified: item.seller.verified,
           })),
         )
+        console.log("after listing items")
 
         const sortedlistingItems = listingItems.sort(function (a, b) {
           return a.pricePerItemUsd - b.pricePerItemUsd
@@ -339,8 +350,8 @@ export default function ItemDetail(props) {
           ),
         )
       })
-      .catch(function (response) {
-        // console.log(response);
+      .catch(function (error) {
+        console.log(error)
       })
   }
 
@@ -1108,9 +1119,9 @@ export default function ItemDetail(props) {
             </h1>
 
             {/* for this section we can check if the item is listed and show current price plus relevant button - e.g, buy now, place bid, make offer, etc */}
-            {isItemListed ? (
+            {true || isItemListed ? (
               <div className="mt-0 mb-4">
-                {lowestSellerItem ? (
+                {isItemListed && lowestSellerItem ? (
                   // <div className="flex gap-x-1 mb-3 justify-center md:justify-start">
                   //   <p className="mt-2 block text-sm py-1 px-2 rounded-md inline border-2 border-green-500 font-bold text-green-500 truncate pointer-events-none">{lowestSellerItem.pricePerItem} {lowestSellerItem.payToken?.payTokenName}</p>
                   // </div>
@@ -1122,7 +1133,7 @@ export default function ItemDetail(props) {
                   </div>
                 ) : null}
                 <div className="flex justify-center md:justify-start gap-2">
-                  {lowestSellerItem ? (
+                  {isItemListed && lowestSellerItem ? (
                     <button
                       type="button"
                       onClick={() => buyItem(lowestSellerItem)}
@@ -1139,7 +1150,7 @@ export default function ItemDetail(props) {
                       <span>Place Bid</span>
                     </button>
                   ) : null}
-                  {isItemListed ? (
+                  {true || isItemListed ? (
                     <div>
                       <button
                         type="button"
