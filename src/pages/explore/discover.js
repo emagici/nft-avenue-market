@@ -68,20 +68,24 @@ export default function Discover() {
 
       console.log(allItems)
 
-      var items = await Promise.all(allItems.map(async (item) => (
-         {
+      var items = await Promise.all(allItems.map(async (item) => {
+        const offersSorted = item.offers.sort(function(a, b) {return b.pricePerItemUsd - a.pricePerItemUsd;});
+        const highestbidItem = offersSorted[0];
+
+         var obj = {
           Listed: true,
           TokenId: item.tokenId,
           NftAddress: item.nft,
           TokenName:  item.tokenName,
           Image: item.imageUrl,
           Video: item.videoUrl,
-          highestbid: item.latestOffer ? Web3.utils.fromWei(toFixed(item.latestOffer.pricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
+          highestbid: highestbidItem ? Web3.utils.fromWei(toFixed(highestbidItem.pricePerItem), "ether") + " " + getPayTokenDetailByAddress(highestbidItem.payToken, userContext.state.blockchainId).payTokenName : "",
           price: Web3.utils.fromWei(toFixed(item.lowestValuePricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
           likes: item.numberOfLikes,
           sellers: item.sellers
         }
-      )))
+        return obj;
+      }))
 
       // items = items.sort(function(a, b) {return b.likes - a.likes;});
 

@@ -44,11 +44,12 @@ export default function RecentlyAddedSection() {
           TokenName:  item.tokenName,
           Image: item.imageUrl,
           Video: item.videoUrl,
-          highestbid: item.latestOffer ? Web3.utils.fromWei(item.latestOffer.pricePerItem.toString(), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
+          highestbid: item.latestOffer ? Web3.utils.fromWei(toFixed(item.latestOffer.pricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.latestOffer.payToken, userContext.state.blockchainId).payTokenName : "",
           price: Web3.utils.fromWei(toFixed(item.lowestValuePricePerItem), "ether") + " " + getPayTokenDetailByAddress(item.lowestValuePayToken, userContext.state.blockchainId).payTokenName,
           likes: item.numberOfLikes
         }
       )))
+
       setItems(items && items.length ? items.filter((item,i) => i < 10) : items);
     })
     .catch(function (response) {

@@ -1,93 +1,124 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import CardDefault from "../../components/cards/item-card-default";
-import SectionHeader from "../../components/section-header";
-import AvatarList from "../../components/avatar/avatar-list";
-import PageTitle from "../../components/page-title";
+import React, { useEffect, useState, useContext } from "react"
+import { Link } from "react-router-dom"
+import CardDefault from "../../components/cards/item-card-default"
+import SectionHeader from "../../components/section-header"
+import AvatarList from "../../components/avatar/avatar-list"
+import PageTitle from "../../components/page-title"
 import {
   PencilAltIcon,
   ExternalLinkIcon,
   QuestionMarkCircleIcon,
-  CheckCircleIcon
-} from "@heroicons/react/solid";
-import { CheckIcon } from "@heroicons/react/outline";
-import { classNames } from '../../utilities/utils'
+  CheckCircleIcon,
+} from "@heroicons/react/solid"
+import { CheckIcon } from "@heroicons/react/outline"
+import {
+  classNames,
+  defaultAvatar,
+  getTokenTypes,
+  getPayTokenDetailByAddress,
+  toFixed,
+} from "../../utilities/utils"
 
-import Web3 from "web3";
-import axios from "axios";
-import Modal from "../../components/modal";
-import CardList from "../../components/cards/card-list";
-import Spinner from "../../components/loading-spinner/spinner";
+import {
+  getMarketplaceContractAddress,
+  MARKETPLACE_ABI,
+} from "../../contracts/FomoMarketPlace"
 
-import { UserContext } from '../../context/user-context';
-import { Web3Context } from '../../context/web3-context';
-import { SharedContext } from '../../context/shared-context';
+import Web3 from "web3"
+import axios from "axios"
+import Modal from "../../components/modal"
+import CardList from "../../components/cards/card-list"
+import Spinner from "../../components/loading-spinner/spinner"
 
-import AppUrls from '../../AppSettings';
+import { UserContext } from "../../context/user-context"
+import { Web3Context } from "../../context/web3-context"
+import { SharedContext } from "../../context/shared-context"
+import { WalletContext } from "../../context/wallet-context"
+
+import AppUrls from "../../AppSettings"
 
 const appUrls = {
-    fomoHost: AppUrls.fomoHost,
-    fomoHostApi: AppUrls.fomoHostApi,
-    fomoClient: AppUrls.fomoClient,
-    fomoNodeAPI: AppUrls.fomoNodeAPI
-};
+  fomoHost: AppUrls.fomoHost,
+  fomoHostApi: AppUrls.fomoHostApi,
+  fomoClient: AppUrls.fomoClient,
+  fomoNodeAPI: AppUrls.fomoNodeAPI,
+}
 
-var loading = false;
+var loading = false
 
 export default function Profile() {
-  const [web3, setWeb3] = useState();
+  const userContext = useContext(UserContext)
+  const web3Context = useContext(Web3Context)
+  const sharedContext = useContext(SharedContext)
+  const walletContext = useContext(WalletContext)
+
   const [loadingData, setLoadingData] = useState({
     onsale: true,
     owned: true,
+    offers: true,
     profile: true,
     activity: true,
-  });
+  })
 
-  const [myActivies, setMyActivities] = useState([]);
-  const [ownNfts, setOwnNfts] = useState([]);
-  const [onSaleNfts, setOnSaleNfts] = useState([]);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [accessToken, setAccessToken] = useState("");
-  const [userProfile, setUserProfile] = useState();
-  const [displayName, setDisplayName] = useState(null);
-  const [signInModalOpen, setSignInModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("On Sale");
-  const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false);
-  const [seedWords, setSeedWords] = useState("");
-  const [followers, setFollowers] = useState([]);
-  const [followees, setFollowees] = useState([]);
-  const [likedItems, setLikedItems] = useState([]);
+  const [web3, setWeb3] = useState()
+  const [myAdd, setMyadd] = useState()
+  const [tokenTypes, setTokenTypes] = useState([])
+  const [marketplaceContract, setMarketplaceContract] = useState()
+  const [marketplaceContractAddress, setMarketplaceContractAddress] = useState()
+
+  const [myActivies, setMyActivities] = useState([])
+  const [ownNfts, setOwnNfts] = useState([])
+  const [onSaleNfts, setOnSaleNfts] = useState([])
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [accessToken, setAccessToken] = useState("")
+  const [userProfile, setUserProfile] = useState()
+  const [displayName, setDisplayName] = useState(null)
+  const [signInModalOpen, setSignInModalOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState("On Sale")
+  const [seedWordsModalOpen, setSeedWordsModalOpen] = useState(false)
+  const [seedWords, setSeedWords] = useState("")
+  const [offers, setOffers] = useState(null)
+  const [followers, setFollowers] = useState([])
+  const [followees, setFollowees] = useState([])
+  const [likedItems, setLikedItems] = useState([])
   const tabs = [
     "On Sale",
     "Owned",
+    "Offers",
     // "Created",
     "Liked",
     "Following",
     "Followers",
     "Activity",
-  ];
+  ]
 
   const [ratingModalOpen, setRatingModalOpen] = useState(false)
 
-  const userContext = useContext(UserContext);
-  const web3Context = useContext(Web3Context);
-  const sharedContext = useContext(SharedContext);
-
+  useEffect(() => {
+    setTokenTypes(getTokenTypes(userContext.state.blockchainId))
+    setMarketplaceContractAddress(
+      getMarketplaceContractAddress(userContext.state.blockchainId),
+    )
+  }, [userContext.state.blockchainId])
 
   useEffect(() => {
-    init();
-  }, []);
-
+    init()
+  }, [])
 
   useEffect(() => {
     if (userProfile) {
       try {
         if (userProfile.name.length > 15) {
-          setDisplayName(`${userProfile.name.substr(0,6)}...${userProfile.name.substr(-4,4)}`)
+          setDisplayName(
+            `${userProfile.name.substr(0, 6)}...${userProfile.name.substr(
+              -4,
+              4,
+            )}`,
+          )
         } else {
           setDisplayName(userProfile.name)
         }
-      } catch(e) {
+      } catch (e) {
         setDisplayName(userProfile.name)
       }
     } else {
@@ -95,20 +126,23 @@ export default function Profile() {
     }
   }, [userProfile])
 
+  useEffect(() => {
+    if (userContext.state.accessToken) getOffers()
+  }, [userContext.state.accessToken])
 
-  function init(){
-    let accessToken = getUrlAccessToken();
-    if(accessToken){
-      setAccessToken(accessToken);
-      clearUrlAccessToken();
-      setLoggedIn(true);
-      loadProfile(accessToken);
-      loadMyRegisteredWalletAddress(accessToken);
+  function init() {
+    let accessToken = getUrlAccessToken()
+    if (accessToken) {
+      setAccessToken(accessToken)
+      clearUrlAccessToken()
+      setLoggedIn(true)
+      loadProfile(accessToken)
+      loadMyRegisteredWalletAddress(accessToken)
       // console.warn("access token: ", accessToken);
 
       userContext.dispatch({
         type: "SET_ACCESS_TOKEN",
-        payload: accessToken
+        payload: accessToken,
       })
     }
   }
@@ -118,11 +152,11 @@ export default function Profile() {
       Listed: onSaleObj.id > 0 ? true : false,
       TokenId: onSaleObj.tokenId,
       NftAddress: onSaleObj.nft,
-      TokenName:  onSaleObj.tokenName,
+      TokenName: onSaleObj.tokenName,
       Image: onSaleObj.imageUrl,
-      Video: onSaleObj.videoUrl
-    };
-    return obj;
+      Video: onSaleObj.videoUrl,
+    }
+    return obj
   }
 
   const transformOwnNftObj = (ownObj) => {
@@ -131,13 +165,25 @@ export default function Profile() {
       Listed: ownObj.id > 0 ? true : false,
       TokenId: ownObj.TokenId,
       NftAddress: ownObj.NftAddress,
-      TokenName:  ownObj.TokenName,
+      TokenName: ownObj.TokenName,
       Image: ownObj.Image,
       Video: ownObj.TokenIPFSVideoPreview,
-      Audio:  ownObj.TokenIPFSAudioPreview,
-      Quantity: ownObj.OwnedNftQuantity
-    };
-    return obj;
+      Audio: ownObj.TokenIPFSAudioPreview,
+      Quantity: ownObj.OwnedNftQuantity,
+    }
+    return obj
+  }
+
+  function isLoading(state) {
+    if (state) {
+      sharedContext.dispatch({
+        type: "START_LOADING",
+      })
+    } else {
+      sharedContext.dispatch({
+        type: "STOP_LOADING",
+      })
+    }
   }
 
   const loadMyRegisteredWalletAddress = (accessToken) => {
@@ -145,69 +191,73 @@ export default function Profile() {
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyWalletAddress`,
       headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
+        Authorization: "Bearer " + accessToken + "",
+      },
     })
-    .then(function (response) {
-      console.log(response)
-      userContext.dispatch({
-        type: "SET_REGISTERED_ADDRESS",
-        payload: response.data.result
-       })
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
+      .then(function (response) {
+        console.log(response)
+        userContext.dispatch({
+          type: "SET_REGISTERED_ADDRESS",
+          payload: response.data.result,
+        })
+      })
+      .catch(function (response) {
+        console.log(response)
+      })
   }
 
   const loadProfile = async (accessToken) => {
     // isLoading(true);
-    setLoadingData(prevState => { return {...prevState, profile: true } })
+    setLoadingData((prevState) => {
+      return { ...prevState, profile: true }
+    })
 
     await axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/User/GetProfile?blockchain=${userContext.state.blockchainId}`,
       headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
+        Authorization: "Bearer " + accessToken + "",
+      },
     })
-    .then(function (response) {
-      setUserProfile(response.data.result);
-      
-      setFollowers(response.data.result.followers
-        .map((x) => toAvatarObject(x))
-      );
+      .then(function (response) {
+        setUserProfile(response.data.result)
 
-      setFollowees(response.data.result.followees
-        .map((x) => toAvatarObject(x))
-      );
+        setFollowers(
+          response.data.result.followers.map((x) => toAvatarObject(x)),
+        )
 
-      setLikedItems(response.data.result.likedItems
-        .map((x) => toLikedItemObject(x))
-      );
+        setFollowees(
+          response.data.result.followees.map((x) => toAvatarObject(x)),
+        )
 
-      userContext.dispatch({
-        type: "UPDATE_DATA",
-        payload: response.data.result
-       })
+        setLikedItems(
+          response.data.result.likedItems.map((x) => toLikedItemObject(x)),
+        )
+
+        userContext.dispatch({
+          type: "UPDATE_DATA",
+          payload: response.data.result,
+        })
+      })
+      .catch(function (response) {
+        console.log(response)
+      })
+      .finally(function () {
+        // isLoading(false);
+      })
+
+    setLoadingData((prevState) => {
+      return { ...prevState, profile: false }
     })
-    .catch(function (response) {
-      console.log(response);
-    })
-    .finally(function(){
-      // isLoading(false);
-    });
-
-    setLoadingData(prevState => { return {...prevState, profile: false } })
   }
 
-  function toAvatarObject(x){
+  function toAvatarObject(x) {
     return {
       sellerProfilePicUrl: x.profilePictureUrl,
       username: x.name,
       name: x.name,
-      sellerId: x.id
-    };
+      sellerId: x.id,
+    }
   }
 
   const toLikedItemObject = (x) => {
@@ -215,43 +265,48 @@ export default function Profile() {
       Listed: true,
       TokenId: x.tokenId,
       NftAddress: x.nft,
-      TokenName:  x.tokenName,
+      TokenName: x.tokenName,
       Image: x.imageUrl,
-      Video: x.videoUrl
-    };
-    return obj;
+      Video: x.videoUrl,
+    }
+    return obj
   }
 
   const loadMyActivities = async (accessToken) => {
-    setLoadingData(prevState => { return {...prevState, activity: true } })
+    setLoadingData((prevState) => {
+      return { ...prevState, activity: true }
+    })
     await axios({
       method: "GET",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetMyActivities`,
       headers: {
-        "Authorization": "Bearer " + accessToken + ""
-      }
+        Authorization: "Bearer " + accessToken + "",
+      },
     })
-    .then(function (response) {
-      console.log(response)
-      setMyActivities(response.data.result);
-    })
-    .catch(function (response) {
-      console.log(response);
-    });
+      .then(function (response) {
+        console.log(response)
+        setMyActivities(response.data.result)
+      })
+      .catch(function (response) {
+        console.log(response)
+      })
 
-    setLoadingData(prevState => { return {...prevState, activity: false } })
+    setLoadingData((prevState) => {
+      return { ...prevState, activity: false }
+    })
   }
 
   const getOwnNfts = async (sign, myadd) => {
-
-    if(sign){
-      setLoadingData(prevState => { return {...prevState, owned: true } })
+    if (sign) {
+      setLoadingData((prevState) => {
+        return { ...prevState, owned: true }
+      })
       axios({
         method: "get",
         url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetUserOwnedNftsBySign?sign=${sign}&blockchain=${userContext.state.blockchainId}`,
       })
-      .then(function (response) {
-        var items = response.data.result.nftsOwned.map((item, i) => {   
+        .then(function (response) {
+          var items = response.data.result.nftsOwned.map((item, i) => {
             var obj = {
               id: 0,
               TokenName: item.tokenName,
@@ -260,35 +315,41 @@ export default function Profile() {
               TokenId: item.tokenId,
               NftAddress: item.tokenContractAddress,
               OwnedNftQuantity: item.count,
-              TokenIPFSAudioPreview: item.wavAudioFile
-            };
-            return obj;
-        })
-        setOwnNfts(items);
-  
-        userContext.dispatch({
-          type: "SET_OWN_NFTS",
-          payload: items
-        })
+              TokenIPFSAudioPreview: item.wavAudioFile,
+            }
+            return obj
+          })
+          setOwnNfts(items)
 
-        setLoadingData(prevState => { return {...prevState, owned: false } })
-      })
-      .catch(function (response) {
-        console.log(response);
-      });
+          userContext.dispatch({
+            type: "SET_OWN_NFTS",
+            payload: items,
+          })
+
+          setLoadingData((prevState) => {
+            return { ...prevState, owned: false }
+          })
+        })
+        .catch(function (response) {
+          console.log(response)
+        })
     }
 
-    setLoadingData(prevState => { return {...prevState, onsale: true } })
+    setLoadingData((prevState) => {
+      return { ...prevState, onsale: true }
+    })
 
     var myListedNfts = await axios({
       method: "get",
       url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetNftInfoBySellerAddress?address=${myadd}&blockchain=${userContext.state.blockchainId}`,
     })
 
-    setOnSaleNfts(myListedNfts.data.result);
-    setLoadingData(prevState => { return {...prevState, onsale: false } })
+    setOnSaleNfts(myListedNfts.data.result)
+    setLoadingData((prevState) => {
+      return { ...prevState, onsale: false }
+    })
   }
-  
+
   // const signAndGetUserData = async () => {
   //   const accounts = await web3.eth.getAccounts();
   //   var myadd = accounts[0];
@@ -302,73 +363,127 @@ export default function Profile() {
   // };
 
   useEffect(() => {
-    setWeb3(web3Context.state.web3Data);
-  }, [web3Context.state.web3Data]);
+    setWeb3(web3Context.state.web3Data)
+  }, [web3Context.state.web3Data])
 
   useEffect(async () => {
     console.log(web3)
     console.log(userContext.state.accessToken)
-    if(web3 && userContext.state.accessToken){
-      const accounts = await web3.eth.getAccounts();
-      var myadd = accounts[0];
-      
-      if(userContext.state.name)
-        setUserProfile(userContext.state);
-      else
-        loadProfile(userContext.state.accessToken)
+    if (web3 && userContext.state.accessToken) {
+      const accounts = await web3.eth.getAccounts()
+      var myadd = accounts[0]
 
-      loadMyActivities(userContext.state.accessToken);
+      if (userContext.state.name) setUserProfile(userContext.state)
+      else loadProfile(userContext.state.accessToken)
 
+      loadMyActivities(userContext.state.accessToken)
 
       getOwnNfts(userContext.state.sign, myadd)
-      setLoggedIn(true);
-    }else if (userContext.state.accessToken){
-
+      setLoggedIn(true)
+    } else if (userContext.state.accessToken) {
       //TODO: [Kugan] - whats the flow to get nfts if logged in via email
-      if(userContext.state.accessToken){
+      if (userContext.state.accessToken) {
         // const accounts = await web3.eth.getAccounts();
         // var myadd = accounts[0];
-        
+
         // if(userContext.state.name)
         //   setUserProfile(userContext.state);
         // else
-          loadProfile(userContext.state.accessToken);
-          loadMyActivities(userContext.state.accessToken);
-  
+        loadProfile(userContext.state.accessToken)
+        loadMyActivities(userContext.state.accessToken)
+
         // getOwnNfts(userContext.state.sign, myadd);
-        setLoggedIn(true);
+        setLoggedIn(true)
       }
     }
-  }, [web3, userContext.state.accessToken]);
+  }, [web3, userContext.state.accessToken])
 
-  function getUrlAccessToken(){
-    let url_string = window.location.href;
-    let url = new URL(url_string);
-    let accessToken = url.searchParams.get("accessToken");
+  function getUrlAccessToken() {
+    let url_string = window.location.href
+    let url = new URL(url_string)
+    let accessToken = url.searchParams.get("accessToken")
 
-    return accessToken;
+    return accessToken
   }
 
   //reference: https://stackoverflow.com/a/22753103/4490058
-  function clearUrlAccessToken(){
+  function clearUrlAccessToken() {
     window.history.pushState(
-      "object or string", 
-      "Title", 
-      "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+      "object or string",
+      "Title",
+      "/" +
+        window.location.href
+          .substring(window.location.href.lastIndexOf("/") + 1)
+          .split("?")[0],
+    )
   }
 
-  function isLoading(state){
-    loading = state;
-    // if(state){
-    //   sharedContext.dispatch({
-    //     type: "START_LOADING"
-    //   })
-    // }
-    // else{
-    //   sharedContext.dispatch({
-    //     type: "STOP_LOADING"
-    //   })
-    // }
+  async function getOffers() {
+    console.log("getOffers")
+    await axios({
+      method: "GET",
+      url: `${appUrls.fomoHostApi}/api/services/app/Nft/GetOffersByUser?blockchain=0`,
+      headers: {
+        Authorization: "Bearer " + userContext.state.accessToken + "",
+      },
+    })
+      .then(function (response) {
+        console.log("getOffers DATA")
+        console.log(response)
+
+        const sortedOfferItems = response.data.result.sort(function (a, b) {
+          return b.pricePerItemUsd - a.pricePerItemUsd
+        })
+
+        setOffers(sortedOfferItems)
+      })
+      .catch(function (response) {
+        console.log("getOffers ERROR")
+        console.log(response)
+      })
+
+    setLoadingData((prevState) => {
+      return { ...prevState, offers: false }
+    })
+  }
+
+  useEffect(async () => {
+    if (!web3 || !marketplaceContractAddress) return
+    const accounts = await web3.eth.getAccounts()
+    var myadd = accounts[0]
+    setMyadd(myadd)
+    setMarketplaceContract(
+      new web3.eth.Contract(MARKETPLACE_ABI, marketplaceContractAddress),
+    )
+  }, [web3, marketplaceContractAddress])
+
+  async function cancelOffer(nftAddress, tokenid) {
+    if (!web3 || !walletContext.state.userConnected || !marketplaceContract)
+      return
+    isLoading(true)
+
+    try {
+      await marketplaceContract.methods
+        .cancelOffer(nftAddress, tokenid)
+        .send({ from: myAdd })
+        .then(async function (result) {
+          const canceledItem = result.events.OfferCanceled.returnValues
+          setOffers(
+            offers.filter(
+              (item) =>
+                item.nftAddress !== nftAddress ||
+                (item.nftAddress === nftAddress && item.tokenId != tokenid),
+            ),
+          )
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    } catch (e) {
+      console.log(e)
+    }
+
+    isLoading(false)
   }
 
   return (
@@ -399,20 +514,21 @@ export default function Profile() {
                   />
                 </Link>
               </div>
-            ) : (
-              null
-            )}
+            ) : null}
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="-mt-12 sm:-mt-16">
             <div className="flex flex-col items-center justify-center gap-3">
-              
               <div>
                 {loggedIn && userProfile ? (
                   <img
                     className="h-24 w-24 shadow-lg rounded-full ring-4 bg-gray-200 ring-white sm:h-32 sm:w-32"
-                    src={userProfile.profilePictureUrl}
+                    src={
+                      userProfile.profilePictureUrl
+                        ? userProfile.profilePictureUrl
+                        : defaultAvatar
+                    }
                     alt=""
                   />
                 ) : (
@@ -421,7 +537,10 @@ export default function Profile() {
               </div>
 
               <h1 className="text-2xl sm:text-4xl font-bold text-center sm:text-left text-gray-900 truncate inline-flex">
-                {loggedIn && userProfile ? displayName : "Sign in required"} {loggedIn && userProfile && userProfile.verified? <CheckCircleIcon class="w-6 h-6 text-green-400" />  : null}
+                {loggedIn && userProfile ? displayName : "Sign in required"}{" "}
+                {loggedIn && userProfile && userProfile.verified ? (
+                  <CheckCircleIcon class="w-6 h-6 text-green-400" />
+                ) : null}
               </h1>
 
               {loggedIn && userProfile ? (
@@ -429,7 +548,6 @@ export default function Profile() {
                   <p>{userProfile.description}</p>
                 </div>
               ) : null}
-
             </div>
           </div>
         </div>
@@ -446,7 +564,7 @@ export default function Profile() {
                     activeTab === tab
                       ? "text-white bg-gray-900 hover:bg-gray-900"
                       : "text-gray-600 bg-white hover:bg-gray-100",
-                    "inline-flex items-center px-4 py-2 m-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                    "inline-flex items-center px-4 py-2 m-1 border border-transparent rounded-full text-sm font-medium focus:outline-none",
                   )}
                 >
                   {tab}
@@ -457,55 +575,57 @@ export default function Profile() {
             {activeTab === "On Sale" ? (
               loadingData.onsale ? (
                 <CardList loading={true} />
-              ) : (
-                onSaleNfts && onSaleNfts.length ? (
-                  <CardList loading={loadingData.onsale} items={onSaleNfts.map(item => {
+              ) : onSaleNfts && onSaleNfts.length ? (
+                <CardList
+                  loading={loadingData.onsale}
+                  items={onSaleNfts.map((item) => {
                     return {
-                      ...transformOnSaleObj(item.nft)
+                      ...transformOnSaleObj(item.nft),
                     }
-                  })} />
-                ) : (
-                  <div className="text-center">
-                    <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
-                    <p className="font-medium text-gray-600 mb-5">
-                      View your owned items to list them for sale now
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("Owned")}
-                      className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                    >
-                      View Owned
-                    </button>
-                  </div>
-                )
+                  })}
+                />
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No items on sale</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    View your owned items to list them for sale now
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("Owned")}
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    View Owned
+                  </button>
+                </div>
               )
             ) : null}
 
             {activeTab === "Owned" ? (
               loadingData.owned ? (
                 <CardList loading={true} />
-              ) : (
-                ownNfts && ownNfts.length ? (
-                  <CardList loading={loadingData.owned} items={ownNfts.map(item => {
+              ) : ownNfts && ownNfts.length ? (
+                <CardList
+                  loading={loadingData.owned}
+                  items={ownNfts.map((item) => {
                     return {
-                      ...transformOwnNftObj(item)
+                      ...transformOwnNftObj(item),
                     }
-                  })} />
-                ) : (
-                  <div className="text-center">
-                    <h1 className="font-bold text-2xl mb-2">No items owned</h1>
-                    <p className="font-medium text-gray-600 mb-5">
-                      Explore our marketplace to find items now.
-                    </p>
-                    <Link
-                      to="/"
-                      className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                    >
-                      Explore
-                    </Link>
-                  </div>
-                )
+                  })}
+                />
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No items owned</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Explore our marketplace to find items now.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
               )
             ) : null}
 
@@ -513,74 +633,204 @@ export default function Profile() {
               <div className="text-center">
                 <h1 className="font-bold text-2xl mb-2">No items created</h1>
                 <p className="font-medium text-gray-600 mb-5">
-                  Apply for verification for your chance to create and sell NFTs right here on the The Avenue
+                  Apply for verification for your chance to create and sell NFTs
+                  right here on the The Avenue
                 </p>
               </div>
             ) : null}
 
-            {activeTab === "Liked" ? (
-
-              likedItems.length > 0 ? (
-                <CardList items={likedItems} loading={loadingData.profile} emptyMsg="No items" />
+            {activeTab === "Offers" ? (
+              loadingData.offers ? (
+                <div className="flex items-center justify-center">
+                  <Spinner className="h-9 w-9" />
+                </div>
+              ) : offers && offers.length ? (
+                <div className="max-w-5xl mx-auto">
+                  <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                      <div className="overflow-hidden sm:rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="">
+                            <tr>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                              >
+                                Item
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Token
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Price per item
+                              </th>
+                              <th
+                                scope="col"
+                                className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider text-center"
+                              >
+                                Quantity
+                              </th>
+                              <th scope="col" className="relative px-6 py-3">
+                                <span className="sr-only">Actions</span>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {offers.map((item, i) => (
+                              <tr key={i}>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                  <div className="flex items-center">
+                                    <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                                      <Link
+                                        to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                        className="hover:opacity-90"
+                                      >
+                                        {item && item.image ? (
+                                          <img
+                                            src={item.image}
+                                            className="w-full h-full object-cover rounded-xl"
+                                          />
+                                        ) : item &&
+                                          item.tokenIPFSVideoPreview ? (
+                                          <video
+                                            src={item.tokenIPFSVideoPreview}
+                                            className="w-full h-full object-cover rounded-xl"
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                          />
+                                        ) : (
+                                          <div className="h-full w-full flex items-center justify-center">
+                                            <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                          </div>
+                                        )}
+                                      </Link>
+                                    </div>
+                                    {item.tokenName}
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                                  {
+                                    getPayTokenDetailByAddress(
+                                      item.payToken,
+                                      userContext.state.blockchainId,
+                                    ).payTokenName
+                                  }
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">
+                                  {Web3.utils.fromWei(
+                                    toFixed(item.pricePerItem, "ether"),
+                                  )}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                  {item.quantity}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <a
+                                    onClick={() =>
+                                      cancelOffer(item.nftAddress, item.tokenId)
+                                    }
+                                    href="javascript:void()"
+                                    className="text-red-600 hover:text-red-700"
+                                  >
+                                    Cancel Offer
+                                  </a>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ) : (
-              <div className="text-center">
-                <h1 className="font-bold text-2xl mb-2">No liked items</h1>
-                <p className="font-medium text-gray-600 mb-5">
-                  Click like on items in the marketplace to save them here.
-                </p>
-                <Link
-                  to="/"
-                  className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                >
-                  Explore
-                </Link>
-              </div>
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No active offers</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    When you make an offer an item it will appear here.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
+              )
+            ) : null}
+
+            {activeTab === "Liked" ? (
+              likedItems.length > 0 ? (
+                <CardList
+                  items={likedItems}
+                  loading={loadingData.profile}
+                  emptyMsg="No items"
+                />
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No liked items</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Click like on items in the marketplace to save them here.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
               )
             ) : null}
 
             {activeTab === "Following" ? (
               loadingData.profile ? (
                 <AvatarList loading={true} />
+              ) : followees.length > 0 ? (
+                <AvatarList items={followees} />
               ) : (
-                followees.length > 0 ? (
-                  <AvatarList items={followees} />
-                ) : (
-                  <div className="text-center">
-                    <h1 className="font-bold text-2xl mb-2">Explore The Avenue</h1>
-                    <p className="font-medium text-gray-600 mb-5">
-                      Explore The Avenue and follow users to see them appear here.
-                    </p>
-                    <Link
-                      to="/"
-                      className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                    >
-                      Explore
-                    </Link>
-                  </div>
-                )
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">
+                    Explore The Avenue
+                  </h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Explore The Avenue and follow users to see them appear here.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
               )
             ) : null}
 
             {activeTab === "Followers" ? (
               loadingData.profile ? (
                 <AvatarList loading={true} />
+              ) : followers.length > 0 ? (
+                <AvatarList items={followers} loading={loading} />
               ) : (
-                followers.length > 0 ? (
-                  <AvatarList items={followers} loading={loading} />
-                ) : (
-                  <div className="text-center">
-                    <h1 className="font-bold text-2xl mb-2">No followers</h1>
-                    <p className="font-medium text-gray-600 mb-5">
-                      Sell and like items to increase your followers.
-                    </p>
-                    <Link
-                      to="/"
-                      className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
-                    >
-                      Explore
-                    </Link>
-                  </div>
-                )
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No followers</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Sell and like items to increase your followers.
+                  </p>
+                  <Link
+                    to="/"
+                    className="text-white bg-indigo-600 hover:bg-indigo-600 hover:bg-indigo-700 items-center px-4 py-2 mx-1 border border-transparent rounded-full text-sm font-medium focus:outline-none"
+                  >
+                    Explore
+                  </Link>
+                </div>
               )
             ) : null}
 
@@ -589,59 +839,87 @@ export default function Profile() {
                 <div className="flex items-center justify-center">
                   <Spinner className="h-9 w-9" />
                 </div>
-              ) : (
-                myActivies && myActivies.length ? (
-                  <div className="-mt-10 md:-mt-5">
-                     <ul className="max-w-xl mx-auto">
-                        {myActivies.filter((item, i) => i < 20).map((item, index) => (
-                          <li key={index} className="border-b border-gray-200">
-                            <div className="flex items-center py-5">
-                              <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
-                                <Link to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="hover:opacity-90">
-                                  {item.nftDetails && item.nftDetails.imageUrl ? (
-                                    <img src={item.nftDetails.imageUrl} className="w-full h-full object-cover rounded-xl" />
-                                  ) : null}
-                                  {item.nftDetails && item.nftDetails.videoUrl ? (
-                                    <video src={item.nftDetails.videoUrl} className="w-full h-full object-cover rounded-xl" autoPlay muted loop playsInline />
-                                  ) : null}
-                                  {!item.nftDetails ? (
-                                    <div className="h-full w-full flex items-center justify-center">
-                                      <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
-                                    </div>
-                                  ) : null}
-                                </Link>
-                              </div>
-                              <div className="max-w-lg">
-                                <p className="text-lg font-bold">{item.eventName}</p>
-                                <Link to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`} className="text-sm hover:opacity-90 font-medium transition-opacity">
-                                  <span>{item.nftDetails?.name}</span>
-                                </Link>
-                                {item.txHash ? (
-                                  <a href={`https://bscscan.com/tx/${item.txHash}`} target="_blank" rel="noreferrer" className="block text-sm underline mt-0.5">
-                                    <span>tx: {`${item.txHash.substr(0,4)}...${item.txHash.substr(-6,6)}`}</span>
-                                    <ExternalLinkIcon
-                                      className="inline ml-1 h-4 w-4 opacity-80"
-                                      aria-hidden="true"
-                                    />
-                                  </a>
+              ) : myActivies && myActivies.length ? (
+                <div className="-mt-10 md:-mt-5">
+                  <ul className="max-w-xl mx-auto">
+                    {myActivies
+                      .filter((item, i) => i < 20)
+                      .map((item, index) => (
+                        <li key={index} className="border-b border-gray-200">
+                          <div className="flex items-center py-5">
+                            <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                              <Link
+                                to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                className="hover:opacity-90"
+                              >
+                                {item.nftDetails && item.nftDetails.imageUrl ? (
+                                  <img
+                                    src={item.nftDetails.imageUrl}
+                                    className="w-full h-full object-cover rounded-xl"
+                                  />
                                 ) : null}
-                              </div>
+                                {item.nftDetails && item.nftDetails.videoUrl ? (
+                                  <video
+                                    src={item.nftDetails.videoUrl}
+                                    className="w-full h-full object-cover rounded-xl"
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                  />
+                                ) : null}
+                                {!item.nftDetails ? (
+                                  <div className="h-full w-full flex items-center justify-center">
+                                    <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                  </div>
+                                ) : null}
+                              </Link>
                             </div>
-                          </li>
-                        ))}
-                     </ul>
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <h1 className="font-bold text-2xl mb-2">No activity</h1>
-                    <p className="font-medium text-gray-600 mb-5">
-                      Your site activity will display here.
-                    </p>
-                  </div>
-                )
+                            <div className="max-w-lg">
+                              <p className="text-lg font-bold">
+                                {item.eventName}
+                              </p>
+                              <Link
+                                to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                className="text-sm hover:opacity-90 font-medium transition-opacity"
+                              >
+                                <span>{item.nftDetails?.name}</span>
+                              </Link>
+                              {item.txHash ? (
+                                <a
+                                  href={`https://bscscan.com/tx/${item.txHash}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="block text-sm underline mt-0.5"
+                                >
+                                  <span>
+                                    tx:{" "}
+                                    {`${item.txHash.substr(
+                                      0,
+                                      4,
+                                    )}...${item.txHash.substr(-6, 6)}`}
+                                  </span>
+                                  <ExternalLinkIcon
+                                    className="inline ml-1 h-4 w-4 opacity-80"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              ) : null}
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <h1 className="font-bold text-2xl mb-2">No activity</h1>
+                  <p className="font-medium text-gray-600 mb-5">
+                    Your site activity will display here.
+                  </p>
+                </div>
               )
             ) : null}
-
           </div>
         ) : null}
 
@@ -653,12 +931,11 @@ export default function Profile() {
           <div>
             <div className="mt-3 text-center sm:mt-5">
               <div className="mt-2">
-                <p className="text-sm text-gray-500 mb-5">
-                </p>
-               
+                <p className="text-sm text-gray-500 mb-5"></p>
+
                 <div className="flex items-center justify-center px-5 mb-3">
                   <div className="h-5 flex items-center">
-                  <label
+                    <label
                       htmlFor="terms"
                       className="font-medium text-gray-700"
                     >
@@ -674,7 +951,6 @@ export default function Profile() {
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -688,9 +964,7 @@ export default function Profile() {
             </button>
           </div>
         </Modal>
-
-
       </div>
     </div>
-  );
+  )
 }
