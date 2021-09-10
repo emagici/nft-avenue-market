@@ -471,7 +471,8 @@ export default function Profile() {
           setOffers(
             offers.filter(
               (item) =>
-                item.nftAddress !== nftAddress && item.tokenId !== tokenid,
+                item.nftAddress !== nftAddress ||
+                (item.nftAddress === nftAddress && item.tokenId != tokenid),
             ),
           )
         })
