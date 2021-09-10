@@ -430,7 +430,12 @@ export default function Profile() {
       .then(function (response) {
         console.log("getOffers DATA")
         console.log(response)
-        setOffers(response.data.result)
+
+        const sortedOfferItems = response.data.result.sort(function (a, b) {
+          return b.pricePerItemUsd - a.pricePerItemUsd
+        })
+
+        setOffers(sortedOfferItems)
       })
       .catch(function (response) {
         console.log("getOffers ERROR")
