@@ -239,6 +239,10 @@ export default function Navbar() {
           web3 = new Web3(
             "https://mainnet.infura.io/v3/77aa95711a704e63ba95d1061a9a08b4",
           )
+        else if (userContext.state.blockchainId == 2)
+          web3 = new Web3(
+            "https://polygon-mainnet.infura.io/v3/80769ff91aca4c8ab65867b9b1f0d027",
+          )
 
         web3Context.dispatch({
           type: "SET_WEB3_DATA",
@@ -310,7 +314,15 @@ export default function Navbar() {
           },
         },
       }
-
+      else if (userContext.state.blockchainId == 2)
+      providerOptions = {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "80769ff91aca4c8ab65867b9b1f0d027",
+          },
+        },
+      }
     const web3Modal = new Web3Modal({
       providerOptions, // required
     })
@@ -338,6 +350,13 @@ export default function Navbar() {
         autoDismiss: true,
       })
       return
+    } else if (userContext.state.blockchainId === 2 && chainId != 137) {
+      addToast("Please connect wallet to Polygon Mainnet", {
+        appearance: "error",
+        autoDismiss: true,
+      })
+      return
+
     }
 
     web3Context.dispatch({

@@ -6,12 +6,13 @@ import { classNames } from "../../utilities/utils"
 
 import BnbLogo from "../../assets/img/logos/bnb-64.png"
 import EthLogo from "../../assets/img/logos/eth-64.png"
-
+import MaticLogo from "../../assets/img/logos/matic-64.png"
 import { UserContext } from "../../context/user-context"
 
 const menuItems = [
   { name: "BSC", image: BnbLogo, id: 0 },
   { name: "Ethereum", image: EthLogo, id: 1 },
+  { name: "Polygon", image: MaticLogo, id: 2 },
 ]
 
 export default function ChainMenu(props) {

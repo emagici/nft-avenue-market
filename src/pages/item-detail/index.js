@@ -27,7 +27,7 @@ import {
   MARKETPLACE_ABI,
   getMarketplaceContractAddress,
 } from "../../contracts/FomoMarketPlace"
-import { GENERICNFT_ABI } from "../../contracts/GenericNFT"
+import { GENERICNFT_ABI, POLYGONNFT_ABI } from "../../contracts/GenericNFT"
 import { GENERIC_TOKEN_ABI } from "../../contracts/GenericToken"
 import {
   getTokenTypes,
@@ -456,7 +456,7 @@ export default function ItemDetail(props) {
   }
 
   const checkNftApprovalAndList = async () => {
-    const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress)
+    const genericNftContract = new web3.eth.Contract(userContext.state.blockchainId === 2 ? POLYGONNFT_ABI : GENERICNFT_ABI, nftAddress)
     const isApprovedForAll = await genericNftContract.methods
       .isApprovedForAll(myAdd, marketplaceContractAddress)
       .call()
