@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import qs from "qs";
 import { WalletContext } from '../../context/wallet-context'
 import { Web3Context } from '../../context/web3-context'
+import { UserContext } from "../../context/user-context"
 import axios from "axios";
 import AppUrls from '../../AppSettings';
 import {
-  GENERICNFT_ABI, GENERICNFT721_ABI
+  GENERICNFT_ABI, GENERICNFT721_ABI, POLYGONNFT721_ABI, POLYGONNFT_ABI
 } from "../../contracts/GenericNFT";
 import { useHistory } from "react-router-dom";
 
@@ -22,6 +23,7 @@ const appUrls = {
 
 export default function TransferItem(props) {
   let history = useHistory();
+  const userContext = useContext(UserContext);
   const [tokenid, setTokenId] = useState("");
   const [nftAddress, setNftAddress] = useState("");
   const [nftName, setNftName] = useState("");
@@ -41,8 +43,7 @@ export default function TransferItem(props) {
     if (!web3 || !walletContext.state.userConnected) return;
 
     if(nftType === "1155"){
-      const genericNftContract = new web3.eth.Contract(GENERICNFT_ABI, nftAddress);
-
+      const genericNftContract = new web3.eth.Contract(userContext.state.blockchainId === 2?POLYGONNFT_ABI:GENERICNFT_ABI, nftAddress);
       await genericNftContract.methods
         .safeTransferFrom(myAdd, toAddress, tokenid, qty, "0x00")
         .send({ from: myAdd })
@@ -53,8 +54,7 @@ export default function TransferItem(props) {
           });
     }
     else{
-      const genericNftContract = new web3.eth.Contract(GENERICNFT721_ABI, nftAddress);
-
+      const genericNftContract = new web3.eth.Contract(userContext.state.blockchainId === 2?POLYGONNFT721_ABI:GENERICNFT721_ABI, nftAddress);
       await genericNftContract.methods
         .safeTransferFrom(myAdd, toAddress, tokenid)
         .send({ from: myAdd })
