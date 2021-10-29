@@ -28,7 +28,7 @@ export function ItemPropertiesPanel({ items }) {
 
 export default function ItemProperties(props) {
   return (
-    <div className="hidden md:block">
+    <div className="hidden md:block md:pt-2">
       <Accordion>
         <AccordionItem toggle="properties">Properties</AccordionItem>
         <AccordionPanel id="properties">

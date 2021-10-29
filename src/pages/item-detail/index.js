@@ -19,6 +19,8 @@ import { HeartIcon } from "@heroicons/react/solid"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCopy, faCheck } from "@fortawesome/free-solid-svg-icons"
 
+import ReactReadMoreReadLess from "react-read-more-read-less"
+
 import { SharedContext } from "../../context/shared-context"
 import { UserContext } from "../../context/user-context"
 import { Web3Context } from "../../context/web3-context"
@@ -1121,8 +1123,8 @@ export default function ItemDetail(props) {
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6">
         <div className=" mt-4 md:mt-10 md:grid md:grid-cols-3 gap-x-8">
           <div className="flex justify-center md:justify-end mb-5 md:mb-0">
-            <div className="flex-1 max-w-sm">
-              <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg">
+            <div className="flex-1 flex flex-col max-w-sm">
+              <div className="block aspect-w-10 aspect-h-12 rounded-lg bg-gray-100 focus:outline-none overflow-hidden shadow-lg order-1 md:order-2">
                 {nftVideoSrc ? (
                   <video
                     autoPlay
@@ -1144,7 +1146,7 @@ export default function ItemDetail(props) {
                 )}
               </div>
 
-              <div className="px-1 py-4 flex justify-between items-center">
+              <div className="px-1 py-4 md:pt-0 flex justify-between items-center order-2 md:order-1">
                 <div>
                   {userContext.state.accessToken ? (
                     <button
@@ -1203,9 +1205,11 @@ export default function ItemDetail(props) {
                 ) : null}
               </div>
 
-              {properties && properties.length ? (
-                <ItemProperties items={properties} />
-              ) : null}
+              <div className="order-3">
+                {properties && properties.length ? (
+                  <ItemProperties items={properties} />
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="col-span-2">
@@ -1370,7 +1374,15 @@ export default function ItemDetail(props) {
                   Description
                 </p>
                 <p className="mb-6 text-sm md:text-base text-center md:text-left">
-                  {nftDescription}
+                  <ReactReadMoreReadLess
+                    charLimit={250}
+                    readMoreText={"Read More"}
+                    readLessText={"Read Less"}
+                    readMoreClassName="font-semibold text-indigo-600 block mt-2"
+                    readLessClassName="font-semibold text-indigo-600 block mt-2"
+                  >
+                    {nftDescription}
+                  </ReactReadMoreReadLess>
                 </p>
               </div>
             ) : null}
