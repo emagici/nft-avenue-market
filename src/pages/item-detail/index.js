@@ -52,6 +52,7 @@ import {
 
 import AppUrls from "../../AppSettings"
 import { Fragment } from "react"
+import ItemProperties, { ItemPropertiesPanel } from "./item-properties"
 
 const tabs = [
   { name: "Info", href: "#", current: true },
@@ -78,6 +79,93 @@ const appUrls = {
   fomoHostApi: AppUrls.fomoHostApi,
   fomoClient: AppUrls.fomoClient,
 }
+
+const properties = [
+  {
+    id: 1,
+    trait: "Background",
+    value: "Alley BG ",
+    rarity: "super rare",
+  },
+  {
+    id: 3,
+    trait: "Tail",
+    value: "Tail_Black",
+    rarity: "original",
+  },
+  {
+    id: 2,
+    trait: "Tail_elements",
+    value: "Tail flames alt",
+    rarity: "super rare",
+  },
+  {
+    id: 17,
+    trait: "Body",
+    value: "Body_Suit Brown",
+    rarity: "original",
+  },
+  {
+    id: 6,
+    trait: "Neck",
+    value: "None",
+    rarity: "original",
+  },
+  {
+    id: 3,
+    trait: "Chest",
+    value: "Cpie Pin1",
+    rarity: "original",
+  },
+  {
+    id: 5,
+    trait: "Hat-hair",
+    value: "Pink Cap",
+    rarity: "rare",
+  },
+  {
+    id: 2,
+    trait: "Head",
+    value: "Rainbow head",
+    rarity: "original",
+  },
+  {
+    id: 7,
+    trait: "Helmet",
+    value: "Karate Kid Bandana",
+    rarity: "super rare",
+  },
+  {
+    id: 3,
+    trait: "Eyebrows",
+    value: "Eye brows 3",
+    rarity: "original",
+  },
+  {
+    id: 4,
+    trait: "Eyes",
+    value: "Zombie eyes",
+    rarity: "super rare",
+  },
+  {
+    id: 8,
+    trait: "Face",
+    value: "None",
+    rarity: "original",
+  },
+  {
+    id: 7,
+    trait: "Mouth",
+    value: "Mouth LSD 2",
+    rarity: "rare",
+  },
+  {
+    id: 6,
+    trait: "Hands",
+    value: "L Hand Bong Red Glove",
+    rarity: "rare",
+  },
+]
 
 export default function ItemDetail(props) {
   const location = useLocation()
@@ -456,7 +544,10 @@ export default function ItemDetail(props) {
   }
 
   const checkNftApprovalAndList = async () => {
-    const genericNftContract = new web3.eth.Contract(userContext.state.blockchainId === 2 ? POLYGONNFT_ABI : GENERICNFT_ABI, nftAddress)
+    const genericNftContract = new web3.eth.Contract(
+      userContext.state.blockchainId === 2 ? POLYGONNFT_ABI : GENERICNFT_ABI,
+      nftAddress,
+    )
     const isApprovedForAll = await genericNftContract.methods
       .isApprovedForAll(myAdd, marketplaceContractAddress)
       .call()
@@ -1111,6 +1202,10 @@ export default function ItemDetail(props) {
                   </div>
                 ) : null}
               </div>
+
+              {properties && properties.length ? (
+                <ItemProperties items={properties} />
+              ) : null}
             </div>
           </div>
           <div className="col-span-2">
@@ -1298,6 +1393,15 @@ export default function ItemDetail(props) {
                   </button>
                 </div>
               </AccordionPanel> */}
+
+              {properties && properties.length ? (
+                <div className="md:hidden">
+                  <AccordionItem toggle="properties">Properties</AccordionItem>
+                  <AccordionPanel id="properties">
+                    <ItemPropertiesPanel items={properties} />
+                  </AccordionPanel>
+                </div>
+              ) : null}
 
               {nftAddress === "0x429b37477dfad86369503567994b2e548e2f0e0d" &&
               nftMetadata ? (
