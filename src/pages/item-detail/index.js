@@ -82,92 +82,92 @@ const appUrls = {
   fomoClient: AppUrls.fomoClient,
 }
 
-const properties = [
-  {
-    id: 1,
-    trait: "Background",
-    value: "Alley BG ",
-    rarity: "super rare",
-  },
-  {
-    id: 3,
-    trait: "Tail",
-    value: "Tail_Black",
-    rarity: "original",
-  },
-  {
-    id: 2,
-    trait: "Tail_elements",
-    value: "Tail flames alt",
-    rarity: "super rare",
-  },
-  {
-    id: 17,
-    trait: "Body",
-    value: "Body_Suit Brown",
-    rarity: "original",
-  },
-  {
-    id: 6,
-    trait: "Neck",
-    value: "None",
-    rarity: "original",
-  },
-  {
-    id: 3,
-    trait: "Chest",
-    value: "Cpie Pin1",
-    rarity: "original",
-  },
-  {
-    id: 5,
-    trait: "Hat-hair",
-    value: "Pink Cap",
-    rarity: "rare",
-  },
-  {
-    id: 2,
-    trait: "Head",
-    value: "Rainbow head",
-    rarity: "original",
-  },
-  {
-    id: 7,
-    trait: "Helmet",
-    value: "Karate Kid Bandana",
-    rarity: "super rare",
-  },
-  {
-    id: 3,
-    trait: "Eyebrows",
-    value: "Eye brows 3",
-    rarity: "original",
-  },
-  {
-    id: 4,
-    trait: "Eyes",
-    value: "Zombie eyes",
-    rarity: "super rare",
-  },
-  {
-    id: 8,
-    trait: "Face",
-    value: "None",
-    rarity: "original",
-  },
-  {
-    id: 7,
-    trait: "Mouth",
-    value: "Mouth LSD 2",
-    rarity: "rare",
-  },
-  {
-    id: 6,
-    trait: "Hands",
-    value: "L Hand Bong Red Glove",
-    rarity: "rare",
-  },
-]
+// const properties = [
+//   {
+//     id: 1,
+//     trait: "Background",
+//     value: "Alley BG ",
+//     rarity: "super rare",
+//   },
+//   {
+//     id: 3,
+//     trait: "Tail",
+//     value: "Tail_Black",
+//     rarity: "original",
+//   },
+//   {
+//     id: 2,
+//     trait: "Tail_elements",
+//     value: "Tail flames alt",
+//     rarity: "super rare",
+//   },
+//   {
+//     id: 17,
+//     trait: "Body",
+//     value: "Body_Suit Brown",
+//     rarity: "original",
+//   },
+//   {
+//     id: 6,
+//     trait: "Neck",
+//     value: "None",
+//     rarity: "original",
+//   },
+//   {
+//     id: 3,
+//     trait: "Chest",
+//     value: "Cpie Pin1",
+//     rarity: "original",
+//   },
+//   {
+//     id: 5,
+//     trait: "Hat-hair",
+//     value: "Pink Cap",
+//     rarity: "rare",
+//   },
+//   {
+//     id: 2,
+//     trait: "Head",
+//     value: "Rainbow head",
+//     rarity: "original",
+//   },
+//   {
+//     id: 7,
+//     trait: "Helmet",
+//     value: "Karate Kid Bandana",
+//     rarity: "super rare",
+//   },
+//   {
+//     id: 3,
+//     trait: "Eyebrows",
+//     value: "Eye brows 3",
+//     rarity: "original",
+//   },
+//   {
+//     id: 4,
+//     trait: "Eyes",
+//     value: "Zombie eyes",
+//     rarity: "super rare",
+//   },
+//   {
+//     id: 8,
+//     trait: "Face",
+//     value: "None",
+//     rarity: "original",
+//   },
+//   {
+//     id: 7,
+//     trait: "Mouth",
+//     value: "Mouth LSD 2",
+//     rarity: "rare",
+//   },
+//   {
+//     id: 6,
+//     trait: "Hands",
+//     value: "L Hand Bong Red Glove",
+//     rarity: "rare",
+//   },
+// ]
 
 export default function ItemDetail(props) {
   const location = useLocation()
@@ -204,6 +204,8 @@ export default function ItemDetail(props) {
   const [shareUrl, setShareUrl] = useState(null)
 
   const [showPurchasedModal, setShowPurchasedModal] = useState(false)
+
+  const [properties, setProperties] = useState(null)
 
   const [offerLength, setOfferLength] = useState(7)
   const [offerQuantity, setOfferQuantity] = useState(1)
