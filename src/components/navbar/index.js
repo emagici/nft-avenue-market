@@ -18,6 +18,7 @@ import AwesomeDebouncePromise from "awesome-debounce-promise"
 import { useAsync } from "react-async-hook"
 import useConstant from "use-constant"
 import UserMenu from "./user-menu"
+import Modal from "../modal"
 import axios from "axios"
 import AppUrls from "../../AppSettings"
 import moment from "moment"
@@ -107,6 +108,9 @@ export default function Navbar() {
   const [notifications, setNotifications] = useState([])
   const [newNotificationCount, setNewNotificationCount] = useState(0)
   const [provider, setProvider] = useState()
+
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false)
+  const [showBanner, setShowBanner] = useState(true)
 
   const changeNetworkHandle = () => {
     walletContext.dispatch({
@@ -314,7 +318,7 @@ export default function Navbar() {
           },
         },
       }
-      else if (userContext.state.blockchainId == 2)
+    else if (userContext.state.blockchainId == 2)
       providerOptions = {
         walletconnect: {
           package: WalletConnectProvider,
@@ -356,7 +360,6 @@ export default function Navbar() {
         autoDismiss: true,
       })
       return
-
     }
 
     web3Context.dispatch({
@@ -507,457 +510,532 @@ export default function Navbar() {
   })
 
   return (
-    <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
-      {({ open }) => (
-        <>
-          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="-ml-2 mr-2 flex items-center md:hidden z-10">
-                  {/* Mobile menu button */}
-                  <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <XIcon className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-                    )}
-                  </Disclosure.Button>
-                </div>
-                <div className="flex-shrink-0 flex items-center">
-                  <Link to="/">
-                    {/* <img
-                      className="hidden sm:block h-8 w-auto"
-                      src={AvenueLogo}
-                      alt="Workflow"
-                    /> */}
-                    <img
-                      className="hidden sm:block h-16 object-contain w-auto -mx-4"
-                      src={AvenueLogoGif}
-                      alt="Workflow"
-                    />
-                  </Link>
-                </div>
-                <div className="hidden md:ml-2 md:flex md:space-x-5">
-                  {Routes.filter((item) => item.nav).map((item, index) => (
-                    <Link
-                      key={index}
-                      to={item.path}
-                      className={classNames(
-                        item.path == location.pathname
-                          ? "border-indigo-500 text-gray-900"
-                          : "border-transparent text-gray-700 hover:border-gray-500 hover:text-gray-900",
-                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold",
-                      )}
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 hidden xl:flex">
-                <div className="max-w-lg w-full lg:max-w-xs">
-                  <label htmlFor="search" className="sr-only">
-                    Search
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <SearchIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <input
-                      id="search"
-                      name="search"
-                      className="block w-full pl-10 pr-3 py-2 border-gray-300 rounded-full leading-5 bg-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Search"
-                      type="search"
-                      onChange={(e) => setInputText(e.target.value)}
-                      value={inputText}
-                      onKeyPress={(e) => onEnter(e)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <CommunityMenu />
-
-                <div className="flex-1 flex items-center justify-center hidden md:flex xl:hidden">
-                  <Link
-                    as="a"
-                    to="/search"
-                    className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm"
+    <div>
+      {showBanner ? (
+        <div className="relative bg-indigo-600">
+          <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+            <div className="pr-16 sm:text-center sm:px-16">
+              <p className="font-medium text-white">
+                <span className="">
+                  Scheduled upgrade and maintenance to The Avenue.
+                </span>
+                <span className="block sm:ml-2 sm:inline-block">
+                  <a
+                    href="#"
+                    onClick={() => setMaintenanceModalOpen(true)}
+                    className="text-white font-bold underline"
                   >
-                    <SearchIcon className="h-6 w-6" />
-                    <span className="sr-only">Search</span>
-                  </Link>
-                </div>
-
-                {myAdd && loggedIn ? (
-                  <div className="flex-shrink-0 flex items-center">
-                    {/* Profile dropdown */}
-                    <Menu as="div" className="sm:relative">
-                      {({ open }) => (
-                        <>
-                          <div>
-                            <Menu.Button className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
-                              <span className="sr-only">
-                                View notifications
-                              </span>
-                              <BellIcon
-                                className={
-                                  newNotificationCount
-                                    ? "h-6 w-6 align-text-top animate-swing origin-top"
-                                    : "h-6 w-6"
-                                }
-                                aria-hidden="true"
-                              />
-                              {/* {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)} */}
-                              {newNotificationCount ? (
-                                <span class="absolute top-0 right-0 flex h-3 w-3">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
-                                </span>
-                              ) : null}
-                            </Menu.Button>
-                          </div>
-                          <Transition
-                            show={open}
-                            as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
-                          >
-                            <Menu.Items
-                              static
-                              // className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                              className="absolute z-10 left-0 right-0 sm:left-auto sm:top-auto sm:bottom-auto mt-3 w-screen sm:w-max sm:w-auto"
-                            >
-                              <div className="max-h-96 overflow-y-scroll relative rounded-lg w-full sm:min-w-92 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
-                                <h1 className="font-bold my-2 px-4">
-                                  Notifications
-                                </h1>
-                                {notifications && notifications.length ? (
-                                  <a
-                                    className="block mb-2 mt-0.5 px-4 text-sm underline"
-                                    href="#"
-                                    onClick={() => markNotificationsAsRead()}
-                                  >
-                                    Mark all as read
-                                  </a>
-                                ) : null}
-                                {notifications && notifications.length ? (
-                                  notifications.map((item, index) => (
-                                    <Menu.Item
-                                      key={index}
-                                      as={"span"}
-                                      className={
-                                        item.hasRead
-                                          ? "block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg mb-1 mt-1"
-                                          : "block py-2 font-medium mx-2 px-2 rounded-lg mb-1 mt-1 hover:bg-blue-100 bg-blue-50 text-blue-700"
-                                      }
-                                      onClick={() =>
-                                        markNotificationsAsRead([item.id])
-                                      }
-                                    >
-                                      <div className="flex items-center py-5">
-                                        <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
-                                          <Link
-                                            to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
-                                            className="hover:opacity-90"
-                                          >
-                                            {item.nftDetails &&
-                                            item.nftDetails.imageUrl ? (
-                                              <img
-                                                src={item.nftDetails.imageUrl}
-                                                className="w-full h-full object-cover"
-                                              />
-                                            ) : null}
-                                            {item.nftDetails &&
-                                            item.nftDetails.videoUrl ? (
-                                              <video
-                                                src={item.nftDetails.videoUrl}
-                                                className="w-full h-full object-cover"
-                                                autoPlay
-                                                muted
-                                                loop
-                                                playsInline
-                                              />
-                                            ) : null}
-                                            {item.userLike &&
-                                            item.userLike.userFk
-                                              .profilePictureUrl ? (
-                                              <img
-                                                src={
-                                                  item.userLike.userFk
-                                                    .profilePictureUrl
-                                                }
-                                                className="w-full h-full object-cover"
-                                              />
-                                            ) : null}
-                                            {item.userFollower &&
-                                            item.userFollower.followerUserFk
-                                              .profilePictureUrl ? (
-                                              <img
-                                                src={
-                                                  item.userFollower
-                                                    .followerUserFk
-                                                    .profilePictureUrl
-                                                }
-                                                className="w-full h-full object-cover"
-                                              />
-                                            ) : null}
-                                            {!item.nftDetails ? (
-                                              <div className="h-full w-full flex items-center justify-center">
-                                                <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
-                                              </div>
-                                            ) : null}
-                                          </Link>
-                                        </div>
-                                        <div className="max-w-lg">
-                                          {(() => {
-                                            if (
-                                              item.eventName ==
-                                                "UserFollowed" &&
-                                              item.userFollower
-                                            )
-                                              return (
-                                                <p className="text-md font-bold">
-                                                  {item.userFollower
-                                                    .followerUserFk.name
-                                                    .length > 12
-                                                    ? item.userFollower.followerUserFk.name.substr(
-                                                        0,
-                                                        10,
-                                                      ) + "..."
-                                                    : item.userFollower
-                                                        .followerUserFk
-                                                        .name}{" "}
-                                                  is following you
-                                                </p>
-                                              )
-                                            else if (
-                                              item.eventName == "ItemLiked" &&
-                                              item.userLike
-                                            )
-                                              return (
-                                                <p className="text-md font-bold">
-                                                  {item.userLike.userFk.name}{" "}
-                                                  liked your NFT
-                                                </p>
-                                              )
-                                            else
-                                              return (
-                                                <p className="text-md font-bold">
-                                                  {item.eventName.replace(
-                                                    /([A-Z])/g,
-                                                    " $1",
-                                                  )}
-                                                </p>
-                                              )
-                                          })()}
-                                          <Link
-                                            to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
-                                            className="block text-xs hover:opacity-90 font-medium transition-opacity"
-                                          >
-                                            <span>{item.nftDetails?.name}</span>
-                                          </Link>
-                                          {item.txHash ? (
-                                            <a
-                                              href={`https://bscscan.com/tx/${item.txHash}`}
-                                              target="_blank"
-                                              className="block text-sm underline mt-0.5"
-                                            >
-                                              <span>
-                                                tx:{" "}
-                                                {`${item.txHash.substr(
-                                                  0,
-                                                  4,
-                                                )}...${item.txHash.substr(
-                                                  -6,
-                                                  6,
-                                                )}`}
-                                              </span>
-                                              <ExternalLinkIcon
-                                                className="inline ml-1 h-4 w-4 opacity-80"
-                                                aria-hidden="true"
-                                              />
-                                            </a>
-                                          ) : null}
-                                          {item.eventName == "UserFollowed" &&
-                                          item.userFollower ? (
-                                            <a
-                                              href={`${appUrls.fomoClient}/profile-info?userId=${item.userFollower.followerUserId}`}
-                                              target="_self"
-                                              className="block text-sm underline mt-0.5"
-                                            >
-                                              <span>view profile</span>
-                                              <ExternalLinkIcon
-                                                className="inline ml-1 h-4 w-4 opacity-80"
-                                                aria-hidden="true"
-                                              />
-                                            </a>
-                                          ) : null}
-                                          <span className="text-xs">
-                                            {moment(item.dateCreated).fromNow()}
-                                          </span>
-                                        </div>
-                                      </div>
-
-                                      {/* {notification.eventName.replace(
-                                        /([A-Z])/g,
-                                        " $1"
-                                      )}
-                                      <span className="block text-xs">
-                                        {moment(
-                                          notification.dateCreated
-                                        ).fromNow()}
-                                      </span> */}
-                                    </Menu.Item>
-                                  ))
-                                ) : (
-                                  <div className="">
-                                    <p className="text-sm font-medium px-4 pb-2">
-                                      No notifications to display.
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </Menu.Items>
-                          </Transition>
-                        </>
-                      )}
-                    </Menu>
-                  </div>
-                ) : null}
-
-                {false && myAdd ? (
-                  <div className="flex-shrink-0 hidden md:block">
-                    <Link
-                      to="/create"
-                      className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
-                    >
-                      <span>Create</span>
-                    </Link>
-                  </div>
-                ) : null}
-
-                {myAdd ? (
-                  loggedIn ? (
-                    <UserMenu handleSignOut={handleSignOut} />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setSignInModalOpen(true)}
-                      className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white shadow-sm focus:outline-none bg-gray-100 hover:bg-gray-200 text-gray-900"
-                    >
-                      <span className="">Sign In</span>
-                      {/* <span className="hidden md:inline">Sign In / Register</span> */}
-                    </button>
-                  )
-                ) : null}
-
-                <SignInRegisterModal
-                  modalOpen={signInModalOpen}
-                  setModalOpen={(v) => setSignInModalOpen(v)}
-                />
-
-                <div className="flex-shrink-0">
-                  {myAdd ? (
-                    <Menu as="div" className="inline-flex relative">
-                      {({ open }) => (
-                        <>
-                          <div>
-                            <Menu.Button className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
-                              <span className="sr-only">Wallet</span>
-                              {myAdd.substr(0, 6) + "..."}
-                            </Menu.Button>
-                          </div>
-                          <Transition
-                            show={open}
-                            as={Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
-                          >
-                            <Menu.Items
-                              static
-                              className="origin-top-right absolute right-0 mt-12 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                            >
-                              <a
-                                href="javascript:void(0);"
-                                onClick={() => disconnect()}
-                                className="py-2 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
-                              >
-                                <div className="ml-4">
-                                  <p className="text-sm font-bold text-red-500">
-                                    Disconnect
-                                  </p>
-                                </div>
-                              </a>
-                            </Menu.Items>
-                          </Transition>
-                        </>
-                      )}
-                    </Menu>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => connectWallet()}
-                      className="bg-indigo-600 hover:bg-indigo-700 relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
-                    >
-                      <span>Connect Wallet</span>
-                    </button>
-                  )}
-                </div>
-                <ChainMenu disconnect={changeNetworkHandle} />
-              </div>
+                    {" "}
+                    Read more <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </span>
+              </p>
+            </div>
+            <div className="absolute inset-y-0 right-0 pt-1 pr-1 flex items-start sm:pt-1 sm:pr-2 sm:items-start">
+              <button
+                type="button"
+                onClick={() => setShowBanner(false)}
+                className="flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white"
+              >
+                <span className="sr-only">Dismiss</span>
+                <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+              </button>
             </div>
           </div>
+        </div>
+      ) : null}
+      <Disclosure as="nav" className="bg-white shadow sticky top-0 navbar">
+        {({ open }) => (
+          <>
+            <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between h-16">
+                <div className="flex">
+                  <div className="-ml-2 mr-2 flex items-center md:hidden z-10">
+                    {/* Mobile menu button */}
+                    <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                      <span className="sr-only">Open main menu</span>
+                      {open ? (
+                        <XIcon className="block h-6 w-6" aria-hidden="true" />
+                      ) : (
+                        <MenuIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Disclosure.Button>
+                  </div>
+                  <div className="flex-shrink-0 flex items-center">
+                    <Link to="/">
+                      {/* <img
+                        className="hidden sm:block h-8 w-auto"
+                        src={AvenueLogo}
+                        alt="Workflow"
+                      /> */}
+                      <img
+                        className="hidden sm:block h-16 object-contain w-auto -mx-4"
+                        src={AvenueLogoGif}
+                        alt="Workflow"
+                      />
+                    </Link>
+                  </div>
+                  <div className="hidden md:ml-2 md:flex md:space-x-5">
+                    {Routes.filter((item) => item.nav).map((item, index) => (
+                      <Link
+                        key={index}
+                        to={item.path}
+                        className={classNames(
+                          item.path == location.pathname
+                            ? "border-indigo-500 text-gray-900"
+                            : "border-transparent text-gray-700 hover:border-gray-500 hover:text-gray-900",
+                          "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-bold",
+                        )}
+                      >
+                        {item.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
 
-          <Disclosure.Panel className="md:hidden">
-            <div className="border-t">
-              <Disclosure.Button
-                as={Link}
-                to="/search"
-                className={classNames(
-                  location.pathname == "/search"
-                    ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
-                  "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6 appearance-none",
-                )}
-              >
-                Search
-              </Disclosure.Button>
-              {Routes.filter((item) => item.nav).map((item, index) => (
+                <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 hidden xl:flex">
+                  <div className="max-w-lg w-full lg:max-w-xs">
+                    <label htmlFor="search" className="sr-only">
+                      Search
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <SearchIcon
+                          className="h-5 w-5 text-gray-400"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <input
+                        id="search"
+                        name="search"
+                        className="block w-full pl-10 pr-3 py-2 border-gray-300 rounded-full leading-5 bg-gray-100 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        placeholder="Search"
+                        type="search"
+                        onChange={(e) => setInputText(e.target.value)}
+                        value={inputText}
+                        onKeyPress={(e) => onEnter(e)}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <CommunityMenu />
+
+                  <div className="flex-1 flex items-center justify-center hidden md:flex xl:hidden">
+                    <Link
+                      as="a"
+                      to="/search"
+                      className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm"
+                    >
+                      <SearchIcon className="h-6 w-6" />
+                      <span className="sr-only">Search</span>
+                    </Link>
+                  </div>
+
+                  {myAdd && loggedIn ? (
+                    <div className="flex-shrink-0 flex items-center">
+                      {/* Profile dropdown */}
+                      <Menu as="div" className="sm:relative">
+                        {({ open }) => (
+                          <>
+                            <div>
+                              <Menu.Button className="relative bg-gray-100 p-2 rounded-full flex justify-center items-center text-sm hover:bg-gray-200 focus:outline-none shadow-sm">
+                                <span className="sr-only">
+                                  View notifications
+                                </span>
+                                <BellIcon
+                                  className={
+                                    newNotificationCount
+                                      ? "h-6 w-6 align-text-top animate-swing origin-top"
+                                      : "h-6 w-6"
+                                  }
+                                  aria-hidden="true"
+                                />
+                                {/* {newNotificationCount > 0 && (<sup>{newNotificationCount}</sup>)} */}
+                                {newNotificationCount ? (
+                                  <span class="absolute top-0 right-0 flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                                  </span>
+                                ) : null}
+                              </Menu.Button>
+                            </div>
+                            <Transition
+                              show={open}
+                              as={Fragment}
+                              enter="transition ease-out duration-200"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items
+                                static
+                                // className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                className="absolute z-10 left-0 right-0 sm:left-auto sm:top-auto sm:bottom-auto mt-3 w-screen sm:w-max sm:w-auto"
+                              >
+                                <div className="max-h-96 overflow-y-scroll relative rounded-lg w-full sm:min-w-92 shadow-xl ring-1 ring-black ring-opacity-5 overflow-hidden bg-white">
+                                  <h1 className="font-bold my-2 px-4">
+                                    Notifications
+                                  </h1>
+                                  {notifications && notifications.length ? (
+                                    <a
+                                      className="block mb-2 mt-0.5 px-4 text-sm underline"
+                                      href="#"
+                                      onClick={() => markNotificationsAsRead()}
+                                    >
+                                      Mark all as read
+                                    </a>
+                                  ) : null}
+                                  {notifications && notifications.length ? (
+                                    notifications.map((item, index) => (
+                                      <Menu.Item
+                                        key={index}
+                                        as={"span"}
+                                        className={
+                                          item.hasRead
+                                            ? "block py-2 font-medium text-gray-700 hover:bg-gray-100 mx-2 px-2 rounded-lg mb-1 mt-1"
+                                            : "block py-2 font-medium mx-2 px-2 rounded-lg mb-1 mt-1 hover:bg-blue-100 bg-blue-50 text-blue-700"
+                                        }
+                                        onClick={() =>
+                                          markNotificationsAsRead([item.id])
+                                        }
+                                      >
+                                        <div className="flex items-center py-5">
+                                          <div className="mr-3 h-16 w-16 bg-gray-100 rounded-xl overflow-hidden">
+                                            <Link
+                                              to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                              className="hover:opacity-90"
+                                            >
+                                              {item.nftDetails &&
+                                              item.nftDetails.imageUrl ? (
+                                                <img
+                                                  src={item.nftDetails.imageUrl}
+                                                  className="w-full h-full object-cover"
+                                                />
+                                              ) : null}
+                                              {item.nftDetails &&
+                                              item.nftDetails.videoUrl ? (
+                                                <video
+                                                  src={item.nftDetails.videoUrl}
+                                                  className="w-full h-full object-cover"
+                                                  autoPlay
+                                                  muted
+                                                  loop
+                                                  playsInline
+                                                />
+                                              ) : null}
+                                              {item.userLike &&
+                                              item.userLike.userFk
+                                                .profilePictureUrl ? (
+                                                <img
+                                                  src={
+                                                    item.userLike.userFk
+                                                      .profilePictureUrl
+                                                  }
+                                                  className="w-full h-full object-cover"
+                                                />
+                                              ) : null}
+                                              {item.userFollower &&
+                                              item.userFollower.followerUserFk
+                                                .profilePictureUrl ? (
+                                                <img
+                                                  src={
+                                                    item.userFollower
+                                                      .followerUserFk
+                                                      .profilePictureUrl
+                                                  }
+                                                  className="w-full h-full object-cover"
+                                                />
+                                              ) : null}
+                                              {!item.nftDetails ? (
+                                                <div className="h-full w-full flex items-center justify-center">
+                                                  <QuestionMarkCircleIcon className="h-8 w-8 text-gray-600" />
+                                                </div>
+                                              ) : null}
+                                            </Link>
+                                          </div>
+                                          <div className="max-w-lg">
+                                            {(() => {
+                                              if (
+                                                item.eventName ==
+                                                  "UserFollowed" &&
+                                                item.userFollower
+                                              )
+                                                return (
+                                                  <p className="text-md font-bold">
+                                                    {item.userFollower
+                                                      .followerUserFk.name
+                                                      .length > 12
+                                                      ? item.userFollower.followerUserFk.name.substr(
+                                                          0,
+                                                          10,
+                                                        ) + "..."
+                                                      : item.userFollower
+                                                          .followerUserFk
+                                                          .name}{" "}
+                                                    is following you
+                                                  </p>
+                                                )
+                                              else if (
+                                                item.eventName == "ItemLiked" &&
+                                                item.userLike
+                                              )
+                                                return (
+                                                  <p className="text-md font-bold">
+                                                    {item.userLike.userFk.name}{" "}
+                                                    liked your NFT
+                                                  </p>
+                                                )
+                                              else
+                                                return (
+                                                  <p className="text-md font-bold">
+                                                    {item.eventName.replace(
+                                                      /([A-Z])/g,
+                                                      " $1",
+                                                    )}
+                                                  </p>
+                                                )
+                                            })()}
+                                            <Link
+                                              to={`/item-detail?tokenid=${item.tokenId}&nftaddress=${item.nftAddress}`}
+                                              className="block text-xs hover:opacity-90 font-medium transition-opacity"
+                                            >
+                                              <span>
+                                                {item.nftDetails?.name}
+                                              </span>
+                                            </Link>
+                                            {item.txHash ? (
+                                              <a
+                                                href={`https://bscscan.com/tx/${item.txHash}`}
+                                                target="_blank"
+                                                className="block text-sm underline mt-0.5"
+                                              >
+                                                <span>
+                                                  tx:{" "}
+                                                  {`${item.txHash.substr(
+                                                    0,
+                                                    4,
+                                                  )}...${item.txHash.substr(
+                                                    -6,
+                                                    6,
+                                                  )}`}
+                                                </span>
+                                                <ExternalLinkIcon
+                                                  className="inline ml-1 h-4 w-4 opacity-80"
+                                                  aria-hidden="true"
+                                                />
+                                              </a>
+                                            ) : null}
+                                            {item.eventName == "UserFollowed" &&
+                                            item.userFollower ? (
+                                              <a
+                                                href={`${appUrls.fomoClient}/profile-info?userId=${item.userFollower.followerUserId}`}
+                                                target="_self"
+                                                className="block text-sm underline mt-0.5"
+                                              >
+                                                <span>view profile</span>
+                                                <ExternalLinkIcon
+                                                  className="inline ml-1 h-4 w-4 opacity-80"
+                                                  aria-hidden="true"
+                                                />
+                                              </a>
+                                            ) : null}
+                                            <span className="text-xs">
+                                              {moment(
+                                                item.dateCreated,
+                                              ).fromNow()}
+                                            </span>
+                                          </div>
+                                        </div>
+
+                                        {/* {notification.eventName.replace(
+                                          /([A-Z])/g,
+                                          " $1"
+                                        )}
+                                        <span className="block text-xs">
+                                          {moment(
+                                            notification.dateCreated
+                                          ).fromNow()}
+                                        </span> */}
+                                      </Menu.Item>
+                                    ))
+                                  ) : (
+                                    <div className="">
+                                      <p className="text-sm font-medium px-4 pb-2">
+                                        No notifications to display.
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </Menu.Items>
+                            </Transition>
+                          </>
+                        )}
+                      </Menu>
+                    </div>
+                  ) : null}
+
+                  {false && myAdd ? (
+                    <div className="flex-shrink-0 hidden md:block">
+                      <Link
+                        to="/create"
+                        className="relative inline-flex items-center px-4 py-2 ml-2 border border-transparent text-sm font-medium rounded-full text-white bg-green-500 shadow-sm hover:bg-green-600 focus:outline-none"
+                      >
+                        <span>Create</span>
+                      </Link>
+                    </div>
+                  ) : null}
+
+                  {myAdd ? (
+                    loggedIn ? (
+                      <UserMenu handleSignOut={handleSignOut} />
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSignInModalOpen(true)}
+                        className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-bold rounded-full text-white shadow-sm focus:outline-none bg-gray-100 hover:bg-gray-200 text-gray-900"
+                      >
+                        <span className="">Sign In</span>
+                        {/* <span className="hidden md:inline">Sign In / Register</span> */}
+                      </button>
+                    )
+                  ) : null}
+
+                  <SignInRegisterModal
+                    modalOpen={signInModalOpen}
+                    setModalOpen={(v) => setSignInModalOpen(v)}
+                  />
+
+                  <div className="flex-shrink-0">
+                    {myAdd ? (
+                      <Menu as="div" className="inline-flex relative">
+                        {({ open }) => (
+                          <>
+                            <div>
+                              <Menu.Button className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none bg-green-500 hover:bg-green-600">
+                                <span className="sr-only">Wallet</span>
+                                {myAdd.substr(0, 6) + "..."}
+                              </Menu.Button>
+                            </div>
+                            <Transition
+                              show={open}
+                              as={Fragment}
+                              enter="transition ease-out duration-200"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-75"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items
+                                static
+                                className="origin-top-right absolute right-0 mt-12 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                              >
+                                <a
+                                  href="javascript:void(0);"
+                                  onClick={() => disconnect()}
+                                  className="py-2 mb-0 flex items-start rounded-lg bg-red-50 hover:bg-red-100 transition ease-in-out duration-150"
+                                >
+                                  <div className="ml-4">
+                                    <p className="text-sm font-bold text-red-500">
+                                      Disconnect
+                                    </p>
+                                  </div>
+                                </a>
+                              </Menu.Items>
+                            </Transition>
+                          </>
+                        )}
+                      </Menu>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => connectWallet()}
+                        className="bg-indigo-600 hover:bg-indigo-700 relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white shadow-sm focus:outline-none"
+                      >
+                        <span>Connect Wallet</span>
+                      </button>
+                    )}
+                  </div>
+                  <ChainMenu disconnect={changeNetworkHandle} />
+                </div>
+              </div>
+            </div>
+
+            <Disclosure.Panel className="md:hidden">
+              <div className="border-t">
                 <Disclosure.Button
                   as={Link}
-                  key={index}
-                  // onClick={() => close}
-                  to={item.path}
+                  to="/search"
                   className={classNames(
-                    item.path == location.pathname
+                    location.pathname == "/search"
                       ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                       : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
                     "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6 appearance-none",
                   )}
                 >
-                  {item.title}
+                  Search
                 </Disclosure.Button>
-              ))}
+                {Routes.filter((item) => item.nav).map((item, index) => (
+                  <Disclosure.Button
+                    as={Link}
+                    key={index}
+                    // onClick={() => close}
+                    to={item.path}
+                    className={classNames(
+                      item.path == location.pathname
+                        ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                        : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700",
+                      "text-center block pl-3 pr-4 py-3 text-base font-medium sm:pl-5 sm:pr-6 appearance-none",
+                    )}
+                  >
+                    {item.title}
+                  </Disclosure.Button>
+                ))}
+              </div>
+            </Disclosure.Panel>
+          </>
+        )}
+      </Disclosure>
+
+      <Modal
+        title="Scheduled Maintenance"
+        open={maintenanceModalOpen}
+        setOpen={(v) => setMaintenanceModalOpen(v)}
+        hideFooter
+      >
+        <div>
+          <div className="mt-3 text-center sm:mt-5 -mb-1">
+            <div className="mt-2 mb-5">
+              <p className="text-sm text-gray-500 mb-5">
+                We are experiencing API outages currently affecting new listings
+                being displayed, all NFTs listed are viewable on the smart
+                contract and the issue will be resolved shortly.
+              </p>
+              <a
+                href="https://bscscan.com/address/0x429b37477dfad86369503567994b2e548e2f0e0d#readProxyContract"
+                target="_blank"
+              >
+                <span className="font-medium underline text-sm">
+                  View Contract <span aria-hidden="true">&rarr;</span>
+                </span>
+              </a>
             </div>
-          </Disclosure.Panel>
-        </>
-      )}
-    </Disclosure>
+            <button
+              onClick={() => setMaintenanceModalOpen(false)}
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
   )
 }
