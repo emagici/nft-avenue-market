@@ -1,8 +1,10 @@
 export const getMarketplaceContractAddress = (blockchainId) => {
-    if (blockchainId == 0)
+    if (blockchainId === 0)
         return '0x6e2ef327fD5E558ad842A2f34358674e61b3aC46';
-    if (blockchainId == 1)
+    if (blockchainId === 1)
         return '0x50b2DC92413cCC580aC4Dc9C7E30a1F772d192DC';
+    if (blockchainId === 2)
+        return '0xd999D5a20294ec90c4f792F63820112E22E61059';
 }
 
 export const MARKETPLACE_ABI = [{
