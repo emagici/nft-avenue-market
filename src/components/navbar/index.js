@@ -110,7 +110,7 @@ export default function Navbar() {
   const [provider, setProvider] = useState()
 
   const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false)
-  const [showBanner, setShowBanner] = useState(true)
+  const [showBanner, setShowBanner] = useState(false)
 
   const changeNetworkHandle = () => {
     walletContext.dispatch({
